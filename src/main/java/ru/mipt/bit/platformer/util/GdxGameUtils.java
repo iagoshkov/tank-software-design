@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import ru.mipt.bit.platformer.Renderable;
 
 import java.util.NoSuchElementException;
 
@@ -52,6 +53,10 @@ public final class GdxGameUtils {
         return rectangle.setCenter(tileCenter);
     }
 
+    public static Rectangle moveObjectAtTileCenter(TiledMapTileLayer tileLayer, Renderable object) {
+        return moveRectangleAtTileCenter(tileLayer, object.getRectangle(), object.getCoordinates());
+    }
+
     public static GridPoint2 incrementedY(GridPoint2 point) {
         return new GridPoint2(point).add(0, 1);
     }
@@ -74,6 +79,10 @@ public final class GdxGameUtils {
         float regionOriginX = regionWidth / 2f;
         float regionOriginY = regionHeight / 2f;
         batch.draw(region, rectangle.x, rectangle.y, regionOriginX, regionOriginY, regionWidth, regionHeight, 1f, 1f, rotation);
+    }
+
+    public static void drawObjectUnscaled(Batch batch, Renderable object) {
+        drawTextureRegionUnscaled(batch, object.getRegion(), object.getRectangle(), object.getRotation());
     }
 
     public static Rectangle createBoundingRectangle(TextureRegion region) {
