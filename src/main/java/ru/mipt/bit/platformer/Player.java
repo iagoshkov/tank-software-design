@@ -30,14 +30,11 @@ public class Player extends GameObject {
     public void checkAndSetupMove(Direction direction, ArrayList<GameObject> gameObjects) {
         if (movementProgress.finishedMoving()) {
             GridPoint2 estimatedCoordinates = new GridPoint2(coordinates);
-            estimatedCoordinates.add(direction.getDeltaCoordinate());
-            this.rotation = direction.getAngle();
+            estimatedCoordinates.add(direction.getCoordinate());
+            rotation = direction.getAngle();
             // check potential player destination for collision with obstacles
-            for (GameObject anotherObject : gameObjects) {
-                if (!(anotherObject instanceof Obstacle) || this.equals(anotherObject)) {
-                    continue;
-                }
-                if (anotherObject.coordinates.equals(estimatedCoordinates)) {
+            for (GameObject gameObject : gameObjects) {
+                if (gameObject.coordinates.equals(estimatedCoordinates)) {
                     return;
                 }
             }

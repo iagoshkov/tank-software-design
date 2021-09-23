@@ -3,11 +3,11 @@ package ru.mipt.bit.platformer.util;
 import com.badlogic.gdx.math.GridPoint2;
 
 public class Direction {
-    private final GridPoint2 deltaCoordinate;
+    private final GridPoint2 Coordinate;
     private final float angle;
 
     public Direction(int x, int y) {
-        deltaCoordinate = new GridPoint2(x, y);
+        Coordinate = new GridPoint2(x, y);
         angle = (float) (Math.atan2(y, x) * 180 / Math.PI);
     }
 
@@ -15,7 +15,7 @@ public class Direction {
         return angle;
     }
 
-    public GridPoint2 getDeltaCoordinate() {
-        return deltaCoordinate;
+    public GridPoint2 getCoordinate() {
+        return Coordinate;
     }
 }

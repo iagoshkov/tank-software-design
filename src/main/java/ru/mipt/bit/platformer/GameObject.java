@@ -12,13 +12,13 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 public class GameObject {
     private final TextureRegion region;
     private final Rectangle bounding;
-    protected GridPoint2 coordinates;
-    protected float rotation;
+    public GridPoint2 coordinates;
+    public float rotation;
 
     public GameObject(TiledMapTileLayer groundLayer, Texture texture, GridPoint2 coordinates, float rotation) {
         this.coordinates = coordinates;
         this.region = new TextureRegion(texture);
-        this.bounding = createBoundingRectangle(region);
+        bounding = createBoundingRectangle(region);
         this.rotation = rotation;
         moveRectangleAtTileCenter(groundLayer, bounding, coordinates);
     }
@@ -28,7 +28,7 @@ public class GameObject {
     }
 
     public Rectangle getBounding() {
-        return this.bounding;
+        return bounding;
     }
 
 }
