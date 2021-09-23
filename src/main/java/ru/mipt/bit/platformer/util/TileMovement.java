@@ -4,6 +4,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import ru.mipt.bit.platformer.models.graphics.Tank;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
@@ -17,19 +19,20 @@ public class TileMovement {
         this.interpolation = interpolation;
     }
 
-    public Rectangle moveRectangleBetweenTileCenters(Rectangle rectangle, GridPoint2 fromTileCoordinates, GridPoint2 toTileCoordinates, float progress) {
-        moveRectangleAtTileCenter(tileLayer, rectangle, fromTileCoordinates);
-        float fromTileBottomLeftX = rectangle.x;
-        float fromTileBottomLeftY = rectangle.y;
+    public void calculateMovableGameObjectCoordinates(Tank movingGraphicObject) {
+        Rectangle rectangle = movingGraphicObject.getRectangle();
+        float progress = movingGraphicObject.getMovementProgress();
 
-        moveRectangleAtTileCenter(tileLayer, rectangle, toTileCoordinates);
-        float toTileBottomLeftX = rectangle.x;
-        float toTileBottomLeftY = rectangle.y;
+        GridPoint2 fromTileCoordinates = movingGraphicObject.getCoordinates();
+        GridPoint2 toTileCoordinates = movingGraphicObject.getDestinationCoordinates();
 
-        float intermediateBottomLeftX = interpolation.apply(fromTileBottomLeftX, toTileBottomLeftX, progress);
-        float intermediateBottomLeftY = interpolation.apply(fromTileBottomLeftY, toTileBottomLeftY, progress);
+        Vector2 from = moveRectangleAtTileCenter(tileLayer, rectangle, fromTileCoordinates);
+        Vector2 to = moveRectangleAtTileCenter(tileLayer, rectangle, toTileCoordinates);
 
-        return rectangle
+        float intermediateBottomLeftX = interpolation.apply(from.x, to.x, progress);
+        float intermediateBottomLeftY = interpolation.apply(from.y, to.y, progress);
+
+        rectangle
                 .setX(intermediateBottomLeftX)
                 .setY(intermediateBottomLeftY);
     }

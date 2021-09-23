@@ -12,7 +12,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import ru.mipt.bit.platformer.models.Player;
+import ru.mipt.bit.platformer.models.graphics.AbstractMovableGameGraphicObject;
+import ru.mipt.bit.platformer.models.graphics.basic.GameGraphicObject;
+import ru.mipt.bit.platformer.models.graphics.Direction;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
@@ -47,43 +53,63 @@ public final class GdxGameUtils {
         }
     }
 
-    public static Rectangle moveRectangleAtTileCenter(TiledMapTileLayer tileLayer, Rectangle rectangle, GridPoint2 tileCoordinates) {
+    public static Vector2 moveRectangleAtTileCenter(TiledMapTileLayer tileLayer, Rectangle rectangle, GridPoint2 tileCoordinates) {
         Vector2 tileCenter = calculateTileCenter(tileLayer, tileCoordinates);
-        return rectangle.setCenter(tileCenter);
+        rectangle.setCenter(tileCenter);
+
+        return new Vector2(rectangle.x, rectangle.y);
     }
 
-    public static GridPoint2 incrementedY(GridPoint2 point) {
-        return new GridPoint2(point).add(0, 1);
+//    public static GridPoint2 incrementedY(GridPoint2 point) {
+//        return new GridPoint2(point).add(0, 1);
+//    }
+//
+//    public static GridPoint2 decrementedX(GridPoint2 point) {
+//        return new GridPoint2(point).sub(1, 0);
+//    }
+//
+//    public static GridPoint2 decrementedY(GridPoint2 point) {
+//        return new GridPoint2(point).sub(0, 1);
+//    }
+//
+//    public static GridPoint2 incrementedX(GridPoint2 point) {
+//        return new GridPoint2(point).add(1, 0);
+//    }
+
+    public static void drawGameGraphicObjectsUnscaled(Batch batch, List<GameGraphicObject> graphicObjects, Player player) {
+        int regionWidth, regionHeight;
+        float regionOriginX, regionOriginY;
+
+        List<GameGraphicObject> objects = new ArrayList<>(graphicObjects);
+        objects.add(player.getTank());
+
+        for (GameGraphicObject object : objects) {
+            TextureRegion textureRegion = object.getTextureRegion();
+            regionWidth = textureRegion.getRegionWidth();
+            regionHeight = textureRegion.getRegionHeight();
+
+            regionOriginX = regionWidth / 2f;
+            regionOriginY = regionHeight / 2f;
+
+            batch.draw(
+                    object.getTextureRegion(), object.getRectangle().x, object.getRectangle().y,
+                    regionOriginX, regionOriginY, regionWidth, regionHeight, 1f, 1f, object.getRotation()
+            );
+        }
     }
 
-    public static GridPoint2 decrementedX(GridPoint2 point) {
-        return new GridPoint2(point).sub(1, 0);
-    }
-
-    public static GridPoint2 decrementedY(GridPoint2 point) {
-        return new GridPoint2(point).sub(0, 1);
-    }
-
-    public static GridPoint2 incrementedX(GridPoint2 point) {
-        return new GridPoint2(point).add(1, 0);
-    }
-
-    public static void drawTextureRegionUnscaled(Batch batch, TextureRegion region, Rectangle rectangle, float rotation) {
-        int regionWidth = region.getRegionWidth();
-        int regionHeight = region.getRegionHeight();
-        float regionOriginX = regionWidth / 2f;
-        float regionOriginY = regionHeight / 2f;
-        batch.draw(region, rectangle.x, rectangle.y, regionOriginX, regionOriginY, regionWidth, regionHeight, 1f, 1f, rotation);
+    public static boolean checkIsMoveSafe(Direction direction, List<GameGraphicObject> graphicObjects,
+                                                AbstractMovableGameGraphicObject movableObject) {
+        return graphicObjects.stream()
+                .noneMatch(gameGraphicObject ->
+                        movableObject.getCoordinates()
+                                .equals(gameGraphicObject.getCoordinates().add(direction.getShift())));
     }
 
     public static Rectangle createBoundingRectangle(TextureRegion region) {
         return new Rectangle()
                 .setWidth(region.getRegionWidth())
                 .setHeight(region.getRegionHeight());
-    }
-
-    public static float continueProgress(float previousProgress, float deltaTime, float speed) {
-        return clamp(previousProgress + deltaTime / speed, 0f, 1f);
     }
 
     private static Vector2 calculateTileCenter(TiledMapTileLayer tileLayer, GridPoint2 tileCoordinates) {
