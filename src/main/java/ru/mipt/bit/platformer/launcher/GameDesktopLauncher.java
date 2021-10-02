@@ -14,6 +14,8 @@ import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.entities.AgileGraphicObject;
 import ru.mipt.bit.platformer.entities.Direction;
 import ru.mipt.bit.platformer.entities.GraphicObject;
+import ru.mipt.bit.platformer.service.ActionMapper;
+import ru.mipt.bit.platformer.service.impl.ActionMapperImpl;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -34,10 +36,12 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private AgileGraphicObject player;
     private GraphicObject tree;
+    private ActionMapper actionMapper;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
+        actionMapper = new ActionMapperImpl();
 
         // load level tiles
         level = new TmxMapLoader().load("level.tmx");
@@ -108,7 +112,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private void performGraphicObjectsInteractions(float deltaTime) {
         if (player.isMovementFinished()) {
             for (Direction direction : Direction.values()) {
-                if (direction.isTriggered(Gdx.input)) {
+                if (actionMapper.isDirectionKeyPressed(direction, Gdx.input)) {
                     if (collisionImpossible(tree, player, direction)) {
                         player.triggerMovement(direction);
                     }
