@@ -2,6 +2,7 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,11 +14,16 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.graphics.ObstacleGraphics;
+import ru.mipt.bit.platformer.graphics.PlayerGraphics;
+import ru.mipt.bit.platformer.model.Direction;
+import ru.mipt.bit.platformer.model.Obstacle;
+import ru.mipt.bit.platformer.model.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
+import com.badlogic.gdx.Input.Keys;
 
 import java.util.List;
 
-import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
@@ -27,10 +33,14 @@ public class GameDesktopLauncher implements ApplicationListener {
     private TiledMap level;
     private MapRenderer levelRenderer;
 
-    private List<Obstacle> obstacles;
     private Player player;
+    private PlayerGraphics playerGraphics;
 
-    private static final int[] DIRECTION_KEYS = new int[]{RIGHT, UP, LEFT, DOWN, W, A, S, D};
+    private List<Obstacle> obstacles;
+    private ObstacleGraphics obstacleGraphics;
+
+    private static final List<Integer> INPUT_KEYS = List.of(
+            Keys.RIGHT, Keys.UP, Keys.LEFT, Keys.DOWN, Keys.W, Keys.A, Keys.S, Keys.D);
 
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -48,20 +58,12 @@ public class GameDesktopLauncher implements ApplicationListener {
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level);
 
-        obstacles = List.of(new Obstacle(
-                new Texture("images/greenTree.png"),
-                new GridPoint2(1, 3), 0f
-        ));
+        player = new Player(new GridPoint2(1, 1), 0);
+        playerGraphics = new PlayerGraphics(new Texture("images/tank_blue.png"), player,
+                new TileMovement(groundLayer, Interpolation.smooth));
 
-        for (var obstacle : obstacles) {
-            moveObjectAtTileCenter(groundLayer, obstacle);
-        }
-
-        player = new Player(
-                new Texture("images/tank_blue.png"),
-                new GridPoint2(1, 1), 0,
-                new TileMovement(groundLayer, Interpolation.smooth)
-        );
+        obstacles = List.of(new Obstacle(new GridPoint2(1, 3), 0f));
+        obstacleGraphics = new ObstacleGraphics(new Texture("images/greenTree.png"), obstacles, groundLayer);
     }
 
     @Override
@@ -73,13 +75,13 @@ public class GameDesktopLauncher implements ApplicationListener {
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        for (var key : DIRECTION_KEYS) {
+        for (var key : INPUT_KEYS) {
             if (Gdx.input.isKeyPressed(key)) {
-                player.tryRotateAndStartMovement(Direction.fromKey(key), obstacles);
+                player.tryRotateAndStartMovement(calcDirectionFromInputKey(key), obstacles);
             }
         }
 
-        player.move();
+        playerGraphics.move();
         player.makeProgress(deltaTime);
         player.tryFinishMovement();
 
@@ -90,12 +92,10 @@ public class GameDesktopLauncher implements ApplicationListener {
         batch.begin();
 
         // render player
-        drawObjectUnscaled(batch, player);
+        playerGraphics.draw(batch);
 
         // render obstacles
-        for (var obstacle : obstacles) {
-            drawObjectUnscaled(batch, obstacle);
-        }
+        obstacleGraphics.draw(batch);
 
         // submit all drawing requests
         batch.end();
@@ -119,11 +119,25 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources
-        for (var obstacle : obstacles) {
-            obstacle.dispose();
-        }
-        player.dispose();
+        playerGraphics.dispose();
+        obstacleGraphics.dispose();
         level.dispose();
         batch.dispose();
+    }
+
+    private static Direction calcDirectionFromInputKey(int key) {
+        if (key == Keys.RIGHT || key == Input.Keys.D) {
+            return Direction.RIGHT;
+        }
+        if (key == Input.Keys.UP || key == Input.Keys.W) {
+            return Direction.UP;
+        }
+        if (key == Input.Keys.LEFT || key == Input.Keys.A) {
+            return Direction.LEFT;
+        }
+        if (key == Input.Keys.DOWN || key == Input.Keys.S) {
+            return Direction.DOWN;
+        }
+        throw new IllegalArgumentException();
     }
 }
