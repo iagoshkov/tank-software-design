@@ -12,21 +12,28 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
+import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.objects.GraphicsObjects;
 import ru.mipt.bit.platformer.objects.Tree;
+import ru.mipt.bit.platformer.player.GraphicsPlayer;
+import ru.mipt.bit.platformer.player.move.Movement;
 import ru.mipt.bit.platformer.player.Player;
+import ru.mipt.bit.platformer.player.move.NewDestination;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 
 public class Render {
+    private static final float MOVEMENT_SPEED = 0.4f;
+
     private final Batch batch;
     private final MapRenderer levelRenderer;
     private final TileMovement tileMovement;
     private final TiledMapTileLayer groundLayer;
     private final Player player;
     private final Tree tree;
+    private GraphicsPlayer graphicsPlayer;
+    private GraphicsObjects graphicsTree;
 
-
-    private float deltaTime;
 
     public Render(Batch batch, MapRenderer levelRenderer, TileMovement tileMovement, TiledMapTileLayer groundLayer, Player player, Tree tree) {
         this.batch = batch;
@@ -38,33 +45,35 @@ public class Render {
     }
 
     public void doRender(){
+        graphicsPlayer = new GraphicsPlayer(player,batch,tileMovement);
+        graphicsTree = new GraphicsObjects(batch,tree);
         // clear the screen
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
+
         // get time passed since the last render
-        deltaTime = Gdx.graphics.getDeltaTime();
+        float deltaTime = player.getDeltaTime();
 
 
-            if (isEqual(player.movementProgress, 1f)) {
-                player.movementKey(Gdx.input);
-                if (!tree.getObstacleCoordinates().equals(player.newCoordinates())) {
-                    player.destinationCoordinates = player.newCoordinates();
-                    player.movementProgress = 0f;
-                    player.currMovementVector.x = 0;
-                    player.currMovementVector.y = 0;
+        if (isEqual(player.getMovementProgress(), 1f)) {
+                Movement.movementKey(Gdx.input);
+                if (!tree.getObstacleCoordinates().equals(NewDestination.newCoordinates())) {
+                    NewDestination.setDestinationCoordinates(NewDestination.newCoordinates());
+                    player.setMovementProgress(0f);
+                    Movement.setCurrMovementVector(new GridPoint2(0,0));
                 }
-                player.rotation = player.currRotation;
+                player.setRotation(Movement.getCurrRotation());
             }
 
 
         // calculate interpolated player screen coordinates
-        tileMovement.moveRectangleBetweenTileCenters(player.rectangle, player.coordinates, player.destinationCoordinates, player.movementProgress);
+        GraphicsPlayer.CalcInterpPlayerCoordinate();
 
-        player.movementProgress = continueProgress(player.movementProgress, deltaTime, player.MOVEMENT_SPEED);
-        if (isEqual(player.movementProgress, 1f)) {
+        player.setMovementProgress(continueProgress(player.getMovementProgress(), deltaTime, MOVEMENT_SPEED));
+        if (isEqual(player.getMovementProgress(), 1f)) {
             // record that the player has reached his/her destination
-            player.coordinates.set(player.destinationCoordinates);
+            player.setCoordinates(NewDestination.getDestinationCoordinates());
         }
 
         // render each tile of the level
@@ -74,12 +83,13 @@ public class Render {
         batch.begin();
 
         // render player
-        drawTextureRegionUnscaled(batch, player.graphics, player.rectangle, player.rotation);
+        graphicsPlayer.DrawPlayer();
 
         // render tree obstacle
-        drawTextureRegionUnscaled(batch, tree.getObstacleGraphics(), tree.getObstacleRectangle(), 0f);
+        graphicsTree.DrawTree();
 
         // submit all drawing requests
         batch.end();
     }
+
 }

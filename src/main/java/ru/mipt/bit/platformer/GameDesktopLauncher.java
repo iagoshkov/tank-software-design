@@ -3,7 +3,6 @@ package ru.mipt.bit.platformer;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
@@ -27,10 +26,8 @@ public class GameDesktopLauncher implements ApplicationListener {
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
 
-    private Texture blueTankTexture;
     private Player player;
 
-    private Texture greenTreeTexture;
     private Tree tree;
 
     Render render;
@@ -45,14 +42,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
-        // Texture decodes an image file and loads it into GPU memory, it represents a native resource
-        blueTankTexture = new Texture("images/tank_blue.png");
-        // TextureRegion represents Texture portion, there may be many TextureRegion instances of the same Texture
-        player = new Player(blueTankTexture);
-        // TextureRegion represents Texture portion, there may be many TextureRegion instances of the same Texture
+        player = new Player();
 
-        greenTreeTexture = new Texture("images/greenTree.png");
-        tree = new Tree(greenTreeTexture);
+        tree = new Tree();
         moveRectangleAtTileCenter(groundLayer, tree.getObstacleRectangle(), tree.getObstacleCoordinates());
 
         render = new Render(batch,levelRenderer,tileMovement,groundLayer,player,tree);
@@ -81,8 +73,8 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        greenTreeTexture.dispose();
-        blueTankTexture.dispose();
+        //greenTreeTexture.dispose();
+        //blueTankTexture.dispose();
         level.dispose();
         batch.dispose();
     }
