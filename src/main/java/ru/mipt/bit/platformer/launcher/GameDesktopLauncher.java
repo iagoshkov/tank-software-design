@@ -2,61 +2,80 @@ package ru.mipt.bit.platformer.launcher;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.entities.AgileGraphicObject;
+import ru.mipt.bit.platformer.controllers.PlayerController;
+import ru.mipt.bit.platformer.controllers.PlayerControllerImpl;
+import ru.mipt.bit.platformer.entities.LibGdxGraphicObject;
 import ru.mipt.bit.platformer.entities.Direction;
-import ru.mipt.bit.platformer.entities.GraphicObject;
+import ru.mipt.bit.platformer.entities.Player;
+import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
+import ru.mipt.bit.platformer.keyboard.LibGdxKeyboardChecker;
+import ru.mipt.bit.platformer.movables.Tank;
+import ru.mipt.bit.platformer.graphic.LevelRender;
+import ru.mipt.bit.platformer.graphic.LibGdxGraphicObjectRender;
+import ru.mipt.bit.platformer.graphic.LibGdxLevelRender;
+import ru.mipt.bit.platformer.movement.LibGdxMovementService;
+import ru.mipt.bit.platformer.movement.LibGdxMovementServiceImpl;
 import ru.mipt.bit.platformer.service.ActionMapper;
 import ru.mipt.bit.platformer.service.impl.ActionMapperImpl;
-import ru.mipt.bit.platformer.util.TileMovement;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+import com.badlogic.gdx.Input.Keys;
+
+import java.util.List;
+
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
 
-    private Batch batch;
-
-    private TiledMap level;
-    private MapRenderer levelRenderer;
-    private TileMovement tileMovement;
-
-    private Texture blueTankTexture;
-    private Texture greenTreeTexture;
-
-    private AgileGraphicObject player;
-    private GraphicObject tree;
+    private LevelRender levelRender;
+    private LibGdxMovementService movementService;
     private ActionMapper actionMapper;
+    private PlayerController playerController;
+    private KeyboardChecker keyboardChecker;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        actionMapper = new ActionMapperImpl();
+        Batch batch = new SpriteBatch();
+        TiledMap level = new TmxMapLoader().load("level.tmx");
+        MapRenderer levelRenderer = createSingleLayerMapRenderer(level, batch);
+        TiledMapTileLayer tileLayer = getSingleLayer(level);
 
-        // load level tiles
-        level = new TmxMapLoader().load("level.tmx");
-        levelRenderer = createSingleLayerMapRenderer(level, batch);
-        TiledMapTileLayer groundLayer = getSingleLayer(level);
-        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        levelRender = new LibGdxLevelRender(batch, levelRenderer);
+        movementService = new LibGdxMovementServiceImpl(getSingleLayer(level), Interpolation.smooth);
 
-        // Texture decodes an image file and loads it into GPU memory, it represents a native resource
-        blueTankTexture = new Texture("images/tank_blue.png");
-        greenTreeTexture = new Texture("images/greenTree.png");
-        // TextureRegion represents Texture portion, there may be many TextureRegion instances of the same Texture
+        Texture blueTankTexture = new Texture("images/tank_blue.png");
+        Texture greenTreeTexture = new Texture("images/greenTree.png");
 
-        player = new AgileGraphicObject(blueTankTexture, new GridPoint2(1, 1), 0f);
-        tree = new GraphicObject(greenTreeTexture, new GridPoint2(1, 3));
-        moveRectangleAtTileCenter(groundLayer, tree.getRectangle(), tree.getCoordinates());
+        Tank tank = new Tank(MOVEMENT_SPEED, movementService, blueTankTexture, new GridPoint2(1, 1), 0f);
+        LibGdxGraphicObject tree = new LibGdxGraphicObject(greenTreeTexture, new GridPoint2(1, 3), 0f);
+
+
+        levelRender.addRenderer(new LibGdxGraphicObjectRender(tree, batch));
+        levelRender.addRenderer(new LibGdxGraphicObjectRender(tank.getGraphicObject(), batch));
+
+
+        actionMapper = new ActionMapperImpl(DEFAULT_KEY_MAPPING);
+        keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
+
+        Player player = new Player("George", tank);
+
+        playerController = new PlayerControllerImpl(actionMapper, keyboardChecker, player, List.of(tree));
+
+
+
     }
 
     @Override
@@ -68,7 +87,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         performGraphicObjectsInteractions(deltaTime);
 
-        drawGraphicObjects();
+        levelRender.renderAll();
     }
 
     @Override
@@ -89,24 +108,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        greenTreeTexture.dispose();
-        blueTankTexture.dispose();
-        level.dispose();
-        batch.dispose();
-    }
-
-    private void drawGraphicObjects() {
-        // render each tile of the level
-        levelRenderer.render();
-
-        // start recording all drawing commands
-        batch.begin();
-
-        // render player
-        drawGraphicObjectsUnscaled(batch, player, tree);
-
-        // submit all drawing requests
-        batch.end();
+        levelRender.dispose();
     }
 
     private void performGraphicObjectsInteractions(float deltaTime) {
