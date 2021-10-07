@@ -11,6 +11,10 @@ public class Obstacle {
         this.rotation = rotation;
     }
 
+    public Obstacle(GridPoint2 coordinates) {
+        this(coordinates, 0f);
+    }
+
     public float getRotation() {
         return rotation;
     }

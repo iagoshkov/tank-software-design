@@ -7,7 +7,7 @@ import java.util.List;
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
 public class Player {
-    private static final float MOVEMENT_SPEED = 0.4f;
+    private final float movementSpeed;
 
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     private final GridPoint2 coordinates;
@@ -16,10 +16,19 @@ public class Player {
     private float rotation;
     private float movementProgress = 1f;
 
-    public Player(GridPoint2 coordinates, float rotation) {
+    public Player(GridPoint2 coordinates, float rotation, float movementSpeed) {
         this.coordinates = coordinates;
         this.destinationCoordinates = coordinates;
         this.rotation = rotation;
+        this.movementSpeed = movementSpeed;
+    }
+
+    public Player(GridPoint2 coordinates, float rotation) {
+        this(coordinates, rotation, 0.4f);
+    }
+
+    public Player(GridPoint2 coordinates) {
+        this(coordinates, 0, 0.4f);
     }
 
     public float getRotation() {
@@ -68,6 +77,6 @@ public class Player {
     }
 
     public void makeProgress(float deltaTime) {
-        movementProgress = clamp(movementProgress + deltaTime / MOVEMENT_SPEED, 0f, 1f);
+        movementProgress = clamp(movementProgress + deltaTime / movementSpeed, 0f, 1f);
     }
 }
