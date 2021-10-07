@@ -8,11 +8,11 @@ import ru.mipt.bit.platformer.model.Player;
 
 import java.util.List;
 
-public class PhysicsController {
+public class PlayerController {
     private final Player player;
     private final List<Obstacle> obstacles;
 
-    public PhysicsController(Player player, List<Obstacle> obstacles) {
+    public PlayerController(Player player, List<Obstacle> obstacles) {
         this.player = player;
         this.obstacles = obstacles;
     }

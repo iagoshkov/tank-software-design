@@ -22,7 +22,7 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private LevelRenderer levelRenderer;
-    private PhysicsController physicsController;
+    private PlayerController playerController;
 
     private Player player;
     private List<Obstacle> obstacles;
@@ -55,13 +55,13 @@ public class GameDesktopLauncher implements ApplicationListener {
         ObstacleGraphics obstacleGraphics = new ObstacleGraphics(new Texture("images/greenTree.png"),
                 obstacles, tileLayer);
 
-        physicsController = new PhysicsController(player, obstacles);
+        playerController = new PlayerController(player, obstacles);
         levelRenderer = new LevelRenderer(map, playerGraphics, obstacleGraphics);
     }
 
     @Override
     public void render() {
-        physicsController.process();
+        playerController.process();
         levelRenderer.render();
     }
 
