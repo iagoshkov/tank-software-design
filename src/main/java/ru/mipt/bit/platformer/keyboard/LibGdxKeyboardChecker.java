@@ -9,7 +9,7 @@ public class LibGdxKeyboardChecker implements KeyboardChecker {
     private final Input gdxInput;
 
     @Override
-    public boolean isButtonPressed(int button) {
-        return gdxInput.isButtonPressed(button);
+    public boolean isKeyPressed(int button) {
+        return gdxInput.isKeyPressed(button);
     }
 }

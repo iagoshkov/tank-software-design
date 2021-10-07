@@ -2,11 +2,9 @@ package ru.mipt.bit.platformer.launcher;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -16,35 +14,31 @@ import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.controllers.PlayerController;
 import ru.mipt.bit.platformer.controllers.PlayerControllerImpl;
 import ru.mipt.bit.platformer.entities.LibGdxGraphicObject;
-import ru.mipt.bit.platformer.entities.Direction;
 import ru.mipt.bit.platformer.entities.Player;
-import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
-import ru.mipt.bit.platformer.keyboard.LibGdxKeyboardChecker;
-import ru.mipt.bit.platformer.movables.Tank;
 import ru.mipt.bit.platformer.graphic.LevelRender;
 import ru.mipt.bit.platformer.graphic.LibGdxGraphicObjectRender;
 import ru.mipt.bit.platformer.graphic.LibGdxLevelRender;
+import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
+import ru.mipt.bit.platformer.keyboard.LibGdxKeyboardChecker;
+import ru.mipt.bit.platformer.movables.Tank;
 import ru.mipt.bit.platformer.movement.LibGdxMovementService;
 import ru.mipt.bit.platformer.movement.LibGdxMovementServiceImpl;
 import ru.mipt.bit.platformer.service.ActionMapper;
 import ru.mipt.bit.platformer.service.impl.ActionMapperImpl;
 
-import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import com.badlogic.gdx.Input.Keys;
-
 import java.util.List;
 
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.DEFAULT_KEY_MAPPING;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
 
     private LevelRender levelRender;
-    private LibGdxMovementService movementService;
-    private ActionMapper actionMapper;
     private PlayerController playerController;
-    private KeyboardChecker keyboardChecker;
 
     @Override
     public void create() {
@@ -54,27 +48,25 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMapTileLayer tileLayer = getSingleLayer(level);
 
         levelRender = new LibGdxLevelRender(batch, levelRenderer);
-        movementService = new LibGdxMovementServiceImpl(getSingleLayer(level), Interpolation.smooth);
+        LibGdxMovementService movementService = new LibGdxMovementServiceImpl(Interpolation.smooth);
 
         Texture blueTankTexture = new Texture("images/tank_blue.png");
         Texture greenTreeTexture = new Texture("images/greenTree.png");
 
-        Tank tank = new Tank(MOVEMENT_SPEED, movementService, blueTankTexture, new GridPoint2(1, 1), 0f);
-        LibGdxGraphicObject tree = new LibGdxGraphicObject(greenTreeTexture, new GridPoint2(1, 3), 0f);
+        Tank tank = new Tank(MOVEMENT_SPEED, tileLayer, movementService, blueTankTexture, new GridPoint2(1, 1), 0f);
+        LibGdxGraphicObject tree = new LibGdxGraphicObject(tileLayer, greenTreeTexture, new GridPoint2(1, 3), 0f);
 
 
         levelRender.addRenderer(new LibGdxGraphicObjectRender(tree, batch));
         levelRender.addRenderer(new LibGdxGraphicObjectRender(tank.getGraphicObject(), batch));
 
 
-        actionMapper = new ActionMapperImpl(DEFAULT_KEY_MAPPING);
-        keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
+        ActionMapper actionMapper = new ActionMapperImpl(DEFAULT_KEY_MAPPING);
+        KeyboardChecker keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
 
         Player player = new Player("George", tank);
 
         playerController = new PlayerControllerImpl(actionMapper, keyboardChecker, player, List.of(tree));
-
-
 
     }
 
@@ -85,7 +77,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        performGraphicObjectsInteractions(deltaTime);
+        playerController.movePlayer(deltaTime);
 
         levelRender.renderAll();
     }
@@ -109,22 +101,6 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
         levelRender.dispose();
-    }
-
-    private void performGraphicObjectsInteractions(float deltaTime) {
-        if (player.isMovementFinished()) {
-            for (Direction direction : Direction.values()) {
-                if (actionMapper.isDirectionKeyPressed(direction, Gdx.input)) {
-                    if (collisionImpossible(tree, player, direction)) {
-                        player.triggerMovement(direction);
-                    }
-                    player.setRotation(direction.getRotation());
-                }
-            }
-        }
-
-        tileMovement.interpolateAgileObjectCoordinates(player);
-        player.move(deltaTime, MOVEMENT_SPEED);
     }
 
     private void clearScreen() {

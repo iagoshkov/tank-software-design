@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import lombok.Getter;
+import lombok.ToString;
 import ru.mipt.bit.platformer.service.Colliding;
 import ru.mipt.bit.platformer.service.Disposable;
 
@@ -14,6 +15,7 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter
 
 
 @Getter
+@ToString
 public class LibGdxGraphicObject implements Disposable, Colliding {
 
     private final Texture texture;
@@ -42,6 +44,6 @@ public class LibGdxGraphicObject implements Disposable, Colliding {
 
     @Override
     public boolean isCollisionPossible(GridPoint2 othersCoordinates) {
-        return !logicObject.getCoordinates().equals(othersCoordinates);
+        return logicObject.getCoordinates().equals(othersCoordinates);
     }
 }

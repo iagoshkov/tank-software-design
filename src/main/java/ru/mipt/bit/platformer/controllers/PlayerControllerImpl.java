@@ -21,14 +21,15 @@ public class PlayerControllerImpl implements PlayerController {
     private final List<Colliding> obstacles;
 
 
+    @Override
     public void movePlayer(float deltaTime) {
-        for (int button: actionMapper.getMappedKeys()) {
-            if (checker.isButtonPressed(button)) {
-                Direction direction = actionMapper.getDirectionByKey(button);
+        for (int key: actionMapper.getMappedKeys()) {
+            if (checker.isKeyPressed(key)) {
+                Direction direction = actionMapper.getDirectionByKey(key);
+                player.getMovableObject().setRotation(direction.getRotation());
                 if (collisionImpossible(direction)) {
                     player.getMovableObject().triggerMovement(direction);
                 }
-                player.getMovableObject().setRotation(direction.getRotation());
             }
         }
         player.getMovableObject().move(deltaTime);

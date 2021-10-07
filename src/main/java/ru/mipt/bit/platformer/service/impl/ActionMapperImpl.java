@@ -24,6 +24,6 @@ public class ActionMapperImpl implements ActionMapper {
 
     @Override
     public Direction getDirectionByKey(Integer key) {
-        return null;
+        return keyToDirectionMap.get(key);
     }
 }

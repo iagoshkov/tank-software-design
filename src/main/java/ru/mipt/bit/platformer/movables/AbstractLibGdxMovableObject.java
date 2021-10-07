@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.movables;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import lombok.Getter;
 import ru.mipt.bit.platformer.entities.Direction;
@@ -20,13 +21,13 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
     protected float movementProgress = PROGRESS_MAX;
     protected LibGdxGraphicObject graphicObject;
     protected GridPoint2 destinationCoordinates;
-    private LibGdxMovementService movementService;
+    private final LibGdxMovementService movementService;
 
-    public AbstractLibGdxMovableObject(LibGdxMovementService movementService, Texture texture,
+    public AbstractLibGdxMovableObject(TiledMapTileLayer tileLayer, LibGdxMovementService movementService, Texture texture,
                                        GridPoint2 startCoordinates, float rotation) {
         this.movementService = movementService;
         LogicObject logicObject = new LogicObject(rotation, startCoordinates);
-        graphicObject = new LibGdxGraphicObject(texture, logicObject);
+        graphicObject = new LibGdxGraphicObject(tileLayer, texture, logicObject);
         destinationCoordinates = startCoordinates;
     }
 

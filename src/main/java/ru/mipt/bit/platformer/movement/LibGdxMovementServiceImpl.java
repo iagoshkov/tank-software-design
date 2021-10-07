@@ -16,11 +16,11 @@ public class LibGdxMovementServiceImpl implements LibGdxMovementService {
 
 
     @Override
-    public LibGdxGraphicObject interpolateGameObjectCoordinates(TiledMapTileLayer tileLayer,
-                                                                LibGdxGraphicObject graphicObject,
+    public LibGdxGraphicObject interpolateGameObjectCoordinates(LibGdxGraphicObject graphicObject,
                                                                 float movementProgress, GridPoint2 destination) {
 
-        Rectangle rectangle = new Rectangle(graphicObject.getRectangle());
+        Rectangle rectangle = graphicObject.getRectangle();
+        TiledMapTileLayer tileLayer = graphicObject.getTileLayer();
 
         Vector2 from = moveRectangleAtTileCenter(tileLayer, rectangle, graphicObject.getLogicObject().getCoordinates());
         Vector2 to = moveRectangleAtTileCenter(tileLayer, rectangle, destination);

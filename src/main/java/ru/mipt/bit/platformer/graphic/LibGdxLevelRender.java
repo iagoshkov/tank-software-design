@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer.graphic;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.service.Disposable;
 

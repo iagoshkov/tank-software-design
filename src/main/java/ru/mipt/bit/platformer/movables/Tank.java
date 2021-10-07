@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.movables;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.movement.LibGdxMovementService;
 
@@ -8,10 +9,12 @@ import static com.badlogic.gdx.math.MathUtils.clamp;
 
 public class Tank extends AbstractLibGdxMovableObject {
 
-    private float speed;
+    private final float speed;
 
-    public Tank(float speed, LibGdxMovementService movementService, Texture texture, GridPoint2 startCoordinates, float rotation) {
-        super(movementService, texture, startCoordinates, rotation);
+    public Tank(float speed, TiledMapTileLayer tileLayer, LibGdxMovementService movementService,
+                Texture texture, GridPoint2 startCoordinates, float rotation) {
+
+        super(tileLayer, movementService, texture, startCoordinates, rotation);
         this.speed = speed;
     }
 
