@@ -24,7 +24,7 @@ public class Player {
         return isEqual(this.movementProgress, 1f);
     }
 
-    public void movePlayer(Direction direction, GridPoint2 obstacleCoordinates) {
+    public void move(Direction direction, GridPoint2 obstacleCoordinates) {
         if (isMoving()) {
             // check potential player destination for collision with obstacles
             if (!obstacleCoordinates.equals(new GridPoint2(getCoordinates()).add(direction.getMovementVector()))) {

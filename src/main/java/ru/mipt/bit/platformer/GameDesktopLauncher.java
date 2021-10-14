@@ -75,16 +75,16 @@ public class GameDesktopLauncher implements ApplicationListener {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            player.movePlayer(Direction.UP, treeObstacleCoordinates);
+            player.move(Direction.UP, treeObstacleCoordinates);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            player.movePlayer(Direction.LEFT, treeObstacleCoordinates);
+            player.move(Direction.LEFT, treeObstacleCoordinates);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            player.movePlayer(Direction.DOWN, treeObstacleCoordinates);
+            player.move(Direction.DOWN, treeObstacleCoordinates);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            player.movePlayer(Direction.RIGHT, treeObstacleCoordinates);
+            player.move(Direction.RIGHT, treeObstacleCoordinates);
         }
 
         // calculate interpolated player screen coordinates
