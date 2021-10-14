@@ -1,32 +1,19 @@
 package ru.mipt.bit.platformer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
 
-import static com.badlogic.gdx.Input.Keys.*;
-import static com.badlogic.gdx.Input.Keys.A;
+public enum Direction {
+    UP(new GridPoint2(0, 1), 90f),
+    LEFT(new GridPoint2(-1, 0), 180f),
+    DOWN(new GridPoint2(0, -1), -90f),
+    RIGHT(new GridPoint2(1, 0), 0f);
 
-public class Direction {
     private GridPoint2 movementVector;
-    private float rotation;
 
-    Direction(String direction){
-        if (direction.equals("UP")) {
-            movementVector = new GridPoint2(0, 1);
-            rotation = 90f;
-        }
-        if (direction.equals("LEFT")) {
-            movementVector = new GridPoint2(-1, 0);
-            rotation = -180f;
-        }
-        if (direction.equals("DOWN")) {
-            movementVector = new GridPoint2(0, -1);
-            rotation = -90f;
-        }
-        if (direction.equals("RIGHT")) {
-            movementVector = new GridPoint2(1, 0);
-            rotation = 0f;
-        }
+    private float rotation;
+    Direction(GridPoint2 movementVector, float rotation) {
+        this.movementVector = movementVector;
+        this.rotation = rotation;
     }
 
     public GridPoint2 getMovementVector() {

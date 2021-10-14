@@ -37,9 +37,10 @@ public class GameDesktopLauncher implements ApplicationListener {
     private Player player;
 
     private Texture greenTreeTexture;
-    private TextureRegion treeObstacleGraphics;
     private GridPoint2 treeObstacleCoordinates = new GridPoint2();
-    private Rectangle treeObstacleRectangle = new Rectangle();
+
+    private Graphics playerGraphics;
+    private Graphics treeObstacleGraphics;
 
     @Override
     public void create() {
@@ -53,26 +54,15 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // Texture decodes an image file and loads it into GPU memory, it represents a native resource
         blueTankTexture = new Texture("images/tank_blue.png");
+        playerGraphics = new Graphics(blueTankTexture);
 
-        player = new Player(blueTankTexture);
+        player = new Player();
 
         greenTreeTexture = new Texture("images/greenTree.png");
-        treeObstacleGraphics = new TextureRegion(greenTreeTexture);
-        treeObstacleCoordinates = new GridPoint2(1, 3);
-        treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
-        moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, treeObstacleCoordinates);
-    }
+        treeObstacleGraphics = new Graphics(greenTreeTexture);
 
-    public void movePlayer(String direction) {
-        Direction direction1 = new Direction(direction);
-        if (player.isMoving()) {
-            // check potential player destination for collision with obstacles
-            if (!treeObstacleCoordinates.equals(new GridPoint2(player.getCoordinates()).add(direction1.getMovementVector()))) {
-                player.setDestinationCoordinates(new GridPoint2(player.getDestinationCoordinates()).add(direction1.getMovementVector()));
-                player.setMovementProgress(0f);
-            }
-            player.setRotation(direction1.getRotation());
-        }
+        treeObstacleCoordinates = new GridPoint2(1, 3);
+        moveRectangleAtTileCenter(groundLayer, treeObstacleGraphics.getRectangle(), treeObstacleCoordinates);
     }
 
     @Override
@@ -85,21 +75,21 @@ public class GameDesktopLauncher implements ApplicationListener {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            movePlayer("UP");
+            player.movePlayer(Direction.UP, treeObstacleCoordinates);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            movePlayer("LEFT");
+            player.movePlayer(Direction.LEFT, treeObstacleCoordinates);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            movePlayer("DOWN");
+            player.movePlayer(Direction.DOWN, treeObstacleCoordinates);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            movePlayer("RIGHT");
+            player.movePlayer(Direction.RIGHT, treeObstacleCoordinates);
         }
 
         // calculate interpolated player screen coordinates
         tileMovement.moveRectangleBetweenTileCenters(
-                player.getRectangle(),
+                playerGraphics.getRectangle(),
                 player.getCoordinates(),
                 player.getDestinationCoordinates(),
                 player.getMovementProgress()
@@ -117,11 +107,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         // start recording all drawing commands
         batch.begin();
 
-        // render player
-        drawTextureRegionUnscaled(batch, player.getGraphics(), player.getRectangle(), player.getRotation());
-
-        // render tree obstacle
-        drawTextureRegionUnscaled(batch, treeObstacleGraphics, treeObstacleRectangle, 0f);
+        playerGraphics.render(batch, player.getRotation());
+        treeObstacleGraphics.render(batch, 0f);
 
         // submit all drawing requests
         batch.end();
