@@ -15,12 +15,16 @@ import ru.mipt.bit.platformer.graphics.PlayerGraphics;
 import ru.mipt.bit.platformer.model.Obstacle;
 import ru.mipt.bit.platformer.model.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.loaders.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
+    private final GameObjectMapLoader gameObjectMapLoader;
+
     private LevelRenderer levelRenderer;
     private PlayerController playerController;
 
@@ -31,15 +35,23 @@ public class GameDesktopLauncher implements ApplicationListener {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         // level width: 10 tiles x 128px, height: 8 tiles x 128px
         config.setWindowedMode(1280, 1024);
-        new Lwjgl3Application(new GameDesktopLauncher(), config);
+        //
+        var gameDesktopLauncher = new GameDesktopLauncher(new GameObjectMapFileLoader("/gameObjectMap"));
+        new Lwjgl3Application(gameDesktopLauncher, config);
     }
 
-    private void createPlayer(GridPoint2 initialCoordinates, float initialRotation) {
-        player = new Player(initialCoordinates, initialRotation);
+    public GameDesktopLauncher(GameObjectMapLoader gameObjectMapLoader) {
+        this.gameObjectMapLoader = gameObjectMapLoader;
     }
 
-    private void createObstacle(GridPoint2 coordinates, float rotation) {
-        obstacles = List.of(new Obstacle(coordinates, rotation));
+    private void createPlayer() {
+        player = new Player(gameObjectMapLoader.getPlayerPosition(), 0);
+    }
+
+    private void createObstacles() {
+        obstacles = gameObjectMapLoader.getTreePositions().stream()
+                .map(position -> new Obstacle(position, 0))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -47,11 +59,17 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMap map = new TmxMapLoader().load("level.tmx");
         TiledMapTileLayer tileLayer = getSingleLayer(map);
 
-        createPlayer(new GridPoint2(1, 1), 0);
+        try {
+            gameObjectMapLoader.loadMap();
+        } catch (MapLoadingException e) {
+            e.printStackTrace();
+        }
+
+        createPlayer();
         PlayerGraphics playerGraphics = new PlayerGraphics(new Texture("images/tank_blue.png"), player,
                 new TileMovement(tileLayer, Interpolation.smooth));
 
-        createObstacle(new GridPoint2(1, 3), 0);
+        createObstacles();
         ObstacleGraphics obstacleGraphics = new ObstacleGraphics(new Texture("images/greenTree.png"),
                 obstacles, tileLayer);
 
