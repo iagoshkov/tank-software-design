@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
@@ -25,10 +28,18 @@ public class Player {
         return isEqual(this.movementProgress, 1f);
     }
 
-    public void move(Direction direction, GridPoint2 obstacleCoordinates) {
+    public void move(Direction direction, ArrayList<Tree> trees) {
+        HashSet<GridPoint2> treesCoordinates = new HashSet<GridPoint2>();
+        for (Tree tree : trees) {
+            treesCoordinates.add(tree.getCoordinates());
+        }
         if (isMoving()) {
             // check potential player destination for collision with obstacles
-            if (!obstacleCoordinates.equals(new GridPoint2(coordinates).add(direction.getMovementVector()))) {
+//            if (!obstacleCoordinates.equals(new GridPoint2(coordinates).add(direction.getMovementVector()))) {
+//                destinationCoordinates = new GridPoint2(destinationCoordinates).add(direction.getMovementVector());
+//                movementProgress = 0f;
+//            }
+            if (!treesCoordinates.contains(new GridPoint2(coordinates).add(direction.getMovementVector()))) {
                 destinationCoordinates = new GridPoint2(destinationCoordinates).add(direction.getMovementVector());
                 movementProgress = 0f;
             }

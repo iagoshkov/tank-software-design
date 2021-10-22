@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
@@ -21,7 +22,7 @@ public class Graphics implements Disposable {
     private HashMap<String, Texture> textures;
     private Level level;
     private ObjectGraphics playerGraphics;
-    private ObjectGraphics treeObstacleGraphics;
+    private ArrayList<ObjectGraphics> treeObstaclesGraphics = new ArrayList<ObjectGraphics>();
 
     public Graphics(Level level) {
         this.level = level;
@@ -29,7 +30,9 @@ public class Graphics implements Disposable {
         
         textures = loadTextures();
         playerGraphics = new ObjectGraphics(textures.get("blueTank"));
-        treeObstacleGraphics = new ObjectGraphics(textures.get("greenTree"));
+        for (int i = 0; i < level.getTreeObstacles().size(); i++) {
+            treeObstaclesGraphics.add(new ObjectGraphics(textures.get("greenTree")));
+        }
 
         loadLevelTiles();
     }
@@ -38,7 +41,9 @@ public class Graphics implements Disposable {
         levelRenderer = createSingleLayerMapRenderer(level.getMap(), batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level.getMap());
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
-        moveRectangleAtTileCenter(groundLayer, treeObstacleGraphics.getRectangle(), level.getTreeObstacle().getCoordinates());
+        for (int i = 0; i < treeObstaclesGraphics.size(); i++) {
+            moveRectangleAtTileCenter(groundLayer, treeObstaclesGraphics.get(i).getRectangle(), level.getTreeObstacles().get(i).getCoordinates());
+        }
     }
 
     private HashMap<String,Texture> loadTextures() {
@@ -57,7 +62,9 @@ public class Graphics implements Disposable {
         batch.begin();
 
         playerGraphics.render(batch, level.getPlayer().getRotation());
-        treeObstacleGraphics.render(batch, 0f);
+        for (ObjectGraphics tree : treeObstaclesGraphics) {
+            tree.render(batch, 0f);
+        }
 
         // submit all drawing requests
         batch.end();

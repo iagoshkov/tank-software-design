@@ -4,6 +4,10 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.math.GridPoint2;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -17,7 +21,8 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-        level = new Level();
+        LevelGenerator levelGenerator = new RandomLevelGenerator();
+        level = levelGenerator.generateLevel();
         graphics = new Graphics(level);
     }
 
@@ -35,27 +40,27 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private void calculateMovement() {
         Player player = level.getPlayer();
-        Tree treeObstacle = level.getTreeObstacle();
+        ArrayList<Tree> treeObstacles = level.getTreeObstacles();
 
-        movePlayerIfKeyPressed(player, treeObstacle);
+        movePlayerIfKeyPressed(player, treeObstacles);
 
         graphics.calculateInterpolatedPlayerScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
     }
 
-    private void movePlayerIfKeyPressed(Player player, Tree treeObstacle) {
+    private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles) {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            player.move(Direction.UP, treeObstacle.getCoordinates());
+            player.move(Direction.UP, treeObstacles);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            player.move(Direction.LEFT, treeObstacle.getCoordinates());
+            player.move(Direction.LEFT, treeObstacles);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            player.move(Direction.DOWN, treeObstacle.getCoordinates());
+            player.move(Direction.DOWN, treeObstacles);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            player.move(Direction.RIGHT, treeObstacle.getCoordinates());
+            player.move(Direction.RIGHT, treeObstacles);
         }
     }
 

@@ -2,18 +2,21 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.Disposable;
+
+import java.util.ArrayList;
 
 public class Level implements Disposable {
     private TiledMap map;
     private Player player;
-    private Tree treeObstacle;
+    private ArrayList<Tree> treeObstacles;
 
-    Level() {
+    Level(Player player, ArrayList<Tree> trees) {
         map = new TmxMapLoader().load("level.tmx");
-        player = new Player(new GridPoint2(1, 1), 0f);
-        treeObstacle = new Tree(new GridPoint2(1, 3));
+//        player = new Player(new GridPoint2(1, 1), 0f);
+//        treeObstacles = new Tree(new GridPoint2(1, 3));
+        this.player = player;
+        this.treeObstacles = trees;
     }
 
     @Override
@@ -25,5 +28,5 @@ public class Level implements Disposable {
 
     public Player getPlayer() { return player; }
 
-    public Tree getTreeObstacle() { return treeObstacle; }
+    public ArrayList<Tree> getTreeObstacles() { return treeObstacles; }
 }
