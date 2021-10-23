@@ -43,8 +43,6 @@ public class RandomLevelGenerator implements LevelGenerator{
 
         int x = (int)(Math.random()*levelWidth);
         int y = (int)(Math.random()*levelHeight);
-        System.out.println(x);
-        System.out.println(x);
 
         return new GridPoint2(x, y);
     }

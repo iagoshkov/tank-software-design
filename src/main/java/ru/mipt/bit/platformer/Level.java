@@ -13,8 +13,6 @@ public class Level implements Disposable {
 
     Level(Player player, ArrayList<Tree> trees) {
         map = new TmxMapLoader().load("level.tmx");
-//        player = new Player(new GridPoint2(1, 1), 0f);
-//        treeObstacles = new Tree(new GridPoint2(1, 3));
         this.player = player;
         this.treeObstacles = trees;
     }
