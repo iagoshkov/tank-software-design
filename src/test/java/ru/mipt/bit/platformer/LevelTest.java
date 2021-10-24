@@ -32,6 +32,5 @@ public class LevelTest {
         Level level = new Level(player, trees);
         Assertions.assertEquals(level.getPlayer(), player);
         Assertions.assertEquals(level.getTreeObstacles(), trees);
-//        Assertions.assertEquals(level.getMap(), new TmxMapLoader().load("src/main/resources/level.tmx"));
     }
 }

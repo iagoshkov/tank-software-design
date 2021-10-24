@@ -57,10 +57,6 @@ public class Player {
         return this.movementProgress;
     }
 
-    public void setCoordinates(GridPoint2 coordinates) {
-        this.coordinates = coordinates;
-    }
-
     public GridPoint2 getCoordinates() {
         return this.coordinates;
     }
