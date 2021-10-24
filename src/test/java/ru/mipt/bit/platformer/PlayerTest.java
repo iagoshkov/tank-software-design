@@ -33,10 +33,13 @@ public class PlayerTest {
         GridPoint2 initialPlayerCoordinates = new GridPoint2(1, 1);
         ArrayList<Tree> trees = new ArrayList<>();
         trees.add(new Tree(new GridPoint2(1, 2)));
+        ArrayList<Player> otherTanks = new ArrayList<>();
+        otherTanks.add(new Player(new GridPoint2(2, 1), 0f));
 
         return Stream.of(
-                Arguments.of(initialPlayerCoordinates, trees, Direction.DOWN, new GridPoint2(1, 0), 0f, -90f),
-                Arguments.of(initialPlayerCoordinates, trees, Direction.UP, new GridPoint2(1, 1), 1f, 90f)
+                Arguments.of(initialPlayerCoordinates, trees, otherTanks, Direction.DOWN, new GridPoint2(1, 0), 0f, -90f),
+                Arguments.of(initialPlayerCoordinates, trees, otherTanks, Direction.UP, new GridPoint2(1, 1), 1f, 90f),
+                Arguments.of(initialPlayerCoordinates, trees, otherTanks, Direction.RIGHT, new GridPoint2(1, 1), 1f, 0f)
         );
     }
 
@@ -45,6 +48,7 @@ public class PlayerTest {
     public void moveTest(
             GridPoint2 initialPlayerCoordinates,
             ArrayList<Tree> trees,
+            ArrayList<Player> otherTanks,
             Direction direction,
             GridPoint2 destinationCoordinates,
             float movementProgress,
@@ -52,7 +56,7 @@ public class PlayerTest {
 
         Player player = new Player(initialPlayerCoordinates, 0f);
 
-        player.move(direction, trees);
+        player.move(direction, trees, otherTanks);
 
         Assertions.assertEquals(player.getDestinationCoordinates(), destinationCoordinates);
         Assertions.assertEquals(player.getMovementProgress(), movementProgress);

@@ -24,6 +24,7 @@ public class Graphics implements Disposable {
     private LevelGraphics levelGraphics;
     private ObjectGraphics playerGraphics;
     private ArrayList<ObjectGraphics> treeObstaclesGraphics = new ArrayList<ObjectGraphics>();
+    private ArrayList<ObjectGraphics> otherTanksGraphics = new ArrayList<>();
 
     public Graphics(Level level) {
         this.level = level;
@@ -33,6 +34,9 @@ public class Graphics implements Disposable {
         playerGraphics = new ObjectGraphics(textures.get("blueTank"));
         for (int i = 0; i < level.getTreeObstacles().size(); i++) {
             treeObstaclesGraphics.add(new ObjectGraphics(textures.get("greenTree")));
+        }
+        for (int i = 0; i < level.getOtherTanks().size(); i++) {
+            otherTanksGraphics.add(new ObjectGraphics(textures.get("blueTank")));
         }
         levelGraphics = new LevelGraphics();
 
@@ -45,6 +49,9 @@ public class Graphics implements Disposable {
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         for (int i = 0; i < treeObstaclesGraphics.size(); i++) {
             moveRectangleAtTileCenter(groundLayer, treeObstaclesGraphics.get(i).getRectangle(), level.getTreeObstacles().get(i).getCoordinates());
+        }
+        for (int i = 0; i < otherTanksGraphics.size(); i++) {
+            moveRectangleAtTileCenter(groundLayer, otherTanksGraphics.get(i).getRectangle(), level.getOtherTanks().get(i).getCoordinates());
         }
     }
 
@@ -66,6 +73,9 @@ public class Graphics implements Disposable {
         playerGraphics.render(batch, level.getPlayer().getRotation());
         for (ObjectGraphics tree : treeObstaclesGraphics) {
             tree.render(batch, 0f);
+        }
+        for (int i = 0; i < otherTanksGraphics.size(); i++) {
+            otherTanksGraphics.get(i).render(batch, level.getOtherTanks().get(i).getRotation());
         }
 
         // submit all drawing requests

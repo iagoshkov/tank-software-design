@@ -7,7 +7,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -42,26 +41,27 @@ public class GameDesktopLauncher implements ApplicationListener {
     private void calculateMovement() {
         Player player = level.getPlayer();
         ArrayList<Tree> treeObstacles = level.getTreeObstacles();
+        ArrayList<Player> otherTanks = level.getOtherTanks();
 
-        movePlayerIfKeyPressed(player, treeObstacles);
+        movePlayerIfKeyPressed(player, treeObstacles, otherTanks);
 
         graphics.calculateInterpolatedPlayerScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
     }
 
-    private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles) {
+    private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks) {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            player.move(Direction.UP, treeObstacles);
+            player.move(Direction.UP, treeObstacles, otherTanks);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            player.move(Direction.LEFT, treeObstacles);
+            player.move(Direction.LEFT, treeObstacles, otherTanks);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            player.move(Direction.DOWN, treeObstacles);
+            player.move(Direction.DOWN, treeObstacles, otherTanks);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            player.move(Direction.RIGHT, treeObstacles);
+            player.move(Direction.RIGHT, treeObstacles, otherTanks);
         }
     }
 

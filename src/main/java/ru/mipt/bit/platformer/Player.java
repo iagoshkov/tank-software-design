@@ -28,14 +28,20 @@ public class Player {
         return isEqual(this.movementProgress, 1f);
     }
 
-    public void move(Direction direction, ArrayList<Tree> trees) {
+    public void move(Direction direction, ArrayList<Tree> trees, ArrayList<Player> otherTanks) {
         HashSet<GridPoint2> treesCoordinates = new HashSet<GridPoint2>();
         for (Tree tree : trees) {
             treesCoordinates.add(tree.getCoordinates());
         }
+        HashSet<GridPoint2> tanksCoordinates = new HashSet<GridPoint2>();
+        for (Player tank : otherTanks) {
+            tanksCoordinates.add(tank.getCoordinates());
+        }
+
         if (isMoving()) {
             // check potential player destination for collision with obstacles
-            if (!treesCoordinates.contains(new GridPoint2(coordinates).add(direction.getMovementVector()))) {
+            if ((!treesCoordinates.contains(new GridPoint2(coordinates).add(direction.getMovementVector())))
+            && (!tanksCoordinates.contains(new GridPoint2(coordinates).add(direction.getMovementVector())))) {
                 destinationCoordinates = new GridPoint2(destinationCoordinates).add(direction.getMovementVector());
                 movementProgress = 0f;
             }

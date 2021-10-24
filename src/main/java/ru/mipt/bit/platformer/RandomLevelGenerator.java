@@ -8,23 +8,29 @@ import java.util.HashSet;
 public class RandomLevelGenerator implements LevelGenerator{
     private GridPoint2 playerCoordinates;
     private HashSet<GridPoint2> treesCoordinates = new HashSet<>();
+    private HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
 
     @Override
     public Level generateLevel() {
         generateTreesCoordinates();
+        generateTanksCoordinates();
+        generatePlayerCoordinates();
+
         ArrayList<Tree> trees = new ArrayList<>();
         for (GridPoint2 coordinates : treesCoordinates) {
             trees.add(new Tree(coordinates));
         }
-
-        generatePlayerCoordinates();
+        ArrayList<Player> tanks = new ArrayList<>();
+        for (GridPoint2 coordinates : tanksCoordinates) {
+            tanks.add(new Player(coordinates, 0f));
+        }
         Player player = new Player(playerCoordinates, 0f);
 
-        return new Level(player, trees);
+        return new Level(player, trees, tanks);
     }
 
     private void generateTreesCoordinates() {
-        int numberOfTrees = (int)(Math.random()*20);
+        int numberOfTrees = 7 + (int)(Math.random()*7);
         while (treesCoordinates.size() != numberOfTrees) {
             treesCoordinates.add(generateRandomPosition());
         };
@@ -32,10 +38,21 @@ public class RandomLevelGenerator implements LevelGenerator{
 
     private void generatePlayerCoordinates() {
         GridPoint2 position = generateRandomPosition();
-        while (treesCoordinates.contains(position)) {
+        while (treesCoordinates.contains(position) || tanksCoordinates.contains(position)) {
             position = generateRandomPosition();
         };
         playerCoordinates = position;
+    }
+
+    private void generateTanksCoordinates() {
+        int numberOfTanks = 1 + (int)(Math.random()*5);
+        while (tanksCoordinates.size() != numberOfTanks) {
+            GridPoint2 position = generateRandomPosition();
+            while (treesCoordinates.contains(position)) {
+                position = generateRandomPosition();
+            };
+            tanksCoordinates.add(position);
+        };
     }
 
     private GridPoint2 generateRandomPosition() {
