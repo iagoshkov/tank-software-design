@@ -21,8 +21,8 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-//        LevelGenerator levelGenerator = new RandomLevelGenerator();
-        LevelGenerator levelGenerator = new FileLevelGenerator("src/test/resources/testLevel");
+        LevelGenerator levelGenerator = new RandomLevelGenerator();
+//        LevelGenerator levelGenerator = new FileLevelGenerator("src/test/resources/testLevel");
         level = levelGenerator.generateLevel();
         graphics = new Graphics(level);
     }

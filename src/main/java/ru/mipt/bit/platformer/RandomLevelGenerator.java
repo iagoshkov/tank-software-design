@@ -6,35 +6,36 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class RandomLevelGenerator implements LevelGenerator{
-    private Player player;
-    private ArrayList<Tree> trees = new ArrayList<Tree>();
+    private GridPoint2 playerCoordinates;
+    private HashSet<GridPoint2> treesCoordinates = new HashSet<>();
 
     @Override
     public Level generateLevel() {
-        trees = generateTrees();
-        player = generatePlayer();
+        generateTreesCoordinates();
+        ArrayList<Tree> trees = new ArrayList<>();
+        for (GridPoint2 coordinates : treesCoordinates) {
+            trees.add(new Tree(coordinates));
+        }
+
+        generatePlayerCoordinates();
+        Player player = new Player(playerCoordinates, 0f);
+
         return new Level(player, trees);
     }
 
-    private ArrayList<Tree> generateTrees() {
-        HashSet<GridPoint2> treesCoordinates = new HashSet<GridPoint2>();
+    private void generateTreesCoordinates() {
         int numberOfTrees = (int)(Math.random()*20);
-        ArrayList<Tree> trees = new ArrayList<Tree>();
         while (treesCoordinates.size() != numberOfTrees) {
             treesCoordinates.add(generateRandomPosition());
-        }
-        for (GridPoint2 position : treesCoordinates) {
-            trees.add(new Tree(position));
-        }
-        return trees;
+        };
     }
 
-    private Player generatePlayer() {
+    private void generatePlayerCoordinates() {
         GridPoint2 position = generateRandomPosition();
-        while (trees.contains(position)) {
+        while (treesCoordinates.contains(position)) {
             position = generateRandomPosition();
-        }
-        return new Player(position, 0f);
+        };
+        playerCoordinates = position;
     }
 
     private GridPoint2 generateRandomPosition() {
