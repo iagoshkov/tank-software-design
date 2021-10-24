@@ -23,7 +23,9 @@ public class FileLevelGenerator implements LevelGenerator{
     public Level generateLevel() {
         readLevelFromFile();
         createLevelFromArray();
-        return new Level(player, trees);
+        final int height = levelArray.size();
+        final int width = levelArray.get(0).size();
+        return new Level(player, trees, height, width);
     }
 
     private void createLevelFromArray() {

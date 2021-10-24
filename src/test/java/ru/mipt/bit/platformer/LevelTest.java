@@ -17,19 +17,23 @@ import java.util.stream.Stream;
 public class LevelTest {
 
     public static Stream<Arguments> dataForCreateLevelTest() {
+        final int height = 11;
+        final int width = 7;
         return Stream.of(
                 Arguments.of(new Player(new GridPoint2(0, 0), 0f),
-                        new ArrayList<Tree>(Arrays.asList(new Tree(new GridPoint2(2, 2))))),
+                        new ArrayList<Tree>(Arrays.asList(new Tree(new GridPoint2(2, 2)))),
+                        height, width),
                 Arguments.of(new Player(new GridPoint2(6, 1), 90f),
                         new ArrayList<Tree>(Arrays.asList(new Tree(new GridPoint2(3, 6)),
-                                new Tree(new GridPoint2(3, 6)))))
+                                new Tree(new GridPoint2(3, 6)))),
+                        height, width)
         );
     }
 
     @ParameterizedTest
     @MethodSource("dataForCreateLevelTest")
-    public void createLevelTest(Player player, ArrayList<Tree> trees) {
-        Level level = new Level(player, trees);
+    public void createLevelTest(Player player, ArrayList<Tree> trees, int height, int width) {
+        Level level = new Level(player, trees, height, width);
         Assertions.assertEquals(level.getPlayer(), player);
         Assertions.assertEquals(level.getTreeObstacles(), trees);
     }

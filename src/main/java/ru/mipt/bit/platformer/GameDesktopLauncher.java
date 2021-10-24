@@ -7,6 +7,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -42,26 +43,27 @@ public class GameDesktopLauncher implements ApplicationListener {
         Player player = level.getPlayer();
         ArrayList<Tree> treeObstacles = level.getTreeObstacles();
         ArrayList<Player> otherTanks = level.getOtherTanks();
+        HashSet<GridPoint2> levelBorders = level.getBorders();
 
-        movePlayerIfKeyPressed(player, treeObstacles, otherTanks);
+        movePlayerIfKeyPressed(player, treeObstacles, otherTanks, levelBorders);
 
         graphics.calculateInterpolatedPlayerScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
     }
 
-    private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks) {
+    private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            player.move(Direction.UP, treeObstacles, otherTanks);
+            player.move(Direction.UP, treeObstacles, otherTanks, levelBorders);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            player.move(Direction.LEFT, treeObstacles, otherTanks);
+            player.move(Direction.LEFT, treeObstacles, otherTanks, levelBorders);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            player.move(Direction.DOWN, treeObstacles, otherTanks);
+            player.move(Direction.DOWN, treeObstacles, otherTanks, levelBorders);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            player.move(Direction.RIGHT, treeObstacles, otherTanks);
+            player.move(Direction.RIGHT, treeObstacles, otherTanks, levelBorders);
         }
     }
 

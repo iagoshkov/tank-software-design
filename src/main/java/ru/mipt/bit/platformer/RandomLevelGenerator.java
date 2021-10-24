@@ -10,6 +10,9 @@ public class RandomLevelGenerator implements LevelGenerator{
     private HashSet<GridPoint2> treesCoordinates = new HashSet<>();
     private HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
 
+    final int levelWidth = 10;
+    final int levelHeight = 8;
+
     @Override
     public Level generateLevel() {
         generateTreesCoordinates();
@@ -26,7 +29,7 @@ public class RandomLevelGenerator implements LevelGenerator{
         }
         Player player = new Player(playerCoordinates, 0f);
 
-        return new Level(player, trees, tanks);
+        return new Level(player, trees, tanks, levelHeight, levelWidth);
     }
 
     private void generateTreesCoordinates() {
@@ -56,9 +59,6 @@ public class RandomLevelGenerator implements LevelGenerator{
     }
 
     private GridPoint2 generateRandomPosition() {
-        int levelWidth = 10;
-        int levelHeight = 8;
-
         int x = (int)(Math.random()*levelWidth);
         int y = (int)(Math.random()*levelHeight);
 
