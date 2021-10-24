@@ -21,6 +21,7 @@ public class Graphics implements Disposable {
     private TileMovement tileMovement;
     private HashMap<String, Texture> textures;
     private Level level;
+    private LevelGraphics levelGraphics;
     private ObjectGraphics playerGraphics;
     private ArrayList<ObjectGraphics> treeObstaclesGraphics = new ArrayList<ObjectGraphics>();
 
@@ -33,13 +34,14 @@ public class Graphics implements Disposable {
         for (int i = 0; i < level.getTreeObstacles().size(); i++) {
             treeObstaclesGraphics.add(new ObjectGraphics(textures.get("greenTree")));
         }
+        levelGraphics = new LevelGraphics();
 
         loadLevelTiles();
     }
 
     private void loadLevelTiles() {
-        levelRenderer = createSingleLayerMapRenderer(level.getMap(), batch);
-        TiledMapTileLayer groundLayer = getSingleLayer(level.getMap());
+        levelRenderer = createSingleLayerMapRenderer(levelGraphics.getMap(), batch);
+        TiledMapTileLayer groundLayer = getSingleLayer(levelGraphics.getMap());
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         for (int i = 0; i < treeObstaclesGraphics.size(); i++) {
             moveRectangleAtTileCenter(groundLayer, treeObstaclesGraphics.get(i).getRectangle(), level.getTreeObstacles().get(i).getCoordinates());
@@ -83,6 +85,7 @@ public class Graphics implements Disposable {
     @Override
     public void dispose() {
         batch.dispose();
+        levelGraphics.dispose();
         for(Texture texture : textures.values()) { texture.dispose(); }
     }
 }
