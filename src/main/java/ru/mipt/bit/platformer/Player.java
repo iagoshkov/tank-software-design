@@ -35,10 +35,6 @@ public class Player {
         }
         if (isMoving()) {
             // check potential player destination for collision with obstacles
-//            if (!obstacleCoordinates.equals(new GridPoint2(coordinates).add(direction.getMovementVector()))) {
-//                destinationCoordinates = new GridPoint2(destinationCoordinates).add(direction.getMovementVector());
-//                movementProgress = 0f;
-//            }
             if (!treesCoordinates.contains(new GridPoint2(coordinates).add(direction.getMovementVector()))) {
                 destinationCoordinates = new GridPoint2(destinationCoordinates).add(direction.getMovementVector());
                 movementProgress = 0f;
