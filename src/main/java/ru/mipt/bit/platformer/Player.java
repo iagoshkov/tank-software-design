@@ -34,16 +34,18 @@ public class Player {
             treesCoordinates.add(tree.getCoordinates());
         }
         HashSet<GridPoint2> tanksCoordinates = new HashSet<GridPoint2>();
+        HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
         for (Player tank : otherTanks) {
             tanksCoordinates.add(tank.getCoordinates());
+            tanksDestinationCoordinates.add(tank.getDestinationCoordinates());
         }
 
         if (isMoving()) {
             // check potential player destination for collision with obstacles
-            if ((!treesCoordinates.contains(new GridPoint2(coordinates).add(direction.getMovementVector())))
-            && (!tanksCoordinates.contains(new GridPoint2(coordinates).add(direction.getMovementVector())))
-            && (!levelBorders.contains(new GridPoint2(coordinates).add(direction.getMovementVector())))) {
-                destinationCoordinates = new GridPoint2(destinationCoordinates).add(direction.getMovementVector());
+            GridPoint2 newCoordinates = new GridPoint2(coordinates).add(direction.getMovementVector());
+            if ( (!treesCoordinates.contains(newCoordinates)) && (!tanksCoordinates.contains(newCoordinates))
+            && (!levelBorders.contains(newCoordinates)) && (!tanksDestinationCoordinates.contains(newCoordinates)) ) {
+                destinationCoordinates = newCoordinates;
                 movementProgress = 0f;
             }
             rotation = direction.getRotation();
