@@ -1,25 +1,23 @@
 package ru.mipt.bit.platformer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.Direction;
 import ru.mipt.bit.platformer.util.MovementProgress;
 import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.util.GdxKeyboardListener;
 
 import java.util.ArrayList;
 
-import static com.badlogic.gdx.Input.Keys.*;
-
-public class Player extends GameObject {
+public class Tank extends GameObject {
     private static final float MOVEMENT_SPEED = 0.4f;
 
     private final TileMovement tileMovement;
     private final MovementProgress movementProgress;
     private final GridPoint2 previousCoordinates;
 
-    public Player(TiledMapTileLayer groundLayer, Texture texture, GridPoint2 coordinates, float rotation, TileMovement tileMovement) {
+    public Tank(TiledMapTileLayer groundLayer, Texture texture, GridPoint2 coordinates, float rotation, TileMovement tileMovement) {
         super(groundLayer, texture, coordinates, rotation);
         this.tileMovement = tileMovement;
         movementProgress = new MovementProgress(MOVEMENT_SPEED);
@@ -43,17 +41,17 @@ public class Player extends GameObject {
         }
     }
 
-    public void move(float deltaTime, ArrayList<GameObject> gameObjects) {
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
+    public void move(float deltaTime, ArrayList<GameObject> gameObjects, GdxKeyboardListener keyboardListener) {
+        if (keyboardListener.isUp()) {
             checkAndSetupMove(new Direction(0, 1), gameObjects);
         }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
+        if (keyboardListener.isLeft()) {
             checkAndSetupMove(new Direction(-1, 0), gameObjects);
         }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
+        if (keyboardListener.isDown()) {
             checkAndSetupMove(new Direction(0, -1), gameObjects);
         }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
+        if (keyboardListener.isRight()) {
             checkAndSetupMove(new Direction(1, 0), gameObjects);
         }
 

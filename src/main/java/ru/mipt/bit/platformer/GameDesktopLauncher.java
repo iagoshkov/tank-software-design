@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-//import ru.mipt.bit.platformer.util.TextureLoader;
+import ru.mipt.bit.platformer.util.GdxKeyboardListener;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.ArrayList;
@@ -24,16 +24,44 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Batch batch;
-//    private TextureLoader textureLoader;
+
 
     private TiledMap level;
     private MapRenderer levelRenderer;
 
-    private Player player;
+
+    private Tank player;
     private Texture blueTankTexture;
     private Texture greenTreeTexture;
+    private ArrayList<Obstacle> obstacles;
     private Obstacle tree;
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
+    private GdxKeyboardListener keyboardListener;
+
+    @Override
+    public void render() {
+        clearScreen();
+
+        // get time passed since the last render
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        player.move(deltaTime, gameObjects, keyboardListener);
+
+        // render each tile of the level
+        levelRenderer.render();
+
+        // start recording all drawing commands
+        batch.begin();
+        for (GameObject gameObject : gameObjects) {
+            gameObject.draw(batch);
+        }
+        // submit all drawing requests
+        batch.end();
+    }
+
+    private void clearScreen() {
+        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
+        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
+    }
 
     @Override
     public void create() {
@@ -47,34 +75,19 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // load game objects
         blueTankTexture = new Texture("images/tank_blue.png");
-        player = new Player(groundLayer, blueTankTexture, new GridPoint2(1, 1), 0f, tileMovement);
+        player = new Tank(groundLayer, blueTankTexture, new GridPoint2(1, 1), 0f, tileMovement);
         gameObjects.add(player);
         greenTreeTexture = new Texture("images/greenTree.png");
         tree = new Obstacle(groundLayer, greenTreeTexture, new GridPoint2(1, 3), 0f);
         gameObjects.add(tree);
+
+//        // initialize level
+//        Level level = new Level(new LevelFromFileGenerator("src/main/resources/disposition.txt"));
+//        level.initObjects();
+//        player = level.getPlayer();
+//        obstacles = level.getObstacles();
     }
 
-    @Override
-    public void render() {
-        // clear the screen
-        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
-        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-
-        // get time passed since the last render
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        player.move(deltaTime, gameObjects);
-
-        // render each tile of the level
-        levelRenderer.render();
-
-        // start recording all drawing commands
-        batch.begin();
-        for (GameObject gameObject : gameObjects) {
-            gameObject.draw(batch);
-        }
-        // submit all drawing requests
-        batch.end();
-    }
 
     @Override
     public void resize(int width, int height) {
