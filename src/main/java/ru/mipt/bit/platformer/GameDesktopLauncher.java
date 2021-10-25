@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -46,10 +47,15 @@ public class GameDesktopLauncher implements ApplicationListener {
         HashSet<GridPoint2> levelBorders = level.getBorders();
 
         movePlayerIfKeyPressed(player, treeObstacles, otherTanks, levelBorders);
+        moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
 
         graphics.calculateInterpolatedPlayerScreenCoordinates();
+        graphics.calculateInterpolatedOtherTanksScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
+        for (Player tank : otherTanks) {
+            tank.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
+        }
     }
 
     private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
@@ -64,6 +70,16 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
             player.move(Direction.RIGHT, treeObstacles, otherTanks, levelBorders);
+        }
+    }
+
+    private void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
+        for (Player tank : otherTanks) {
+            ArrayList<Player> newOtherTanks = new ArrayList<>(otherTanks);
+            newOtherTanks.remove(tank);
+            newOtherTanks.add(player);
+            Direction direction = Direction.values()[new Random().nextInt(Direction.values().length)];
+            tank.move(direction, treeObstacles, newOtherTanks, levelBorders);
         }
     }
 

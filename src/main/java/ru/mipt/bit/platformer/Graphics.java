@@ -92,6 +92,18 @@ public class Graphics implements Disposable {
         );
     }
 
+    public void calculateInterpolatedOtherTanksScreenCoordinates() {
+        ArrayList<Player> otherTanks = level.getOtherTanks();
+        for (int i = 0; i < otherTanks.size(); i++) {
+            tileMovement.moveRectangleBetweenTileCenters(
+                    otherTanksGraphics.get(i).getRectangle(),
+                    otherTanks.get(i).getCoordinates(),
+                    otherTanks.get(i).getDestinationCoordinates(),
+                    otherTanks.get(i).getMovementProgress()
+            );
+        }
+    }
+
     @Override
     public void dispose() {
         batch.dispose();

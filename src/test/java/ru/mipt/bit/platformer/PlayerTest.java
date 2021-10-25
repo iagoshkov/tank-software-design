@@ -37,15 +37,17 @@ public class PlayerTest {
         otherTanks.add(new Player(new GridPoint2(2, 1), 0f));
 
         return Stream.of(
-                Arguments.of(initialPlayerCoordinates, trees, otherTanks, Direction.DOWN, new GridPoint2(1, 0), 0f, -90f),
-                Arguments.of(initialPlayerCoordinates, trees, otherTanks, Direction.UP, new GridPoint2(1, 1), 1f, 90f),
-                Arguments.of(initialPlayerCoordinates, trees, otherTanks, Direction.RIGHT, new GridPoint2(1, 1), 1f, 0f)
+                Arguments.of(10, 8, initialPlayerCoordinates, trees, otherTanks, Direction.DOWN, new GridPoint2(1, 0), 0f, -90f),
+                Arguments.of(10, 8, initialPlayerCoordinates, trees, otherTanks, Direction.UP, new GridPoint2(1, 1), 1f, 90f),
+                Arguments.of(10, 8, initialPlayerCoordinates, trees, otherTanks, Direction.RIGHT, new GridPoint2(1, 1), 1f, 0f)
         );
     }
 
     @ParameterizedTest
     @MethodSource("dataForMoveTest")
     public void moveTest(
+            int levelHeight,
+            int levelWidth,
             GridPoint2 initialPlayerCoordinates,
             ArrayList<Tree> trees,
             ArrayList<Player> otherTanks,
@@ -55,8 +57,9 @@ public class PlayerTest {
             float rotation) {
 
         Player player = new Player(initialPlayerCoordinates, 0f);
+        Level level = new Level(player, trees, levelHeight, levelWidth);
 
-        player.move(direction, trees, otherTanks);
+        player.move(direction, trees, otherTanks, level.getBorders());
 
         Assertions.assertEquals(player.getDestinationCoordinates(), destinationCoordinates);
         Assertions.assertEquals(player.getMovementProgress(), movementProgress);
