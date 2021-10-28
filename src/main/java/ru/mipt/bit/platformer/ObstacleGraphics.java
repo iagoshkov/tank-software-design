@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-public class ObstacleGraphics implements Graphics {
+public class ObstacleGraphics implements GameObjGraphics {
     private final TextureRegion region;
     private final Rectangle bounding;
     public Texture texture;

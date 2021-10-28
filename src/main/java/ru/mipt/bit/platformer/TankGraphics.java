@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-public class TankGraphics implements Graphics {
+public class TankGraphics implements GameObjGraphics {
     private final TextureRegion region;
     private final Rectangle bounding;
     public Texture texture;
@@ -27,6 +27,10 @@ public class TankGraphics implements Graphics {
     @Override
     public void draw(Batch batch) {
         drawTextureRegionUnscaled(batch, region, bounding, rotation);
+    }
+
+    public void updateRotation(float rotation){
+        this.rotation = rotation;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private TankGraphics playerGraphics;
     private Obstacle tree;
     private ObstacleGraphics treeGraphics;
-    private final ArrayList<Graphics> gameObjectsGraphics = new ArrayList<>();
+    private final ArrayList<GameObjGraphics> gameObjectsGraphics = new ArrayList<>();
     private final GdxKeyboardListener keyboardListener = new GdxKeyboardListener();
     public ColliderManager colliderManager = new ColliderManager();
 
@@ -47,6 +47,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
         player.move(deltaTime, colliderManager, keyboardListener);
+        playerGraphics.updateRotation(player.rotation);
 
         TileMovement tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         tileMovement.moveRectangleBetweenTileCenters(playerGraphics.getBounding(), player.previousCoordinates, player.coordinates, player.movementProgress.getProgress());
@@ -56,7 +57,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // start recording all drawing commands
         batch.begin();
-        for (Graphics graphics : gameObjectsGraphics) {
+        for (GameObjGraphics graphics : gameObjectsGraphics) {
             graphics.draw(batch);
         }
 

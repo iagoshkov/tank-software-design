@@ -23,7 +23,7 @@ public class Tank {
             GridPoint2 estimatedCoordinates = new GridPoint2(coordinates);
             estimatedCoordinates.add(direction.getCoordinate());
             // check potential player destination for collision with obstacles
-            if (!colliderManager.canMove(estimatedCoordinates, direction.getCoordinate())) {
+            if (!colliderManager.canMove(coordinates, direction.getCoordinate())) {
                 return;
             }
             rotation = direction.getAngle();
@@ -49,7 +49,7 @@ public class Tank {
 
         movementProgress.update(deltaTime);
         if (movementProgress.finishedMoving()) {
-            // record that the player has reached his/her destination
+            // record that the player has reached the destination
             previousCoordinates.set(coordinates);
         }
     }
