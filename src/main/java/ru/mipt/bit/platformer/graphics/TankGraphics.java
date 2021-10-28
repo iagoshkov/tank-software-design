@@ -5,19 +5,19 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
-import ru.mipt.bit.platformer.model.Player;
+import ru.mipt.bit.platformer.model.Tank;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
-public class PlayerGraphics implements Disposable {
+public class TankGraphics implements Disposable {
     private final TextureRegion region;
     private final Rectangle rectangle;
-    private final Player player;
+    private final Tank player;
     private final TileMovement tileMovement;
 
-    public PlayerGraphics(Texture texture, Player player, TileMovement tileMovement) {
+    public TankGraphics(Texture texture, Tank player, TileMovement tileMovement) {
         this.region = new TextureRegion(texture);
         this.rectangle = createBoundingRectangle(region);
         this.player = player;

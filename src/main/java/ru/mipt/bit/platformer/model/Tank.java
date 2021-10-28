@@ -1,12 +1,11 @@
 package ru.mipt.bit.platformer.model;
 
 import com.badlogic.gdx.math.GridPoint2;
-
-import java.util.List;
+import ru.mipt.bit.platformer.physics.CollisionManager;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
-public class Player {
+public class Tank {
     private final float movementSpeed;
 
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
@@ -16,19 +15,14 @@ public class Player {
     private float rotation;
     private float movementProgress = 1f;
 
-    public Player(GridPoint2 coordinates, float rotation, float movementSpeed) {
+    private final CollisionManager collisionManager;
+
+    public Tank(GridPoint2 coordinates, float rotation, float movementSpeed, CollisionManager collisionManager) {
         this.coordinates = coordinates;
         this.destinationCoordinates = coordinates;
         this.rotation = rotation;
         this.movementSpeed = movementSpeed;
-    }
-
-    public Player(GridPoint2 coordinates, float rotation) {
-        this(coordinates, rotation, 0.4f);
-    }
-
-    public Player(GridPoint2 coordinates) {
-        this(coordinates, 0, 0.4f);
+        this.collisionManager = collisionManager;
     }
 
     public float getRotation() {
@@ -51,26 +45,19 @@ public class Player {
         return movementProgress < 1f;
     }
 
-    public void tryFinishMovement() {
+    private void tryFinishMovement() {
         if (!isMoving()) {
             coordinates.set(destinationCoordinates);
         }
     }
 
-    public void tryRotateAndStartMovement(Direction direction, List<Obstacle> obstacles) {
+    public void tryRotateAndStartMovement(Direction direction) {
         if (isMoving()) {
             return;
         }
         rotation = direction.getAngle();
         var newDestination = direction.calcDestinationCoordinatesFrom(coordinates);
-        boolean canMove = true;
-        for (var obstacle : obstacles) {
-            if (obstacle.getCoordinates().equals(newDestination)) {
-                canMove = false;
-                break;
-            }
-        }
-        if (canMove) {
+        if (collisionManager.canMove(this, newDestination)) {
             destinationCoordinates = newDestination;
             movementProgress = 0f;
         }
@@ -78,5 +65,6 @@ public class Player {
 
     public void makeProgress(float deltaTime) {
         movementProgress = clamp(movementProgress + deltaTime / movementSpeed, 0f, 1f);
+        tryFinishMovement();
     }
 }

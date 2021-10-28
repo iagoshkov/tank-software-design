@@ -3,18 +3,24 @@ package ru.mipt.bit.platformer.model;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.mipt.bit.platformer.physics.CollisionManager;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerTest {
-    private Player player;
+    private Tank player;
     private static final List<Obstacle> OBSTACLES = List.of(new Obstacle(new GridPoint2(6, 6)));
+    private static final CollisionManager COLLISION_MANAGER = new CollisionManager(10, 10);
+
+    static {
+        COLLISION_MANAGER.setObstacles(OBSTACLES);
+    }
 
     @BeforeEach
     private void setUp() {
-        player = new Player(new GridPoint2(5, 6), 90f);
+        player = new Tank(new GridPoint2(5, 6), 90f, 0.4f, COLLISION_MANAGER);
     }
 
     @Test
@@ -28,16 +34,15 @@ public class PlayerTest {
         for (int i = 0; i < path.size(); ++i) {
             var destination = path.get(i);
             var direction = directions.get(i);
-            player.tryRotateAndStartMovement(direction, OBSTACLES);
+            player.tryRotateAndStartMovement(direction);
             player.makeProgress(1f);
-            player.tryFinishMovement();
             assertEquals(player.getCoordinates(), path.get(i));
         }
     }
 
     @Test
     public void testCollision() {
-        player.tryRotateAndStartMovement(Direction.RIGHT, OBSTACLES);
+        player.tryRotateAndStartMovement(Direction.RIGHT);
         assertFalse(player.isMoving());
         assertEquals(0f, player.getRotation());
     }

@@ -1,22 +1,27 @@
 package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.ai.RandomAI;
+import ru.mipt.bit.platformer.controllers.BotController;
+import ru.mipt.bit.platformer.controllers.PlayerController;
 import ru.mipt.bit.platformer.graphics.LevelRenderer;
 import ru.mipt.bit.platformer.graphics.ObstacleGraphics;
-import ru.mipt.bit.platformer.graphics.PlayerGraphics;
+import ru.mipt.bit.platformer.graphics.TankGraphics;
 import ru.mipt.bit.platformer.model.Obstacle;
-import ru.mipt.bit.platformer.model.Player;
+import ru.mipt.bit.platformer.model.Tank;
+import ru.mipt.bit.platformer.physics.CollisionManager;
 import ru.mipt.bit.platformer.util.TileMovement;
 import ru.mipt.bit.platformer.loaders.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +32,12 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private LevelRenderer levelRenderer;
     private PlayerController playerController;
+    private BotController botController;
 
-    private Player player;
+    private CollisionManager collisionManager;
+
+    private Tank player;
+    private List<Tank> bots;
     private List<Obstacle> obstacles;
 
     public static void main(String[] args) {
@@ -36,7 +45,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         // level width: 10 tiles x 128px, height: 8 tiles x 128px
         config.setWindowedMode(1280, 1024);
         //
-        var gameDesktopLauncher = new GameDesktopLauncher(new GameObjectMapFileLoader("/gameObjectMap"));
+        var gameDesktopLauncher = new GameDesktopLauncher(new GameObjectMapFileLoader(8, 10, "/gameObjectMap"));
         new Lwjgl3Application(gameDesktopLauncher, config);
     }
 
@@ -45,7 +54,13 @@ public class GameDesktopLauncher implements ApplicationListener {
     }
 
     private void createPlayer() {
-        player = new Player(gameObjectMapLoader.getPlayerPosition(), 0);
+        player = new Tank(gameObjectMapLoader.getPlayerPosition(), 0, 0.4f, collisionManager);
+    }
+
+    private void createBots() {
+        bots = gameObjectMapLoader.getBotPositions().stream()
+                .map(position -> new Tank(position, 0, 0.4f, collisionManager))
+                .collect(Collectors.toList());
     }
 
     private void createObstacles() {
@@ -65,21 +80,40 @@ public class GameDesktopLauncher implements ApplicationListener {
             e.printStackTrace();
         }
 
-        createPlayer();
-        PlayerGraphics playerGraphics = new PlayerGraphics(new Texture("images/tank_blue.png"), player,
-                new TileMovement(tileLayer, Interpolation.smooth));
+        collisionManager = new CollisionManager(tileLayer.getHeight(), tileLayer.getWidth());
 
+        createPlayer();
+        createBots();
         createObstacles();
+
+        collisionManager.setObstacles(obstacles);
+
+        playerController = new PlayerController(player);
+        botController = new BotController(new RandomAI(bots), bots);
+
+        var tileMovement = new TileMovement(tileLayer, Interpolation.smooth);
+
+        List<TankGraphics> tankGraphics = new ArrayList<>();
+        tankGraphics.add(new TankGraphics(new Texture("images/tank_blue.png"), player, tileMovement));
+        for (var bot : bots) {
+            tankGraphics.add(new TankGraphics(new Texture("images/tank_blue.png"), bot, tileMovement));
+        }
         ObstacleGraphics obstacleGraphics = new ObstacleGraphics(new Texture("images/greenTree.png"),
                 obstacles, tileLayer);
+        levelRenderer = new LevelRenderer(map, tankGraphics, obstacleGraphics);
 
-        playerController = new PlayerController(player, obstacles);
-        levelRenderer = new LevelRenderer(map, playerGraphics, obstacleGraphics);
+        List<Tank> allTanks = new ArrayList<>();
+        allTanks.add(player);
+        allTanks.addAll(bots);
+        collisionManager.setTanks(allTanks);
     }
 
     @Override
     public void render() {
-        playerController.process();
+        // get time passed since the last render
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        playerController.process(deltaTime);
+        botController.process(deltaTime);
         levelRenderer.render();
     }
 

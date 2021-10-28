@@ -9,5 +9,7 @@ public interface GameObjectMapLoader {
 
     GridPoint2 getPlayerPosition();
 
+    List<GridPoint2> getBotPositions();
+
     List<GridPoint2> getTreePositions();
 }

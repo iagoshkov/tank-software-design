@@ -11,17 +11,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GameObjectMapRandomGeneratorTest {
     @ParameterizedTest
     @CsvSource({
-            "10, 8, 10",
-            "8, 5, 3,",
-            "15, 10, 0",
-            "15, 10, 20"
+            "10, 8, 10, 1",
+            "8, 5, 3, 1",
+            "15, 10, 0, 1",
+            "15, 10, 20, 2"
     })
-    public void testLoadMap(int height, int width, int nTrees) {
+    public void testLoadMap(int height, int width, int nTrees, int nBots) {
         Function<GridPoint2, Boolean> checkPositionCorrectness = (GridPoint2 point) -> {
             return 0 <= point.x && point.x < width && 0 <= point.y && point.y < height;
         };
 
-        var loader = new GameObjectMapRandomGenerator(height, width, nTrees);
+        var loader = new GameObjectMapRandomGenerator(height, width, nTrees, nBots);
         loader.loadMap();
 
         assertTrue(checkPositionCorrectness.apply(loader.getPlayerPosition()));

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GameObjectMapFileLoaderTest {
     @Test
     public void testLoadMap() {
-        var loader = new GameObjectMapFileLoader("/gameObjectMap");
+        var loader = new GameObjectMapFileLoader(8, 10, "/gameObjectMap");
         assertDoesNotThrow(loader::loadMap);
         assertEquals(new GridPoint2(5, 1), loader.getPlayerPosition());
 
