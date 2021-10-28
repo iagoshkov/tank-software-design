@@ -1,62 +1,51 @@
 package ru.mipt.bit.platformer;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.Direction;
-import ru.mipt.bit.platformer.util.MovementProgress;
-import ru.mipt.bit.platformer.util.TileMovement;
-import ru.mipt.bit.platformer.util.GdxKeyboardListener;
+import ru.mipt.bit.platformer.util.*;
 
-import java.util.ArrayList;
-
-public class Tank extends GameObject {
+public class Tank {
     private static final float MOVEMENT_SPEED = 0.4f;
+    public GridPoint2 coordinates;
+    public float rotation;
+    public final MovementProgress movementProgress;
+    public final GridPoint2 previousCoordinates;
 
-    private final TileMovement tileMovement;
-    private final MovementProgress movementProgress;
-    private final GridPoint2 previousCoordinates;
-
-    public Tank(TiledMapTileLayer groundLayer, Texture texture, GridPoint2 coordinates, float rotation, TileMovement tileMovement) {
-        super(groundLayer, texture, coordinates, rotation);
-        this.tileMovement = tileMovement;
+    public Tank(GridPoint2 coordinates, float rotation) {
+        this.coordinates = coordinates;
+        this.rotation = rotation;
         movementProgress = new MovementProgress(MOVEMENT_SPEED);
         previousCoordinates = new GridPoint2(coordinates);
 
     }
 
-    public void checkAndSetupMove(Direction direction, ArrayList<GameObject> gameObjects) {
+    public void checkAndSetupMove(Direction direction, ColliderManager colliderManager) {
         if (movementProgress.finishedMoving()) {
             GridPoint2 estimatedCoordinates = new GridPoint2(coordinates);
             estimatedCoordinates.add(direction.getCoordinate());
-            rotation = direction.getAngle();
             // check potential player destination for collision with obstacles
-            for (GameObject gameObject : gameObjects) {
-                if (gameObject.coordinates.equals(estimatedCoordinates)) {
-                    return;
-                }
+            if (!colliderManager.canMove(estimatedCoordinates, direction.getCoordinate())) {
+                return;
             }
+            rotation = direction.getAngle();
             coordinates = estimatedCoordinates;
             movementProgress.reset();
         }
     }
 
-    public void move(float deltaTime, ArrayList<GameObject> gameObjects, GdxKeyboardListener keyboardListener) {
+    public void move(float deltaTime, ColliderManager colliderManager, GdxKeyboardListener keyboardListener) {
         if (keyboardListener.isUp()) {
-            checkAndSetupMove(new Direction(0, 1), gameObjects);
+            checkAndSetupMove(new Direction(0, 1), colliderManager);
         }
         if (keyboardListener.isLeft()) {
-            checkAndSetupMove(new Direction(-1, 0), gameObjects);
+            checkAndSetupMove(new Direction(-1, 0), colliderManager);
         }
         if (keyboardListener.isDown()) {
-            checkAndSetupMove(new Direction(0, -1), gameObjects);
+            checkAndSetupMove(new Direction(0, -1), colliderManager);
         }
         if (keyboardListener.isRight()) {
-            checkAndSetupMove(new Direction(1, 0), gameObjects);
+            checkAndSetupMove(new Direction(1, 0), colliderManager);
         }
 
-        // calculate interpolated player screen coordinates
-        tileMovement.moveRectangleBetweenTileCenters(this.getBounding(), previousCoordinates, coordinates, movementProgress.getProgress());
 
         movementProgress.update(deltaTime);
         if (movementProgress.finishedMoving()) {

@@ -1,7 +1,6 @@
 package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.KeyboardListener;
 
 import static com.badlogic.gdx.Input.Keys.*;
 

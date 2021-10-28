@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.util.ColliderManager;
 import ru.mipt.bit.platformer.util.GdxKeyboardListener;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -27,16 +28,17 @@ public class GameDesktopLauncher implements ApplicationListener {
 
 
     private TiledMap level;
+    private TiledMapTileLayer groundLayer;
     private MapRenderer levelRenderer;
 
 
     private Tank player;
-    private Texture blueTankTexture;
-    private Texture greenTreeTexture;
-    private ArrayList<Obstacle> obstacles;
+    private TankGraphics playerGraphics;
     private Obstacle tree;
-    private ArrayList<GameObject> gameObjects = new ArrayList<>();
-    private GdxKeyboardListener keyboardListener;
+    private ObstacleGraphics treeGraphics;
+    private final ArrayList<Graphics> gameObjectsGraphics = new ArrayList<>();
+    private final GdxKeyboardListener keyboardListener = new GdxKeyboardListener();
+    public ColliderManager colliderManager = new ColliderManager();
 
     @Override
     public void render() {
@@ -44,18 +46,27 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
-        player.move(deltaTime, gameObjects, keyboardListener);
+        player.move(deltaTime, colliderManager, keyboardListener);
+
+        TileMovement tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        tileMovement.moveRectangleBetweenTileCenters(playerGraphics.getBounding(), player.previousCoordinates, player.coordinates, player.movementProgress.getProgress());
 
         // render each tile of the level
         levelRenderer.render();
 
         // start recording all drawing commands
         batch.begin();
-        for (GameObject gameObject : gameObjects) {
-            gameObject.draw(batch);
+        for (Graphics graphics : gameObjectsGraphics) {
+            graphics.draw(batch);
         }
+
+
         // submit all drawing requests
         batch.end();
+    }
+
+    public void initCollider() {
+        colliderManager.addObstacle(tree);
     }
 
     private void clearScreen() {
@@ -65,27 +76,39 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
+        initLevelRenderer();
 
         // load level tiles
-        level = new TmxMapLoader().load("level.tmx");
+        initMap();
         levelRenderer = createSingleLayerMapRenderer(level, batch);
-        TiledMapTileLayer groundLayer = getSingleLayer(level);
-        TileMovement tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
         // load game objects
-        blueTankTexture = new Texture("images/tank_blue.png");
-        player = new Tank(groundLayer, blueTankTexture, new GridPoint2(1, 1), 0f, tileMovement);
-        gameObjects.add(player);
-        greenTreeTexture = new Texture("images/greenTree.png");
-        tree = new Obstacle(groundLayer, greenTreeTexture, new GridPoint2(1, 3), 0f);
-        gameObjects.add(tree);
+        player = new Tank(new GridPoint2(1, 1), 0f);
+        playerGraphics = new TankGraphics(new Texture("images/tank_blue.png"), groundLayer, player.coordinates, player.rotation);
+        gameObjectsGraphics.add(playerGraphics);
+
+
+        tree = new Obstacle(new GridPoint2(1, 3), 0f);
+        treeGraphics = new ObstacleGraphics(new Texture("images/greenTree.png"), groundLayer, tree.coordinates);
+        gameObjectsGraphics.add(treeGraphics);
+
+        initCollider();
 
 //        // initialize level
 //        Level level = new Level(new LevelFromFileGenerator("src/main/resources/disposition.txt"));
 //        level.initObjects();
 //        player = level.getPlayer();
 //        obstacles = level.getObstacles();
+    }
+
+    private void initLevelRenderer() {
+        batch = new SpriteBatch();
+    }
+
+    private void initMap() {
+        level = new TmxMapLoader().load("level.tmx");
+        groundLayer = getSingleLayer(level);
+
     }
 
 
@@ -107,8 +130,8 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        blueTankTexture.dispose();
-        greenTreeTexture.dispose();
+        playerGraphics.texture.dispose();
+        treeGraphics.texture.dispose();
         level.dispose();
         batch.dispose();
     }

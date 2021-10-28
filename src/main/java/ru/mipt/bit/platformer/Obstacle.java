@@ -1,12 +1,14 @@
 package ru.mipt.bit.platformer;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 
-public class Obstacle extends GameObject {
+public class Obstacle implements GameObject{
+    public GridPoint2 coordinates;
+    public float rotation;
 
-    public Obstacle(TiledMapTileLayer groundLayer, Texture texture, GridPoint2 coordinates, float rotation) {
-        super(groundLayer, texture, coordinates, rotation);
+    public Obstacle( GridPoint2 coordinates, float rotation) {
+        this.coordinates = coordinates;
+        this.rotation = rotation;
     }
+
 }
