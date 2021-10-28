@@ -1,12 +1,14 @@
 package ru.mipt.bit.platformer.ai;
 
+import ru.mipt.bit.platformer.ai.commands.Command;
+import ru.mipt.bit.platformer.ai.commands.MoveCommand;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Tank;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RandomAI implements AI {
+public class RandomAI implements CommandSource {
     private final List<Tank> bots;
 
     public RandomAI(List<Tank> bots) {

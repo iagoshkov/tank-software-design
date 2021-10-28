@@ -11,7 +11,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.ai.RandomAI;
 import ru.mipt.bit.platformer.controllers.BotController;
-import ru.mipt.bit.platformer.controllers.PlayerController;
+import ru.mipt.bit.platformer.controllers.PlayerKeyboardController;
 import ru.mipt.bit.platformer.graphics.LevelRenderer;
 import ru.mipt.bit.platformer.graphics.ObstacleGraphics;
 import ru.mipt.bit.platformer.graphics.TankGraphics;
@@ -31,7 +31,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private final GameObjectMapLoader gameObjectMapLoader;
 
     private LevelRenderer levelRenderer;
-    private PlayerController playerController;
+    private PlayerKeyboardController playerController;
     private BotController botController;
 
     private CollisionManager collisionManager;
@@ -88,7 +88,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         collisionManager.setObstacles(obstacles);
 
-        playerController = new PlayerController(player);
+        playerController = new PlayerKeyboardController(player);
         botController = new BotController(new RandomAI(bots), bots);
 
         var tileMovement = new TileMovement(tileLayer, Interpolation.smooth);

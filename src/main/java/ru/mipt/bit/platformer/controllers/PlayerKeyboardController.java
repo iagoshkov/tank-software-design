@@ -5,10 +5,10 @@ import ru.mipt.bit.platformer.input.KeyboardListener;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Tank;
 
-public class PlayerController {
+public class PlayerKeyboardController {
     private final Tank player;
 
-    public PlayerController(Tank player) {
+    public PlayerKeyboardController(Tank player) {
         this.player = player;
     }
 

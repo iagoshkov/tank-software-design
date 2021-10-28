@@ -1,5 +1,6 @@
-package ru.mipt.bit.platformer.ai;
+package ru.mipt.bit.platformer.ai.commands;
 
+import ru.mipt.bit.platformer.ai.commands.Command;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Tank;
 
