@@ -25,13 +25,9 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Batch batch;
-
-
     private TiledMap level;
     private TiledMapTileLayer groundLayer;
     private MapRenderer levelRenderer;
-
-
     private Tank player;
     private TankGraphics playerGraphics;
     private Obstacle tree;
@@ -46,6 +42,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
+        
         player.move(deltaTime, colliderManager, keyboardListener);
         playerGraphics.updateRotation(player.rotation);
 
@@ -60,7 +57,6 @@ public class GameDesktopLauncher implements ApplicationListener {
         for (GameObjGraphics graphics : gameObjectsGraphics) {
             graphics.draw(batch);
         }
-
 
         // submit all drawing requests
         batch.end();
@@ -80,36 +76,29 @@ public class GameDesktopLauncher implements ApplicationListener {
         initLevelRenderer();
 
         // load level tiles
-        initMap();
+        level = new TmxMapLoader().load("level.tmx");
+        groundLayer = getSingleLayer(level);
+
         levelRenderer = createSingleLayerMapRenderer(level, batch);
 
-        // load game objects
+        loadGameObjectsAndGraphics();
+
+        initCollider();
+
+    }
+
+    private void loadGameObjectsAndGraphics() {
         player = new Tank(new GridPoint2(1, 1), 0f);
         playerGraphics = new TankGraphics(new Texture("images/tank_blue.png"), groundLayer, player.coordinates, player.rotation);
         gameObjectsGraphics.add(playerGraphics);
 
-
         tree = new Obstacle(new GridPoint2(1, 3), 0f);
         treeGraphics = new ObstacleGraphics(new Texture("images/greenTree.png"), groundLayer, tree.coordinates);
         gameObjectsGraphics.add(treeGraphics);
-
-        initCollider();
-
-//        // initialize level
-//        Level level = new Level(new LevelFromFileGenerator("src/main/resources/disposition.txt"));
-//        level.initObjects();
-//        player = level.getPlayer();
-//        obstacles = level.getObstacles();
     }
 
     private void initLevelRenderer() {
         batch = new SpriteBatch();
-    }
-
-    private void initMap() {
-        level = new TmxMapLoader().load("level.tmx");
-        groundLayer = getSingleLayer(level);
-
     }
 
 
