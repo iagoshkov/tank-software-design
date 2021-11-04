@@ -29,7 +29,6 @@ public class Graphics implements Disposable {
     public Graphics(Level level) {
         this.level = level;
         batch = new SpriteBatch();
-        
         textures = loadTextures();
         playerGraphics = new ObjectGraphics(textures.get("blueTank"));
         for (int i = 0; i < level.getTreeObstacles().size(); i++) {

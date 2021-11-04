@@ -13,12 +13,13 @@ import java.util.Random;
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
-public class GameDesktopLauncher implements ApplicationListener {
+public class GameDesktopLauncher implements ApplicationListener, Game {
 
     private static final float MOVEMENT_SPEED = 0.4f;
 
     private Level level;
     private Graphics graphics;
+    private GameAiAdapter gameAiAdapter = new GameAiAdapter();
 
     @Override
     public void create() {
@@ -47,7 +48,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         HashSet<GridPoint2> levelBorders = level.getBorders();
 
         movePlayerIfKeyPressed(player, treeObstacles, otherTanks, levelBorders);
-        moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
+//        moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
+        gameAiAdapter.moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
 
         graphics.calculateInterpolatedPlayerScreenCoordinates();
         graphics.calculateInterpolatedOtherTanksScreenCoordinates();
@@ -73,7 +75,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
     }
 
-    private void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
+    @Override
+    public void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
         for (Player tank : otherTanks) {
             ArrayList<Player> newOtherTanks = new ArrayList<>(otherTanks);
             newOtherTanks.remove(tank);
