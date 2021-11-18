@@ -9,6 +9,7 @@ public class Level {
     private Player player;
     private ArrayList<Tree> treeObstacles;
     private ArrayList<Player> otherTanks;
+    private ArrayList<Bullet> bullets;
 
     private int height;
     private int width;
@@ -27,6 +28,10 @@ public class Level {
         createBordersCoordinates();
     }
 
+    public void addBullet(Bullet bullet) {
+        bullets.add(bullet);
+    }
+
     public Player getPlayer() { return player; }
 
     public ArrayList<Tree> getTreeObstacles() { return treeObstacles; }
@@ -34,6 +39,8 @@ public class Level {
     public ArrayList<Player> getOtherTanks() {
         return otherTanks;
     }
+
+    public ArrayList<Bullet> getBullets() { return bullets; }
 
     public int getHeight() {
         return height;
