@@ -23,6 +23,8 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
     @Override
     public void create() {
+        /* Порт */
+
         LevelGenerator levelGenerator = new RandomLevelGenerator();
 //        LevelGenerator levelGenerator = new FileLevelGenerator("src/test/resources/testLevel");
         level = levelGenerator.generateLevel();
@@ -42,6 +44,8 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     }
 
     private void calculateMovement() {
+        /* Порт */
+
         Player player = level.getPlayer();
         ArrayList<Tree> treeObstacles = level.getTreeObstacles();
         ArrayList<Player> otherTanks = level.getOtherTanks();
@@ -61,6 +65,8 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     }
 
     private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
+        /* Адаптер, Application (use-case) */
+
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
             player.move(Direction.UP, treeObstacles, otherTanks, levelBorders);
         }
@@ -77,6 +83,8 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
     @Override
     public void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
+        /* Application (use-case) */
+
         for (Player tank : otherTanks) {
             ArrayList<Player> newOtherTanks = new ArrayList<>(otherTanks);
             newOtherTanks.remove(tank);

@@ -43,6 +43,7 @@ public class Graphics implements Disposable {
     }
 
     private void loadLevelTiles() {
+        /* Адаптер */
         levelRenderer = createSingleLayerMapRenderer(levelGraphics.getMap(), batch);
         TiledMapTileLayer groundLayer = getSingleLayer(levelGraphics.getMap());
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
@@ -63,6 +64,8 @@ public class Graphics implements Disposable {
     }
 
     public void render() {
+        /* Адаптер */
+
         // render each tile of the level
         levelRenderer.render();
 
@@ -82,6 +85,8 @@ public class Graphics implements Disposable {
     }
 
     public void calculateInterpolatedPlayerScreenCoordinates() {
+        /* Адаптер */
+
         Player player = level.getPlayer();
         tileMovement.moveRectangleBetweenTileCenters(
                 playerGraphics.getRectangle(),
@@ -92,6 +97,8 @@ public class Graphics implements Disposable {
     }
 
     public void calculateInterpolatedOtherTanksScreenCoordinates() {
+        /* Адаптер */
+
         ArrayList<Player> otherTanks = level.getOtherTanks();
         for (int i = 0; i < otherTanks.size(); i++) {
             tileMovement.moveRectangleBetweenTileCenters(

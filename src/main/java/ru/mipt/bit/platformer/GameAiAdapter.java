@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 
 public class GameAiAdapter implements Game{
+    /* Адаптер */
+
     private AI ai = new NotRecommendingAI();
 
     @Override

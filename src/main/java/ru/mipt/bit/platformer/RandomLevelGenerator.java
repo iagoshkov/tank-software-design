@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class RandomLevelGenerator implements LevelGenerator{
+    /* Адаптер */
+
     private GridPoint2 playerCoordinates;
     private HashSet<GridPoint2> treesCoordinates = new HashSet<>();
     private HashSet<GridPoint2> tanksCoordinates = new HashSet<>();

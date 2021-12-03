@@ -9,6 +9,8 @@ import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Player implements Movable {
+    /* Domain (entity) */
+
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     private GridPoint2 coordinates;
     // which tile the player want to go next
@@ -31,6 +33,8 @@ public class Player implements Movable {
 
     @Override
     public void move(Direction direction, ArrayList<Tree> trees, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
+        /* Application (use-case) */
+
         HashSet<GridPoint2> treesCoordinates = new HashSet<>();
         for (Tree tree : trees) {
             treesCoordinates.add(tree.getCoordinates());
@@ -64,10 +68,12 @@ public class Player implements Movable {
     }
 
     public void decreaseHealthPoints(int damage) {
+        /* Application (use-case) */
         healthPoints -= damage;
     }
 
     public int getHealthPoints() {
+        /* Application (use-case) */
         return healthPoints;
     }
 

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class FileLevelGenerator implements LevelGenerator{
+    /* Адаптер */
+
     private ArrayList<ArrayList<Character>> levelArray = new ArrayList<>();
     private String filePath;
     private Player player;
