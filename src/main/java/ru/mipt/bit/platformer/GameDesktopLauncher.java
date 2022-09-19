@@ -71,7 +71,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         // calculate interpolated player screen coordinates
         tank.movePlayerBetweenTileCenters(tileMovement);
 
-        tank.updateMovementProgress(deltaTime, MOVEMENT_SPEED);
+//        tank.updateMovementProgress(deltaTime, MOVEMENT_SPEED);
+        tank.setMovementProgress(continueProgress(tank.getMovementProgress(), deltaTime, MOVEMENT_SPEED));
         tank.movePlayerToDestination();
 
         // render each tile of the level

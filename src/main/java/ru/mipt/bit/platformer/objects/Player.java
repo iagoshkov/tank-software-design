@@ -35,8 +35,8 @@ public class Player extends OnScreenObject {
         this.destinationCoordinates = new GridPoint2(coordinates[0], coordinates[1]);
     }
 
-    public void updateMovementProgress(float deltaTime, float MOVEMENT_SPEED) {
-        this.movementProgress = continueProgress(this.movementProgress, deltaTime, MOVEMENT_SPEED);
+    public void setMovementProgress(float progress) {
+        this.movementProgress = progress;
     }
 
     public void movePlayer (int x, int y, OnScreenObject obstacle) {
@@ -63,5 +63,9 @@ public class Player extends OnScreenObject {
 
     public float GetRotation() {
         return this.rotation;
+    }
+
+    public float getMovementProgress() {
+        return this.movementProgress;
     }
 }
