@@ -7,16 +7,23 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.impl.ObstacleImpl;
-import ru.mipt.bit.platformer.impl.PlayerImpl;
+import com.badlogic.gdx.math.MathUtils;
+import ru.mipt.bit.platformer.direction.Direction;
+import ru.mipt.bit.platformer.gridpoint.GridPoint;
+import ru.mipt.bit.platformer.obstacle.impl.ObstacleImpl;
+import ru.mipt.bit.platformer.obstacle.impl.ObstacleRendererImpl;
+import ru.mipt.bit.platformer.player.impl.PlayerImpl;
+import ru.mipt.bit.platformer.player.impl.PlayerRendererImpl;
+import ru.mipt.bit.platformer.obstacle.Obstacle;
+import ru.mipt.bit.platformer.obstacle.ObstacleRenderer;
+import ru.mipt.bit.platformer.player.Player;
+import ru.mipt.bit.platformer.player.PlayerRenderer;
+import ru.mipt.bit.platformer.util.GdxGameUtils;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import static com.badlogic.gdx.Input.Keys.*;
@@ -36,9 +43,11 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private Texture blueTankTexture;
     private Player player;
+    private PlayerRenderer playerRenderer;
 
     private Texture greenTreeTexture;
     private Obstacle obstacle;
+    private ObstacleRenderer obstacleRenderer;
 
     @Override
     public void create() {
@@ -53,17 +62,24 @@ public class GameDesktopLauncher implements ApplicationListener {
         // Texture decodes an image file and loads it into GPU memory, it represents a native resource
         blueTankTexture = new Texture("images/tank_blue.png");
         player = new PlayerImpl(
+                new GridPoint(1, 1),
+                Direction.RIGHT,
+                GdxGameUtils::continueProgress,
+                MathUtils::isEqual
+        );
+        playerRenderer = new PlayerRendererImpl(
                 blueTankTexture,
-                new GridPoint2(1, 1),
-                tileMovement,
-                Direction.RIGHT
+                tileMovement
         );
 
         greenTreeTexture = new Texture("images/greenTree.png");
         obstacle = new ObstacleImpl(
+                new GridPoint(1, 3)
+        );
+        obstacleRenderer = new ObstacleRendererImpl(
                 greenTreeTexture,
-                new GridPoint2(1, 3),
-                groundLayer
+                groundLayer,
+                obstacle
         );
     }
 
@@ -103,14 +119,12 @@ public class GameDesktopLauncher implements ApplicationListener {
     }
 
     private void draw() {
-        // render each tile of the level
         levelRenderer.render();
-
-        // start recording all drawing commands
         batch.begin();
-        player.draw(batch);
-        obstacle.draw(batch);
-        // submit all drawing requests
+
+        playerRenderer.draw(batch, player);
+        obstacleRenderer.draw(batch);
+
         batch.end();
     }
 

@@ -1,6 +1,6 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.direction;
 
-import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.gridpoint.GridPoint;
 
 public enum Direction {
     RIGHT(0),
@@ -19,7 +19,7 @@ public enum Direction {
         return this.angle;
     }
 
-    public void movePoint(GridPoint2 pt) {
+    public void movePoint(GridPoint pt) {
         switch (this) {
             case RIGHT:
                 ++pt.x;
