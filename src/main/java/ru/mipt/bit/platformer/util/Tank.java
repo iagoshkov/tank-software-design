@@ -14,16 +14,16 @@ public class Tank {
     public GridPoint2 coordinates; // player current position coordinates
     public GridPoint2 destinationCoordinates; // which tile the player want to go next
     private float movementProgress = 1f;
-    private Rotation rotation;
+    private Orientation orientation;
     public Tank(Texture texture, GridPoint2 gridPoint2) {
         this.texture = texture;
         this.destinationCoordinates = gridPoint2;
         this.graphics = new TextureRegion(this.texture);
         this.rectangle = createBoundingRectangle(this.graphics);
         this.coordinates = new GridPoint2(this.destinationCoordinates);
-        this.rotation = Rotation.RIGHT;
+        this.orientation = Orientation.RIGHT;
     }
-
+    
     public TextureRegion getGraphics() {
         return graphics;
     }
@@ -40,12 +40,12 @@ public class Tank {
         this.movementProgress = movementProgress;
     }
 
-    public Rotation getRotation() {
-        return rotation;
+    public Orientation getOrientation() {
+        return orientation;
     }
-    
-    public void setRotation(Rotation rotation) {
-        this.rotation = rotation;
+
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
     }
 
     public void dispose() {

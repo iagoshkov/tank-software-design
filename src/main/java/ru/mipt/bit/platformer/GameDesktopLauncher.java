@@ -2,6 +2,7 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,10 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.util.Rotation;
-import ru.mipt.bit.platformer.util.Tank;
-import ru.mipt.bit.platformer.util.TileMovement;
-import ru.mipt.bit.platformer.util.Tree;
+import ru.mipt.bit.platformer.util.*;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -26,6 +24,8 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
+
+    private ControlMode controlMode;
     private Tank tank;
     private Tree tree;
     private Batch batch;
@@ -37,15 +37,21 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void create() {
         batch = new SpriteBatch();
 
-        // load level tiles
-        level = new TmxMapLoader().load("level.tmx");
-        levelRenderer = createSingleLayerMapRenderer(level, batch);
-        TiledMapTileLayer groundLayer = getSingleLayer(level);
-        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        controlMode = new ControlMode();
+
+        TiledMapTileLayer groundLayer = initLevel();
 
         tank = new Tank(new Texture("images/tank_blue.png"), new GridPoint2(1, 1));
         tree = new Tree(new Texture("images/greenTree.png"), new GridPoint2(1, 3));
         moveRectangleAtTileCenter(groundLayer, tree.getRectangle(), tree.getCoordinates());
+    }
+
+    private TiledMapTileLayer initLevel() {
+        level = new TmxMapLoader().load("level.tmx");
+        levelRenderer = createSingleLayerMapRenderer(level, batch);
+        TiledMapTileLayer groundLayer = getSingleLayer(level);
+        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        return groundLayer;
     }
 
     @Override
@@ -74,7 +80,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         batch.begin();
 
         // render player
-        drawTextureRegionUnscaled(batch, tank.getGraphics(), tank.getRectangle(), tank.getRotation().toFloat());
+        drawTextureRegionUnscaled(batch, tank.getGraphics(), tank.getRectangle(), tank.getOrientation().toFloat());
 
         // render tree obstacle
         drawTextureRegionUnscaled(batch, tree.getRegion(), tree.getRectangle(), 0f);
@@ -92,6 +98,10 @@ public class GameDesktopLauncher implements ApplicationListener {
         if (isEqual(tank.getMovementProgress(), 1f)) handlePressedButtonByStationaryTank();
     }
 
+    private void calculateDestinationPoint(Input input, GridPoint2 coordinates, Tree obstacle) {
+        // не успел реализовать управление смещением танка в зависимости от нажатой кнопки используя класс Orientation
+    }
+
     private void handlePressedButtonByStationaryTank() {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
             // check potential player destination for collision with obstacles
@@ -99,28 +109,28 @@ public class GameDesktopLauncher implements ApplicationListener {
                 tank.destinationCoordinates.y++;
                 tank.setMovementProgress(0f);
             }
-            tank.setRotation(Rotation.UP);
+            tank.setOrientation(Orientation.UP);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
             if (!tree.getCoordinates().equals(decrementedX(tank.coordinates))) {
                 tank.destinationCoordinates.x--;
                 tank.setMovementProgress(0f);
             }
-            tank.setRotation(Rotation.LEFT);
+            tank.setOrientation(Orientation.LEFT);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
             if (!tree.getCoordinates().equals(decrementedY(tank.coordinates))) {
                 tank.destinationCoordinates.y--;
                 tank.setMovementProgress(0f);
             }
-            tank.setRotation(Rotation.DOWN);
+            tank.setOrientation(Orientation.DOWN);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
             if (!tree.getCoordinates().equals(incrementedX(tank.coordinates))) {
                 tank.destinationCoordinates.x++;
                 tank.setMovementProgress(0f);
             }
-            tank.setRotation(Rotation.RIGHT);
+            tank.setOrientation(Orientation.RIGHT);
         }
     }
 
