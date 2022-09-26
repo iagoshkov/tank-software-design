@@ -1,13 +1,16 @@
 package ru.mipt.bit.platformer.objects;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
 public class OnScreenObject {
+    protected float rotation = 0f;
     private Texture texture;
     private TextureRegion graphics;
     protected Rectangle rectangle;
@@ -29,10 +32,6 @@ public class OnScreenObject {
         setCoordinates(coordinates);
     }
 
-    public TextureRegion getGraphics() {
-        return this.graphics;
-    }
-
     public GridPoint2 getCoordinates() {
         return this.coordinates;
     }
@@ -43,5 +42,9 @@ public class OnScreenObject {
 
     public void dispose() {
         texture.dispose();
+    }
+
+    public void draw(Batch batch) {
+        drawTextureRegionUnscaled(batch, this.graphics, this.rectangle, this.rotation);
     }
 }

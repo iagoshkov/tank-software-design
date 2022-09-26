@@ -13,7 +13,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.util.TileMovement;
 
-import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 import ru.mipt.bit.platformer.objects.*;
@@ -48,46 +47,21 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void render() {
-        // clear the screen
+        // clear screen
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
-        // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            tank.movePlayer(0, 1, tree);
-        }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            tank.movePlayer(-1, 0, tree);
-        }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            tank.movePlayer(0, -1, tree);
-        }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            tank.movePlayer(1, 0, tree);
-        }
+        tank.move(Gdx.input, tree, tileMovement, deltaTime, MOVEMENT_SPEED);
 
-        // calculate interpolated player screen coordinates
-        tank.movePlayerBetweenTileCenters(tileMovement);
-
-//        tank.updateMovementProgress(deltaTime, MOVEMENT_SPEED);
-        tank.setMovementProgress(continueProgress(tank.getMovementProgress(), deltaTime, MOVEMENT_SPEED));
-        tank.movePlayerToDestination();
-
-        // render each tile of the level
         levelRenderer.render();
 
-        // start recording all drawing commands
         batch.begin();
 
-        // render player
-        drawTextureRegionUnscaled(batch, tank.getGraphics(), tank.getRectangle(), tank.GetRotation());
+        tank.draw(batch);
+        tree.draw(batch);
 
-        // render tree obstacle
-        drawTextureRegionUnscaled(batch, tree.getGraphics(), tree.getRectangle(), 0f);
-
-        // submit all drawing requests
         batch.end();
     }
 
@@ -108,7 +82,6 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void dispose() {
-        // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
         tree.dispose();
         tank.dispose();
         level.dispose();

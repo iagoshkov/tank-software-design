@@ -1,15 +1,17 @@
 package ru.mipt.bit.platformer.objects;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class Player extends OnScreenObject {
-    private float rotation = 0f;
     private float movementProgress = 1f;
-    private GridPoint2 destinationCoordinates;
+    private final GridPoint2 destinationCoordinates;
+    private final int[] coordinatesAdd = {0, 0};
 
     private void setRotation(int x, int y) {
         if (x > 0) {
@@ -23,11 +25,11 @@ public class Player extends OnScreenObject {
         }
     }
 
-    private boolean willHitObstacle(int x, int y, OnScreenObject obstacle) {
-        return (x == 1 && obstacle.getCoordinates().equals(incrementedX(coordinates))) ||
-                (x == -1 && obstacle.getCoordinates().equals(decrementedX(coordinates))) ||
-                (y == 1 && obstacle.getCoordinates().equals(incrementedY(coordinates))) ||
-                (y == -1 && obstacle.getCoordinates().equals(decrementedY(coordinates)));
+    private boolean willHitObstacle(OnScreenObject obstacle) {
+        return (coordinatesAdd[0] == 1 && obstacle.getCoordinates().equals(incrementedX(coordinates))) ||
+                (coordinatesAdd[0] == -1 && obstacle.getCoordinates().equals(decrementedX(coordinates))) ||
+                (coordinatesAdd[1] == 1 && obstacle.getCoordinates().equals(incrementedY(coordinates))) ||
+                (coordinatesAdd[1] == -1 && obstacle.getCoordinates().equals(decrementedY(coordinates)));
     }
 
     public Player (String path, int[] coordinates) {
@@ -35,37 +37,47 @@ public class Player extends OnScreenObject {
         this.destinationCoordinates = new GridPoint2(coordinates[0], coordinates[1]);
     }
 
-    public void setMovementProgress(float progress) {
-        this.movementProgress = progress;
-    }
-
-    public void movePlayer (int x, int y, OnScreenObject obstacle) {
+    private void updateCoordinatesIfNoCollision(OnScreenObject obstacle) {
         if (isEqual(this.movementProgress, 1f)) {
-            // check potential player destination for collision with obstacles
-            if (!willHitObstacle(x, y, obstacle)) {
-                this.destinationCoordinates.add(x, y);
+            if (!willHitObstacle(obstacle)) {
+                this.destinationCoordinates.add(coordinatesAdd[0], coordinatesAdd[1]);
                 this.movementProgress = 0f;
             }
-            setRotation(x, y);
+            this.setRotation(coordinatesAdd[0], coordinatesAdd[1]);
         }
     }
 
-    public void movePlayerToDestination () {
+    private void recordIfReachedDestination() {
         if (isEqual(this.movementProgress, 1f)) {
-            // record that the player has reached his/her destination
             this.coordinates.set(destinationCoordinates);
         }
     }
 
-    public void movePlayerBetweenTileCenters(TileMovement tileMovement) {
+    public void move(Input input, OnScreenObject obstacle, TileMovement tileMovement,
+                     float deltaTime, float movementSpeed) {
+        this.processUserInput(input, obstacle);
+
         tileMovement.moveRectangleBetweenTileCenters(this.rectangle, this.coordinates, this.destinationCoordinates, this.movementProgress);
+        this.movementProgress = continueProgress(this.movementProgress, deltaTime, movementSpeed);
+        this.recordIfReachedDestination();
     }
 
-    public float GetRotation() {
-        return this.rotation;
+    private void processUserInput(Input input, OnScreenObject obstacle) {
+        coordinatesAdd[0] = 0;
+        coordinatesAdd[1] = 0;
+        if (input.isKeyPressed(UP) || input.isKeyPressed(W)) {
+            coordinatesAdd[1] = 1;
+        }
+        if (input.isKeyPressed(LEFT) || input.isKeyPressed(A)) {
+            coordinatesAdd[0] = -1;
+        }
+        if (input.isKeyPressed(DOWN) || input.isKeyPressed(S)) {
+            coordinatesAdd[1] = -1;
+        }
+        if (input.isKeyPressed(RIGHT) || input.isKeyPressed(D)) {
+            coordinatesAdd[0] = 1;
+        }
+        this.updateCoordinatesIfNoCollision(obstacle);
     }
 
-    public float getMovementProgress() {
-        return this.movementProgress;
-    }
 }
