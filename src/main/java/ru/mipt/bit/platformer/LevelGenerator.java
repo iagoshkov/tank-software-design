@@ -34,21 +34,19 @@ public class LevelGenerator {
     private GridPoint2 getNewCoordinate(int[] dimensions, ArrayList<GridPoint2> compareTo) {
         Random rd = new Random();
 
-        GridPoint2 new_coords = new GridPoint2(rd.nextInt(dimensions[0]), rd.nextInt(dimensions[1]));
-        while (collides(compareTo, new_coords))
-            new_coords = new GridPoint2(rd.nextInt(dimensions[0]), rd.nextInt(dimensions[1]));
-        return new_coords;
+        GridPoint2 newCoordinates = new GridPoint2(rd.nextInt(dimensions[0]), rd.nextInt(dimensions[1]));
+        while (collides(compareTo, newCoordinates))
+            newCoordinates.set(rd.nextInt(dimensions[0]), rd.nextInt(dimensions[1]));
+        return newCoordinates;
     }
 
-    private boolean collides (ArrayList<GridPoint2> coordinates, GridPoint2 new_coordinates) {
-        boolean collides = false;
+    private boolean collides (ArrayList<GridPoint2> coordinates, GridPoint2 newCoordinates) {
         for (var coord : coordinates) {
-            if (Objects.equals(coord, new_coordinates)) {
-                collides = true;
-                break;
+            if (Objects.equals(coord, newCoordinates)) {
+                return true;
             }
         }
-        return collides;
+        return false;
     }
 
 
@@ -62,10 +60,10 @@ public class LevelGenerator {
             for (int j = 0; j < dimensions[1]; ++j) {
                 switch (levelLayout.get(j).charAt(i)) {
                     case ('T'):
-                        obstaclesCoordinates.add(new GridPoint2(i, j));
+                        obstaclesCoordinates.add(new GridPoint2(i, levelLayout.size() - j - 1));
                         break;
                     case ('X'):
-                        playerCoordinates = new GridPoint2(i, j);
+                        playerCoordinates = new GridPoint2(i, levelLayout.size() - j - 1);
                         break;
                     default:
                         break;

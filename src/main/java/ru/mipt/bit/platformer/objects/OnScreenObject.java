@@ -17,10 +17,6 @@ public class OnScreenObject {
         return rotation;
     }
 
-    public Texture getTexture() {
-        return texture;
-    }
-
     public TextureRegion getGraphics() {
         return graphics;
     }
@@ -37,7 +33,7 @@ public class OnScreenObject {
 
     public OnScreenObject (String path, GridPoint2 coordinates) {
         setTexture(path);
-        this.coordinates = coordinates;
+        this.coordinates = new GridPoint2(coordinates);
     }
 
     public GridPoint2 getCoordinates() {

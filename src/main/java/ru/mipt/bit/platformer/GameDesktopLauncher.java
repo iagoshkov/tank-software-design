@@ -37,7 +37,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private TileMovement tileMovement;
 
     private Player tank;
-    private ArrayList<OnScreenObject> obstacles = new ArrayList<>();
+    private final ArrayList<OnScreenObject> obstacles = new ArrayList<>();
 
     @Override
     public void create() {
@@ -49,12 +49,14 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
-        String levelFilePath = "level.txt";
-        LevelGenerator generator = getLevelGenerator(levelFilePath, new int[]{groundLayer.getWidth(), groundLayer.getHeight()});
+        String levelLayout = "level.txt";
+        LevelGenerator generator = getLevelGenerator(levelLayout, new int[]{groundLayer.getWidth(), groundLayer.getHeight()});
 
         tank = new Player("images/tank_blue.png", generator.getPlayerCoordinates());
         for (var coordinatePair : generator.getObstaclesCoordinates()) {
-            obstacles.add(new OnScreenObject("images/greenTree.png", coordinatePair));
+            var o = new OnScreenObject("images/greenTree.png", coordinatePair);
+            obstacles.add(o);
+            moveRectangleAtTileCenter(groundLayer, o.getRectangle(), o.getCoordinates());
         }
     }
 
@@ -63,6 +65,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         File f = new File(levelFilePath);
 
         if (f.exists() && !f.isDirectory()) {
+            System.out.println("ASDASD");
             try {
                 generator = new LevelGenerator(levelFilePath);
             } catch (FileNotFoundException e) {
@@ -86,15 +89,14 @@ public class GameDesktopLauncher implements ApplicationListener {
         levelRenderer.render();
         batch.begin();
 
-        tank.update(processUserInput(Gdx.input), obstacles, deltaTime, MOVEMENT_SPEED);
         tileMovement.moveRectangleBetweenTileCenters(tank.getRectangle(), tank.getCoordinates(),
                 tank.getDestinationCoordinates(), tank.getMovementProgress());
+        tank.update(processUserInput(Gdx.input), obstacles, deltaTime, MOVEMENT_SPEED);
         drawTextureRegionUnscaled(batch, tank.getGraphics(), tank.getRectangle(), tank.getRotation());
 
         for (var obstacle : obstacles) {
             drawTextureRegionUnscaled(batch, obstacle.getGraphics(), obstacle.getRectangle(), obstacle.getRotation());
         }
-
         batch.end();
     }
 

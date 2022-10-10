@@ -42,7 +42,7 @@ public class Player extends OnScreenObject {
 
     public Player (String path, GridPoint2 coordinates) {
         super(path, coordinates);
-        this.destinationCoordinates = coordinates;
+        this.destinationCoordinates = new GridPoint2(coordinates);
     }
 
     public void update(GridPoint2 movement, ArrayList<OnScreenObject> obstacles,
