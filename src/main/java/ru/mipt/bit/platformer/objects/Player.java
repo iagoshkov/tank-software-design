@@ -1,14 +1,11 @@
 package ru.mipt.bit.platformer.objects;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static com.badlogic.gdx.math.MathUtils.isEqual;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Player extends OnScreenObject {
     private final GridPoint2 destinationCoordinates;

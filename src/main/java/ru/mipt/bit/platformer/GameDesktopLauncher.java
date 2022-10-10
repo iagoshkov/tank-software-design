@@ -13,18 +13,18 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.objects.OnScreenObject;
+import ru.mipt.bit.platformer.objects.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
-
-import static com.badlogic.gdx.Input.Keys.*;
-import static com.badlogic.gdx.Input.Keys.D;
-import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
-import ru.mipt.bit.platformer.objects.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
+
+import static com.badlogic.gdx.Input.Keys.*;
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float MOVEMENT_SPEED = 0.4f;

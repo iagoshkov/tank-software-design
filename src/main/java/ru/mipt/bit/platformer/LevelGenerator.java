@@ -1,9 +1,11 @@
 package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.objects.OnScreenObject;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
