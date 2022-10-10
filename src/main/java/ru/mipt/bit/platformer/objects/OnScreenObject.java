@@ -10,29 +10,20 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
 public class OnScreenObject {
+    protected ObjectGraphics objectGraphics;
+    public ObjectGraphics getObjectGraphics() {
+        return objectGraphics;
+    }
     protected float rotation = 0f;
-    private Texture texture;
-
     public float getRotation() {
         return rotation;
     }
-
-    public TextureRegion getGraphics() {
-        return graphics;
-    }
-
-    private TextureRegion graphics;
-    protected Rectangle rectangle;
     protected GridPoint2 coordinates;
-
-    private void setTexture(String path) {
-        this.texture = new Texture(path);
-        this.graphics = new TextureRegion(texture);
-        this.rectangle = createBoundingRectangle(this.graphics);
+    public OnScreenObject (GridPoint2 coordinates) {
+        this.coordinates = new GridPoint2(coordinates);
     }
-
     public OnScreenObject (String path, GridPoint2 coordinates) {
-        setTexture(path);
+        this.objectGraphics = new ObjectGraphics(path);
         this.coordinates = new GridPoint2(coordinates);
     }
 
@@ -40,11 +31,7 @@ public class OnScreenObject {
         return this.coordinates;
     }
 
-    public Rectangle getRectangle() {
-        return this.rectangle;
-    }
-
-    public void dispose() {
-        texture.dispose();
+    public void draw(Batch batch) {
+        objectGraphics.draw(batch, this.rotation);
     }
 }

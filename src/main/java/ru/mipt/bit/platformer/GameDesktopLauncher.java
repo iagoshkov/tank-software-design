@@ -27,15 +27,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameDesktopLauncher implements ApplicationListener {
-
     private static final float MOVEMENT_SPEED = 0.4f;
-
     private Batch batch;
-
     private TiledMap level;
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
-
     private Player tank;
     private final ArrayList<OnScreenObject> obstacles = new ArrayList<>();
 
@@ -56,7 +52,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         for (var coordinatePair : generator.getObstaclesCoordinates()) {
             var o = new OnScreenObject("images/greenTree.png", coordinatePair);
             obstacles.add(o);
-            moveRectangleAtTileCenter(groundLayer, o.getRectangle(), o.getCoordinates());
+            moveRectangleAtTileCenter(groundLayer, o.getObjectGraphics().getRectangle(), o.getCoordinates());
         }
     }
 
@@ -65,7 +61,6 @@ public class GameDesktopLauncher implements ApplicationListener {
         File f = new File(levelFilePath);
 
         if (f.exists() && !f.isDirectory()) {
-            System.out.println("ASDASD");
             try {
                 generator = new LevelGenerator(levelFilePath);
             } catch (FileNotFoundException e) {
@@ -89,15 +84,19 @@ public class GameDesktopLauncher implements ApplicationListener {
         levelRenderer.render();
         batch.begin();
 
-        tileMovement.moveRectangleBetweenTileCenters(tank.getRectangle(), tank.getCoordinates(),
+        drawObjects(deltaTime);
+        batch.end();
+    }
+
+    private void drawObjects(float deltaTime) {
+        tileMovement.moveRectangleBetweenTileCenters(tank.getObjectGraphics().getRectangle(), tank.getCoordinates(),
                 tank.getDestinationCoordinates(), tank.getMovementProgress());
         tank.update(processUserInput(Gdx.input), obstacles, deltaTime, MOVEMENT_SPEED);
-        drawTextureRegionUnscaled(batch, tank.getGraphics(), tank.getRectangle(), tank.getRotation());
+        tank.draw(batch);
 
         for (var obstacle : obstacles) {
-            drawTextureRegionUnscaled(batch, obstacle.getGraphics(), obstacle.getRectangle(), obstacle.getRotation());
+            obstacle.draw(batch);
         }
-        batch.end();
     }
 
     private GridPoint2 processUserInput(Input input) {
@@ -135,9 +134,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         for (var obstacle : obstacles) {
-            obstacle.dispose();
+            obstacle.getObjectGraphics().dispose();
         }
-        tank.dispose();
+        tank.getObjectGraphics().dispose();
         level.dispose();
         batch.dispose();
     }

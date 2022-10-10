@@ -1,5 +1,6 @@
 package ru.mipt.bit.platformer.objects;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -42,6 +43,11 @@ public class Player extends OnScreenObject {
 
     public Player (String path, GridPoint2 coordinates) {
         super(path, coordinates);
+        this.destinationCoordinates = new GridPoint2(coordinates);
+    }
+
+    public Player (GridPoint2 coordinates) {
+        super(coordinates);
         this.destinationCoordinates = new GridPoint2(coordinates);
     }
 
