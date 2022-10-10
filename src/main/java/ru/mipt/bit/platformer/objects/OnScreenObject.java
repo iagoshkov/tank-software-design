@@ -12,13 +12,22 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled
 public class OnScreenObject {
     protected float rotation = 0f;
     private Texture texture;
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public TextureRegion getGraphics() {
+        return graphics;
+    }
+
     private TextureRegion graphics;
     protected Rectangle rectangle;
     protected GridPoint2 coordinates;
-
-    private void setCoordinates(int[] coordinates) {
-        this.coordinates = new GridPoint2(coordinates[0], coordinates[1]);
-    }
 
     private void setTexture(String path) {
         this.texture = new Texture(path);
@@ -26,10 +35,9 @@ public class OnScreenObject {
         this.rectangle = createBoundingRectangle(this.graphics);
     }
 
-
-    public OnScreenObject (String path, int[] coordinates) {
+    public OnScreenObject (String path, GridPoint2 coordinates) {
         setTexture(path);
-        setCoordinates(coordinates);
+        this.coordinates = coordinates;
     }
 
     public GridPoint2 getCoordinates() {
@@ -42,9 +50,5 @@ public class OnScreenObject {
 
     public void dispose() {
         texture.dispose();
-    }
-
-    public void draw(Batch batch) {
-        drawTextureRegionUnscaled(batch, this.graphics, this.rectangle, this.rotation);
     }
 }

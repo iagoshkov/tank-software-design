@@ -2,6 +2,7 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -10,12 +11,20 @@ import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import static com.badlogic.gdx.Input.Keys.*;
+import static com.badlogic.gdx.Input.Keys.D;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 import ru.mipt.bit.platformer.objects.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
@@ -28,7 +37,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private TileMovement tileMovement;
 
     private Player tank;
-    private OnScreenObject tree;
+    private ArrayList<OnScreenObject> obstacles = new ArrayList<>();
 
     @Override
     public void create() {
@@ -40,9 +49,30 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
-        tank = new Player("images/tank_blue.png", new int[]{1, 1});
-        tree = new OnScreenObject("images/greenTree.png", new int[]{1, 3});
-        moveRectangleAtTileCenter(groundLayer, tree.getRectangle(), tree.getCoordinates());
+        String levelFilePath = "level.txt";
+        LevelGenerator generator = getLevelGenerator(levelFilePath, new int[]{groundLayer.getWidth(), groundLayer.getHeight()});
+
+        tank = new Player("images/tank_blue.png", generator.getPlayerCoordinates());
+        for (var coordinatePair : generator.getObstaclesCoordinates()) {
+            obstacles.add(new OnScreenObject("images/greenTree.png", coordinatePair));
+        }
+    }
+
+    private static LevelGenerator getLevelGenerator(String levelFilePath, int[] dimensions) {
+        LevelGenerator generator;
+        File f = new File(levelFilePath);
+
+        if (f.exists() && !f.isDirectory()) {
+            try {
+                generator = new LevelGenerator(levelFilePath);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            Random rd = new Random();
+            generator = new LevelGenerator(dimensions, rd.nextInt(10));
+        }
+        return generator;
     }
 
     @Override
@@ -53,16 +83,36 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        tank.move(Gdx.input, tree, tileMovement, deltaTime, MOVEMENT_SPEED);
-
         levelRenderer.render();
-
         batch.begin();
 
-        tank.draw(batch);
-        tree.draw(batch);
+        tank.update(processUserInput(Gdx.input), obstacles, deltaTime, MOVEMENT_SPEED);
+        tileMovement.moveRectangleBetweenTileCenters(tank.getRectangle(), tank.getCoordinates(),
+                tank.getDestinationCoordinates(), tank.getMovementProgress());
+        drawTextureRegionUnscaled(batch, tank.getGraphics(), tank.getRectangle(), tank.getRotation());
+
+        for (var obstacle : obstacles) {
+            drawTextureRegionUnscaled(batch, obstacle.getGraphics(), obstacle.getRectangle(), obstacle.getRotation());
+        }
 
         batch.end();
+    }
+
+    private GridPoint2 processUserInput(Input input) {
+        GridPoint2 movement = new GridPoint2(0, 0);
+        if (input.isKeyPressed(UP) || input.isKeyPressed(W)) {
+            movement.y = 1;
+        }
+        if (input.isKeyPressed(LEFT) || input.isKeyPressed(A)) {
+            movement.x = -1;
+        }
+        if (input.isKeyPressed(DOWN) || input.isKeyPressed(S)) {
+            movement.y = -1;
+        }
+        if (input.isKeyPressed(RIGHT) || input.isKeyPressed(D)) {
+            movement.x = 1;
+        }
+        return movement;
     }
 
     @Override
@@ -82,7 +132,9 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void dispose() {
-        tree.dispose();
+        for (var obstacle : obstacles) {
+            obstacle.dispose();
+        }
         tank.dispose();
         level.dispose();
         batch.dispose();
