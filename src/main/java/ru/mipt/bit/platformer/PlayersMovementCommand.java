@@ -31,9 +31,9 @@ public class PlayersMovementCommand {
         GridPoint2 movement = new GridPoint2(0, 0);
 
         if (rd.nextInt(2) == 0) {
-            movement.x += rd.nextInt(2) * 2 - 1;
+            movement.x += rd.nextInt(3) - 1;
         } else {
-            movement.y += rd.nextInt(2) * 2 - 1;
+            movement.y += rd.nextInt(3) - 1;
         }
 
         return movement;
