@@ -13,6 +13,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.generator.FromFileGenerator;
+import ru.mipt.bit.platformer.generator.LevelGenerator;
+import ru.mipt.bit.platformer.generator.RandomGenerator;
 import ru.mipt.bit.platformer.objects.OnScreenObject;
 import ru.mipt.bit.platformer.objects.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
@@ -32,7 +35,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private TiledMap level;
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
-    private Player tank;
+    private final ArrayList<Player> tanks = new ArrayList<>();
     private final ArrayList<OnScreenObject> obstacles = new ArrayList<>();
 
     @Override
@@ -46,29 +49,34 @@ public class GameDesktopLauncher implements ApplicationListener {
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
         String levelLayout = "level.txt";
-        LevelGenerator generator = getLevelGenerator(levelLayout, new int[]{groundLayer.getWidth(), groundLayer.getHeight()});
+        LevelGenerator generator = getLevelGenerator(levelLayout, groundLayer.getWidth(), groundLayer.getHeight());
 
-        tank = new Player("images/tank_blue.png", generator.getPlayerCoordinates());
+
         for (var coordinatePair : generator.getObstaclesCoordinates()) {
             var o = new OnScreenObject("images/greenTree.png", coordinatePair);
             obstacles.add(o);
             moveRectangleAtTileCenter(groundLayer, o.getObjectGraphics().getRectangle(), o.getCoordinates());
         }
+
+        for (var coordinatePair : generator.getPlayersCoordinates()) {
+            var o = new Player("images/tank_blue.png", coordinatePair);
+            tanks.add(o);
+        }
     }
 
-    private static LevelGenerator getLevelGenerator(String levelFilePath, int[] dimensions) {
+    private static LevelGenerator getLevelGenerator(String levelFilePath, int dim_x, int dim_y) {
         LevelGenerator generator;
         File f = new File(levelFilePath);
 
         if (f.exists() && !f.isDirectory()) {
             try {
-                generator = new LevelGenerator(levelFilePath);
+                generator = new FromFileGenerator(levelFilePath);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else {
             Random rd = new Random();
-            generator = new LevelGenerator(dimensions, rd.nextInt(10));
+            generator = new RandomGenerator(dim_x, dim_y, rd.nextInt(10), rd.nextInt(3)+1);
         }
         return generator;
     }
@@ -84,36 +92,33 @@ public class GameDesktopLauncher implements ApplicationListener {
         levelRenderer.render();
         batch.begin();
 
+        updatePlayersPositions(deltaTime);
         drawObjects(deltaTime);
         batch.end();
     }
 
-    private void drawObjects(float deltaTime) {
-        tileMovement.moveRectangleBetweenTileCenters(tank.getObjectGraphics().getRectangle(), tank.getCoordinates(),
-                tank.getDestinationCoordinates(), tank.getMovementProgress());
-        tank.update(processUserInput(Gdx.input), obstacles, deltaTime, MOVEMENT_SPEED);
-        tank.draw(batch);
+    private void updatePlayersPositions(float deltaTime) {
+        for (int i = 0; i < tanks.size(); ++i) {
+            tileMovement.moveRectangleBetweenTileCenters(tanks.get(i).getObjectGraphics().getRectangle(), tanks.get(i).getCoordinates(),
+                    tanks.get(i).getDestinationCoordinates(), tanks.get(i).getMovementProgress());
+            GridPoint2 movementCoordinates;
 
-        for (var obstacle : obstacles) {
-            obstacle.draw(batch);
+            if (i == tanks.size() - 1) {
+                movementCoordinates = PlayersMovementCommand.getNewPlayerCoordinates(Gdx.input);
+            } else {
+                movementCoordinates = PlayersMovementCommand.getNewPlayerCoordinates();
+            }
+            tanks.get(i).update(movementCoordinates, obstacles, deltaTime, MOVEMENT_SPEED);
         }
     }
 
-    private GridPoint2 processUserInput(Input input) {
-        GridPoint2 movement = new GridPoint2(0, 0);
-        if (input.isKeyPressed(UP) || input.isKeyPressed(W)) {
-            movement.y = 1;
+    private void drawObjects(float deltaTime) {
+        for (var obstacle : obstacles) {
+            obstacle.draw(batch);
         }
-        if (input.isKeyPressed(LEFT) || input.isKeyPressed(A)) {
-            movement.x = -1;
+        for (var tank : tanks) {
+            tank.draw(batch);
         }
-        if (input.isKeyPressed(DOWN) || input.isKeyPressed(S)) {
-            movement.y = -1;
-        }
-        if (input.isKeyPressed(RIGHT) || input.isKeyPressed(D)) {
-            movement.x = 1;
-        }
-        return movement;
     }
 
     @Override
@@ -136,7 +141,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         for (var obstacle : obstacles) {
             obstacle.getObjectGraphics().dispose();
         }
-        tank.getObjectGraphics().dispose();
+        for (var tank : tanks) {
+            tank.getObjectGraphics().dispose();
+        }
         level.dispose();
         batch.dispose();
     }
