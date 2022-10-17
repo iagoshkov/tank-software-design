@@ -49,7 +49,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
         String levelLayout = "level.txt";
-        LevelGenerator generator = getLevelGenerator(levelLayout, groundLayer.getWidth(), groundLayer.getHeight());
+        LevelGenerator generator = LevelGenerator.getLevelGenerator(levelLayout, groundLayer.getWidth(), groundLayer.getHeight());
 
 
         for (var coordinatePair : generator.getObstaclesCoordinates()) {
@@ -59,26 +59,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
 
         for (var coordinatePair : generator.getPlayersCoordinates()) {
-            var o = new Player("images/tank_blue.png", coordinatePair);
+            var o = new Player("images/tank_blue.png", coordinatePair, new GridPoint2(groundLayer.getWidth(), groundLayer.getHeight()));
             tanks.add(o);
         }
-    }
-
-    private static LevelGenerator getLevelGenerator(String levelFilePath, int dim_x, int dim_y) {
-        LevelGenerator generator;
-        File f = new File(levelFilePath);
-
-        if (f.exists() && !f.isDirectory()) {
-            try {
-                generator = new FromFileGenerator(levelFilePath);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            Random rd = new Random();
-            generator = new RandomGenerator(dim_x, dim_y, rd.nextInt(10), rd.nextInt(3)+1);
-        }
-        return generator;
     }
 
     @Override
@@ -108,7 +91,7 @@ public class GameDesktopLauncher implements ApplicationListener {
             } else {
                 movementCoordinates = PlayersMovementCommand.getNewPlayerCoordinates();
             }
-            tanks.get(i).update(movementCoordinates, obstacles, deltaTime, MOVEMENT_SPEED);
+            tanks.get(i).update(movementCoordinates, obstacles, tanks, deltaTime, MOVEMENT_SPEED);
         }
     }
 
