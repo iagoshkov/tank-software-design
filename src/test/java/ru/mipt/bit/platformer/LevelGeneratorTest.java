@@ -3,6 +3,9 @@ package ru.mipt.bit.platformer;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.mipt.bit.platformer.generator.FromFileGenerator;
+import ru.mipt.bit.platformer.generator.LevelGenerator;
+import ru.mipt.bit.platformer.generator.RandomGenerator;
 
 import java.util.ArrayList;
 
@@ -15,9 +18,9 @@ class LevelGeneratorTest {
     @BeforeAll
     static void setUp(){
         try {
-            fromFile = new LevelGenerator("src/test/java/ru/mipt/bit/platformer/level_test.txt");
+            fromFile = new FromFileGenerator("src/test/java/ru/mipt/bit/platformer/level_test.txt");
         } catch (Exception ignored) {}
-        rand = new LevelGenerator(new int[]{5, 5}, 5);
+        rand = new RandomGenerator(5, 5, 5, 3);
     }
 
     @Test
@@ -43,13 +46,29 @@ class LevelGeneratorTest {
 
     @Test
     void getPlayerCoordinates() {
-        checkPlayerNotOverlapsObstacles(fromFile.getPlayerCoordinates(), fromFile.getObstaclesCoordinates());
-        checkPlayerNotOverlapsObstacles(rand.getPlayerCoordinates(), rand.getObstaclesCoordinates());
+        checkObjectsNotOverlap(fromFile.getPlayersCoordinates(), fromFile.getObstaclesCoordinates());
+        checkObjectsNotOverlap(rand.getPlayersCoordinates(), rand.getObstaclesCoordinates());
     }
 
-    private static void checkPlayerNotOverlapsObstacles(GridPoint2 playerFromFile, ArrayList<GridPoint2> obstaclesFromFile) {
-        for (var obstacle : obstaclesFromFile) {
-            assertThat(obstacle).isNotEqualTo(playerFromFile);
+    private static void checkObjectsNotOverlap(ArrayList<GridPoint2> players, ArrayList<GridPoint2> obstacles) {
+        for (var obstacle : obstacles) {
+            for (var player : players) {
+                assertThat(obstacle).isNotEqualTo(player);
+            }
+        }
+
+        for (int i = 0; i < obstacles.size(); ++i) {
+            for (int j = 0; j < obstacles.size(); ++j) {
+                if (i == j) continue;
+                assertThat(obstacles.get(i)).isNotEqualTo(obstacles.get(j));
+            }
+        }
+
+        for (int i = 0; i < players.size(); ++i) {
+            for (int j = 0; j < players.size(); ++j) {
+                if (i == j) continue;
+                assertThat(players.get(i)).isNotEqualTo(players.get(j));
+            }
         }
     }
 }

@@ -50,9 +50,10 @@ public class Player extends OnScreenObject {
         this.battlefieldDimensions = battlefieldDimensions;
     }
 
-    public Player (GridPoint2 coordinates) {
+    public Player (GridPoint2 coordinates, GridPoint2 battlefieldDimensions) {
         super(coordinates);
         this.destinationCoordinates = new GridPoint2(coordinates);
+        this.battlefieldDimensions = battlefieldDimensions;
     }
 
     public void update(GridPoint2 movement, ArrayList<OnScreenObject> obstacles, ArrayList<Player> players,
