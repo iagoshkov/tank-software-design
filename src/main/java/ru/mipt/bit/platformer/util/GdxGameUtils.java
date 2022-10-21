@@ -24,15 +24,23 @@ public final class GdxGameUtils {
 
     public static MapRenderer createSingleLayerMapRenderer(TiledMap tiledMap, Batch batch) {
         TiledMapTileLayer tileLayer = getSingleLayer(tiledMap);
-        float viewWidth = tileLayer.getWidth() * tileLayer.getTileWidth();
-        float viewHeight = tileLayer.getHeight() * tileLayer.getTileHeight();
 
         OrthogonalTiledMapRenderer mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, batch);
-        mapRenderer.getViewBounds().set(0f, 0f, viewWidth, viewHeight);
+        mapRenderer.getViewBounds().set(0f, 0f,
+                tileLayer.getWidth() * tileLayer.getTileWidth(),
+                tileLayer.getHeight() * tileLayer.getTileHeight());
 
         return mapRenderer;
     }
 
+    public static <L extends MapLayer> L getLayerByName(Map map, String name) {
+        MapLayer layer = map.getLayers().get(name);
+
+        if(layer == null) throw new NoSuchElementException("Map has no layer with name: " + name);
+        return (L) layer;
+    }
+
+    //todo переделать в GetLayerByName
     public static <L extends MapLayer> L getSingleLayer(Map map) {
         MapLayers layers = map.getLayers();
         switch (layers.size()) {
