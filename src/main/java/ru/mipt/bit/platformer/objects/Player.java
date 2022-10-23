@@ -12,6 +12,16 @@ public class Player extends OnScreenObject {
     private final GridPoint2 destinationCoordinates;
     private float movementProgress = 1f;
 
+    public boolean isManuallyControlled() {
+        return manuallyControlled;
+    }
+
+    public void setManuallyControlled(boolean manuallyControlled) {
+        this.manuallyControlled = manuallyControlled;
+    }
+
+    private boolean manuallyControlled = false;
+
     public float getMovementProgress() {
         return movementProgress;
     }

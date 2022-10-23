@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -13,19 +12,18 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.generator.FromFileGenerator;
 import ru.mipt.bit.platformer.generator.LevelGenerator;
-import ru.mipt.bit.platformer.generator.RandomGenerator;
+import ru.mipt.bit.platformer.movementCommand.AiMovementCommand;
+import ru.mipt.bit.platformer.movementCommand.MovementCommand;
+import ru.mipt.bit.platformer.movementCommand.RandomMovementCommand;
+import ru.mipt.bit.platformer.movementCommand.UserInputMovementCommand;
 import ru.mipt.bit.platformer.objects.OnScreenObject;
 import ru.mipt.bit.platformer.objects.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Map;
 
-import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
@@ -35,6 +33,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private TiledMap level;
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
+    private int fieldWidth, fieldHeight;
     private final ArrayList<Player> tanks = new ArrayList<>();
     private final ArrayList<OnScreenObject> obstacles = new ArrayList<>();
 
@@ -47,9 +46,11 @@ public class GameDesktopLauncher implements ApplicationListener {
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        fieldWidth = groundLayer.getWidth();
+        fieldHeight = groundLayer.getHeight();
 
         String levelLayout = "level.txt";
-        LevelGenerator generator = LevelGenerator.getLevelGenerator(levelLayout, groundLayer.getWidth(), groundLayer.getHeight());
+        LevelGenerator generator = LevelGenerator.getLevelGenerator(levelLayout, fieldWidth, fieldHeight);
 
 
         for (var coordinatePair : generator.getObstaclesCoordinates()) {
@@ -59,9 +60,11 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
 
         for (var coordinatePair : generator.getPlayersCoordinates()) {
-            var o = new Player("images/tank_blue.png", coordinatePair, new GridPoint2(groundLayer.getWidth(), groundLayer.getHeight()));
+            var o = new Player("images/tank_blue.png", coordinatePair, new GridPoint2(fieldWidth, fieldHeight));
             tanks.add(o);
+            moveRectangleAtTileCenter(groundLayer, o.getObjectGraphics().getRectangle(), o.getCoordinates());
         }
+        tanks.get(tanks.size() - 1).setManuallyControlled(true);
     }
 
     @Override
@@ -75,23 +78,29 @@ public class GameDesktopLauncher implements ApplicationListener {
         levelRenderer.render();
         batch.begin();
 
-        updatePlayersPositions(deltaTime);
+        updateTanksPositions(deltaTime);
         drawObjects(deltaTime);
         batch.end();
     }
 
-    private void updatePlayersPositions(float deltaTime) {
-        for (int i = 0; i < tanks.size(); ++i) {
-            tileMovement.moveRectangleBetweenTileCenters(tanks.get(i).getObjectGraphics().getRectangle(), tanks.get(i).getCoordinates(),
-                    tanks.get(i).getDestinationCoordinates(), tanks.get(i).getMovementProgress());
-            GridPoint2 movementCoordinates;
+    private void updateTanksPositions(float deltaTime) {
+//        MovementCommand automaticMovement = new RandomMovementCommand();
+        AiMovementCommand automaticMovement = new AiMovementCommand(obstacles, tanks, fieldWidth, fieldHeight);
+        MovementCommand userInputMovement = new UserInputMovementCommand(Gdx.input);
 
-            if (i == tanks.size() - 1) {
-                movementCoordinates = PlayersMovementCommand.getNewPlayerCoordinates(Gdx.input);
-            } else {
-                movementCoordinates = PlayersMovementCommand.getNewPlayerCoordinates();
-            }
-            tanks.get(i).update(movementCoordinates, obstacles, tanks, deltaTime, MOVEMENT_SPEED);
+        Map<Player, GridPoint2> manuallyControlledMovements = userInputMovement.getTankActions(obstacles, tanks, fieldWidth, fieldHeight);
+        Map<Player, GridPoint2> autoControlledMovements = automaticMovement.getTankActions(obstacles, tanks, fieldWidth, fieldHeight);
+
+        updateTanksOfSingleType(manuallyControlledMovements, deltaTime);
+        updateTanksOfSingleType(autoControlledMovements, deltaTime);
+    }
+
+    private void updateTanksOfSingleType(Map<Player, GridPoint2> movementsList, float deltaTime) {
+        for (var tank : movementsList.keySet()) {
+            tileMovement.moveRectangleBetweenTileCenters(tank.getObjectGraphics().getRectangle(), tank.getCoordinates(),
+                    tank.getDestinationCoordinates(), tank.getMovementProgress());
+            GridPoint2 movementCoordinates = movementsList.get((tank));
+            tank.update(movementCoordinates, obstacles, tanks, deltaTime, MOVEMENT_SPEED);
         }
     }
 
