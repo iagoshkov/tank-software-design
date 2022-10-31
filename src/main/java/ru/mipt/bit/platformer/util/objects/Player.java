@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.util.enums.Direction;
 import ru.mipt.bit.platformer.util.graphics.TankGraphics;
 import ru.mipt.bit.platformer.util.movement.*;
 
@@ -156,6 +157,22 @@ public class Player {
 
     public void nextMove(Movement nextMove) {
         this.nextMove = nextMove;
+    }
+
+    public void moveUp(){
+        nextMove = new Movement(new GridPoint2(Direction.UP.vector), Direction.UP.rotation);
+    }
+
+    public void moveDown(){
+        nextMove = new Movement(new GridPoint2(Direction.DOWN.vector), Direction.DOWN.rotation);
+    }
+
+    public void moveLeft(){
+        nextMove = new Movement(new GridPoint2(Direction.LEFT.vector), Direction.LEFT.rotation);
+    }
+
+    public void moveRight(){
+        nextMove = new Movement(new GridPoint2(Direction.RIGHT.vector), Direction.RIGHT.rotation);
     }
 }
 
