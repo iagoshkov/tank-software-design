@@ -7,6 +7,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import java.util.List;
+
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class Level{
@@ -29,8 +31,10 @@ public class Level{
                 player.getMovementProgress());
     }
 
-    public void getObstaclesPosition(Tree tree) {
-        moveRectangleAtTileCenter(groundLayer, tree.getRectangle(), tree.getCoordinates());
+    public void getObstaclesPosition(List<Tree> trees) {
+        for (Tree tree : trees) {
+            moveRectangleAtTileCenter(groundLayer, tree.getRectangle(), tree.getCoordinates());
+        }
     }
 
     public void render(){

@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.graphics.TankGraphics;
 import ru.mipt.bit.platformer.util.movement.*;
 
+import java.util.List;
+
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
@@ -55,27 +57,16 @@ public class Player {
         movementProgress = 0f;
     }
 
-    public boolean notObstacleAhead(GridPoint2 obstacleCoordinates) {
+    public boolean notObstacleAhead(List<Tree> trees) {
         GridPoint2 possibleCoordinates = tryMovement();
-        return !obstacleCoordinates.equals(possibleCoordinates);
-    }
-
-    public void move(Input input, GridPoint2 treeObstacleCoordinates, float movementSpeed) {
-        nextMove = KeyboardInterpreter.determineDirectionByKey(Gdx.input);
-        if (!nextMove.isNull() && finishCheck()){
-            rotate();
-            if (notObstacleAhead(treeObstacleCoordinates)){
-                move();
-                finishMove();
+        for (Tree tree : trees) {
+            if (tree.getCoordinates().equals(possibleCoordinates)){
+                return false;
             }
         }
-
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        updateMovementProgress(deltaTime, movementSpeed);
-        if (finishCheck()) {
-            coordinates.set(destination);
-        }
+        return true;
     }
+
 
     public void updateMovementProgress(float deltaTime, float movementSpeed) {
         movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
@@ -104,5 +95,22 @@ public class Player {
     public void dispose(){
         texture.getBlueTank().dispose();
     }
+
+    public void move(Input input, List<Tree> trees, float movementSpeed) {
+        nextMove = KeyboardInterpreter.determineDirectionByKey(Gdx.input);
+        if (!nextMove.isNull() && finishCheck()){
+            rotate();
+            if (notObstacleAhead(trees)){
+                move();
+                finishMove();
+            }
+        }
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        updateMovementProgress(deltaTime, movementSpeed);
+        if (finishCheck()) {
+            coordinates.set(destination);
+        }
+    }
+
 }
 

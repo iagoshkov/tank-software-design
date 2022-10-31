@@ -5,6 +5,9 @@ import ru.mipt.bit.platformer.util.objects.Player;
 import ru.mipt.bit.platformer.util.objects.Tree;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
+import java.util.List;
+
+
 
 public class ScreenPicture {
     public static void clearScreen(){
@@ -12,11 +15,12 @@ public class ScreenPicture {
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    public static void draw(Batch batch, Player player, Tree tree) {
+    public static void draw(Batch batch, Player player, List<Tree> trees) {
         batch.begin();
         drawTextureRegionUnscaled(batch, player.getTexture().getGraphics(), player.getTexture().getRectangle(), player.getRotation());
-        drawTextureRegionUnscaled(batch, tree.getGraphics(), tree.getRectangle(), 0f);
-
+        for (Tree tree : trees) {
+            drawTextureRegionUnscaled(batch, tree.getGraphics(), tree.getRectangle(), 0f);
+        }
         batch.end();
     }
 }
