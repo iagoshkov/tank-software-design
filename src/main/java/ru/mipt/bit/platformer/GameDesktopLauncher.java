@@ -30,6 +30,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     private List<Player> tanks;
     private List<Tree> trees;
 
+
+    int screenSide1;
+    int screenSide2;
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -38,6 +41,9 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         LevelCreator levelGenerator = new LevelCreator();
         levelGenerator.generateLevelFromFile("src/main/resources/level.txt");
+
+        screenSide1 = levelGenerator.getSide1();
+        screenSide2 = levelGenerator.getSide2();
 
         tanks = new ArrayList<>();
         for (int i = 0; i < levelGenerator.getTankCoordinates().size(); i++){
@@ -63,7 +69,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         List<Boolean> obstacle = new ArrayList<>();
         for (Player tank : tanks) {
-            obstacle.add(tank.checkCollisions(trees, tanks));
+            obstacle.add(tank.checkCollisions(trees, tanks, screenSide1, screenSide2));
         }
         for (int i = 0; i < obstacle.size(); i++) {
             if (!obstacle.get(i)){

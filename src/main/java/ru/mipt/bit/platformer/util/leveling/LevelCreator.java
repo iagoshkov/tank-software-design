@@ -7,17 +7,24 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class LevelCreator {
     private List<GridPoint2> tankCoordinates;
     private List<GridPoint2> treeCoordinates;
 
+    private int screenSide1;
+    private int screenSide2;
+
     public LevelCreator(){
         tankCoordinates = new ArrayList<>();
         treeCoordinates = new ArrayList<>();
+        screenSide1 = 0;
+        screenSide2 = 0;
     }
 
     public void generateLevelFromFile(String pathToFile){
         try {
+            fieldSize("src/main/resources/fieldSize");
             File file = new File(pathToFile);
             BufferedReader reader = new BufferedReader(new FileReader(file));
 
@@ -46,5 +53,31 @@ public class LevelCreator {
     public List<GridPoint2> getTreeCoordinates() {
         return treeCoordinates;
     }
+    public int getSide1() {
+        return screenSide1;
+    }
 
+    public int getSide2() {
+        return screenSide2;
+    }
+
+    private void fieldSize(String filePath){
+        try {
+
+            FileReader fr = new FileReader(filePath);
+            BufferedReader reader = new BufferedReader(fr);
+
+            String line = reader.readLine();
+            String[] props;
+
+            if (line != null) {
+                props = line.split(" ");
+                screenSide1 = Integer.parseInt(props[0]);
+                screenSide2 = Integer.parseInt(props[1]);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -128,8 +128,8 @@ public class Player {
         }
     }
 
-    public Boolean checkCollisions(List<Tree> trees, List<Player> tanks) {
-        return notObstacleAhead(trees) && notTankAhead(tanks);
+    public Boolean checkCollisions(List<Tree> trees, List<Player> tanks, int screenSide1, int screenSide2) {
+        return notObstacleAhead(trees) && notTankAhead(tanks) && noWallAhead(screenSide1, screenSide2);
     }
 
     private boolean notTankAhead(List<Player> tanks) {
@@ -146,6 +146,12 @@ public class Player {
             }
         }
         return true;
+    }
+
+    private boolean noWallAhead(int screenSide1, int screenSide2) {
+        GridPoint2 nextCoordinates = tryMovement();
+        return nextCoordinates.x >= 0 && nextCoordinates.x < screenSide1 &&
+                nextCoordinates.y >= 0 && nextCoordinates.y < screenSide2;
     }
 
     public void nextMove(Movement nextMove) {
