@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.util.leveling.LevelCreator;
 
 import java.util.List;
 
@@ -44,6 +45,8 @@ public class Level{
     public void dispose(){
         level.dispose();
     }
+
+
 
 }
 

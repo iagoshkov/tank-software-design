@@ -46,4 +46,5 @@ public class LevelCreator {
     public List<GridPoint2> getTreeCoordinates() {
         return treeCoordinates;
     }
+
 }

@@ -23,4 +23,23 @@ public class KeyboardInterpreter {
         }
         return new Movement();
     }
+
+    public static Movement randomMovementGenerator(Input inputKey) {
+        int random = (int) (Math.random() * 4);
+            if (random == 0) {
+                return new Movement(new GridPoint2(Direction.UP.vector), Direction.UP.rotation);
+            }
+            if (random == 1) {
+                return new Movement(new GridPoint2(Direction.LEFT.vector), Direction.LEFT.rotation);
+            }
+            if (random == 2) {
+                return new Movement(new GridPoint2(Direction.DOWN.vector), Direction.DOWN.rotation);
+            }
+            if (random == 3) {
+                return new Movement(new GridPoint2(Direction.RIGHT.vector), Direction.RIGHT.rotation);
+            }
+
+        return new Movement();
+    }
+
 }

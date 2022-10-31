@@ -15,10 +15,11 @@ public class ScreenPicture {
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    public static void draw(Batch batch, Player player, List<Tree> trees) {
+    public static void draw(Batch batch, List<Player> tanks, List<Tree> trees) {
         batch.begin();
-        drawTextureRegionUnscaled(batch, player.getTexture().getGraphics(), player.getTexture().getRectangle(), player.getRotation());
-        for (Tree tree : trees) {
+        for (Player tank : tanks) {
+            drawTextureRegionUnscaled(batch, tank.getTexture().getGraphics(), tank.getTexture().getRectangle(), tank.getRotation());
+        }for (Tree tree : trees) {
             drawTextureRegionUnscaled(batch, tree.getGraphics(), tree.getRectangle(), 0f);
         }
         batch.end();

@@ -9,8 +9,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
+import org.lwjgl.system.CallbackI;
 import ru.mipt.bit.platformer.util.graphics.ScreenPicture;
 import ru.mipt.bit.platformer.util.leveling.LevelCreator;
+import ru.mipt.bit.platformer.util.movement.Movement;
 import ru.mipt.bit.platformer.util.objects.Level;
 import ru.mipt.bit.platformer.util.objects.Player;
 import ru.mipt.bit.platformer.util. objects.Tree;
@@ -25,7 +27,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private Batch batch;
 
     private Level levelLayer;
-    private Player tank;
+    private List<Player> tanks;
     private List<Tree> trees;
 
     @Override
@@ -37,9 +39,11 @@ public class GameDesktopLauncher implements ApplicationListener {
         LevelCreator levelGenerator = new LevelCreator();
         levelGenerator.generateLevelFromFile("src/main/resources/level.txt");
 
-        tank = new Player(new Texture("images/tank_blue.png"), levelGenerator.getTankCoordinates().get(0));
+        tanks = new ArrayList<>();
+        for (int i = 0; i < levelGenerator.getTankCoordinates().size(); i++){
+            tanks.add(new Player(new Texture("images/tank_blue.png"), levelGenerator.getTankCoordinates().get(i)));
+        }
 
-        //trees = new Tree(new Texture("images/greenTree.png"), new GridPoint2(1, 3));
         trees = new ArrayList<>();
         for (int i = 0; i < levelGenerator.getTreeCoordinates().size(); i++){
             trees.add(new Tree(new Texture("images/greenTree.png"), levelGenerator.getTreeCoordinates().get(i)));
@@ -52,13 +56,40 @@ public class GameDesktopLauncher implements ApplicationListener {
         // clear the screen
         ScreenPicture.clearScreen();
 
-        tank.move(Gdx.input, trees, MOVEMENT_SPEED);
+        tanks.get(0).updateMove(true);
+        for (int i = 1; i < tanks.size(); i++) {
+            tanks.get(i).updateMove(false);
+        }
+
+        List<Boolean> obstacle = new ArrayList<>();
+        for (Player tank : tanks) {
+            obstacle.add(tank.checkCollisions(trees, tanks));
+        }
+        for (int i = 0; i < obstacle.size(); i++) {
+            if (!obstacle.get(i)){
+                tanks.get(i).nextMove(new Movement(new GridPoint2(0, 0), tanks.get(i).getRotation()));
+            }
+            tanks.get(i).move(trees, tanks, MOVEMENT_SPEED);
+        }
+
+
+        for (Player tank : tanks) {
+            tank.updateCoordinates();
+        }
+
+        for (Player tank : tanks) {
+            levelLayer.updatePosition(tank);
+        }
+
+
         // calculate interpolated player screen coordinates
-        levelLayer.updatePosition(tank);
+        for (Player tank : tanks) {
+            levelLayer.updatePosition(tank);
+        }
         // render each tile of the level
         levelLayer.render();
 
-        ScreenPicture.draw(batch, tank, trees);
+        ScreenPicture.draw(batch, tanks, trees);
     }
 
     @Override
@@ -79,7 +110,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         for (Tree tree : trees) {
             tree.dispose();
         }
-        tank.dispose();
+        for (Player tank : tanks) {
+            tank.dispose();
+        }
         levelLayer.dispose();
         batch.dispose();
     }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.TileMovement;
 import ru.mipt.bit.platformer.util.graphics.TankGraphics;
 import ru.mipt.bit.platformer.util.movement.*;
 
@@ -19,7 +20,7 @@ public class Player {
     private float rotation;
     private TankGraphics texture;
     private float movementProgress;
-
+    public TileMovement tileMovement;
 
     public Movement nextMove;
 
@@ -40,16 +41,20 @@ public class Player {
         rotation = nextMove.rotation;
     }
 
-    public void move() {
+    public void moving() {
         destination.add(nextMove.direction);
     }
 
     public GridPoint2 tryMovement() {
+        if (nextMove.isNull())
+            return destination;
+
         GridPoint2 newCoordinates = new GridPoint2();
         newCoordinates.x = destination.x + nextMove.direction.x;
         newCoordinates.y = destination.y + nextMove.direction.y;
         return newCoordinates;
     }
+
 
     public void finishMove() {
         nextMove.direction.x = 0;
@@ -68,8 +73,13 @@ public class Player {
     }
 
 
-    public void updateMovementProgress(float deltaTime, float movementSpeed) {
-        movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
+    public void updateMove(boolean itIsPlayer) {
+        if (itIsPlayer){
+            nextMove = KeyboardInterpreter.determineDirectionByKey(Gdx.input);
+        }
+        else {
+            nextMove = KeyboardInterpreter.randomMovementGenerator(Gdx.input);
+        }
     }
 
     public float getRotation() {
@@ -96,21 +106,50 @@ public class Player {
         texture.getBlueTank().dispose();
     }
 
-    public void move(Input input, List<Tree> trees, float movementSpeed) {
-        nextMove = KeyboardInterpreter.determineDirectionByKey(Gdx.input);
-        if (!nextMove.isNull() && finishCheck()){
+    public void move(List<Tree> trees, List<Player> tanks, float movementSpeed) {
+        if (!nextMove.isNull() && finishCheck()) {
             rotate();
-            if (notObstacleAhead(trees)){
-                move();
-                finishMove();
-            }
+            moving();
+            finishMove();
         }
+
         float deltaTime = Gdx.graphics.getDeltaTime();
         updateMovementProgress(deltaTime, movementSpeed);
+    }
+
+    private void updateMovementProgress(float deltaTime, float movementSpeed) {
+        movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
+    }
+
+    public void updateCoordinates(){
         if (finishCheck()) {
+            // record that the player has reached his/her destination
             coordinates.set(destination);
         }
     }
 
+    public Boolean checkCollisions(List<Tree> trees, List<Player> tanks) {
+        return notObstacleAhead(trees) && notTankAhead(tanks);
+    }
+
+    private boolean notTankAhead(List<Player> tanks) {
+        GridPoint2 thisPossibleCoordinates = tryMovement();
+        GridPoint2 tankPossibleCoordinates;
+        for (Player tank : tanks) {
+            if (this.equals(tank)) {
+                continue;
+            }
+            tankPossibleCoordinates = tank.tryMovement();
+            if (tank.getCoordinates().equals(thisPossibleCoordinates) ||
+                    tankPossibleCoordinates.equals(thisPossibleCoordinates)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void nextMove(Movement nextMove) {
+        this.nextMove = nextMove;
+    }
 }
 
