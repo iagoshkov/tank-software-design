@@ -9,8 +9,8 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
 public class ObjectGraphics {
-    private TextureRegion graphics;
-    private Texture texture;
+    private final TextureRegion graphics;
+    private final Texture texture;
 
     public TextureRegion getGraphics() {
         return graphics;

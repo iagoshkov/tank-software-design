@@ -5,6 +5,12 @@ import com.badlogic.gdx.math.GridPoint2;
 
 public class OnScreenObject {
     protected ObjectGraphics objectGraphics;
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    protected boolean alive = true;
     public ObjectGraphics getObjectGraphics() {
         return objectGraphics;
     }

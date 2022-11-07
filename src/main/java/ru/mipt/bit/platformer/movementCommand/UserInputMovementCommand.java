@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer.movementCommand;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.objects.OnScreenObject;
-import ru.mipt.bit.platformer.objects.Player;
+import ru.mipt.bit.platformer.objects.Tank;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,25 +14,26 @@ public class UserInputMovementCommand implements MovementCommand {
     private final Input input;
 
     @Override
-    public HashMap<Player, GridPoint2> getTankActions(ArrayList<OnScreenObject> obstacles, ArrayList<Player> players, int fieldWidth, int fieldHeight) {
-        HashMap<Player, GridPoint2> ret = new HashMap<>();
-        for (var player : players) {
+    public HashMap<Tank, TankAction> getTankActions(ArrayList<OnScreenObject> obstacles, ArrayList<Tank> tanks, int fieldWidth, int fieldHeight) {
+        HashMap<Tank, TankAction> ret = new HashMap<>();
+        for (var player : tanks) {
             if (!player.isManuallyControlled())
                 continue;
-            GridPoint2 movement = new GridPoint2(0, 0);
+            TankAction action;
             if (input.isKeyPressed(UP) || input.isKeyPressed(W)) {
-                movement.y = 1;
+                action = TankAction.MOVE_UP;
+            } else if (input.isKeyPressed(LEFT) || input.isKeyPressed(A)) {
+                action = TankAction.MOVE_LEFT;
+            } else if (input.isKeyPressed(DOWN) || input.isKeyPressed(S)) {
+                action = TankAction.MOVE_DOWN;
+            } else if (input.isKeyPressed(RIGHT) || input.isKeyPressed(D)) {
+                action = TankAction.MOVE_RIGHT;
+            } else if (input.isKeyPressed(SPACE)) {
+                action = TankAction.SHOOT;
+            } else {
+                action = TankAction.WAIT;
             }
-            if (input.isKeyPressed(LEFT) || input.isKeyPressed(A)) {
-                movement.x = -1;
-            }
-            if (input.isKeyPressed(DOWN) || input.isKeyPressed(S)) {
-                movement.y = -1;
-            }
-            if (input.isKeyPressed(RIGHT) || input.isKeyPressed(D)) {
-                movement.x = 1;
-            }
-            ret.put(player, movement);
+            ret.put(player, action);
         }
         return ret;
     }
