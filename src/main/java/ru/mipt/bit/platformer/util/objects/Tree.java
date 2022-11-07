@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 
-public class Tree {
+public class Tree implements BaseObject{
     private final Texture texture;
     private final TextureRegion graphics;
     private final GridPoint2 coordinates;

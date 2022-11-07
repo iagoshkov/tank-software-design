@@ -7,12 +7,15 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.util.TileMovement;
 import ru.mipt.bit.platformer.util.leveling.LevelCreator;
+import ru.mipt.bit.platformer.util.observer.BulletAction;
+import ru.mipt.bit.platformer.util.observer.Observable;
+import ru.mipt.bit.platformer.util.observer.Observer;
 
 import java.util.List;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-public class Level{
+public class Level implements Observable {
     public TiledMap level;
     public MapRenderer levelRenderer;
     public TileMovement tileMovement;
@@ -47,6 +50,19 @@ public class Level{
     }
 
 
+    @Override
+    public void addObserver(Observer o) {
 
+    }
+
+    @Override
+    public void removeObserver(Observer o) {
+
+    }
+
+    @Override
+    public void giveSignal(BulletAction bulletAction, BaseObject object) {
+
+    }
 }
 

@@ -14,7 +14,7 @@ import java.util.List;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Player {
+public class Player implements BaseObject{
 
     private GridPoint2 coordinates;
     private GridPoint2 destination;
