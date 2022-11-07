@@ -9,7 +9,7 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Bullet extends OnScreenObject{
     private GridPoint2 battlefieldDimensions;
-    private GridPoint2 destinationCoordinates;
+    private volatile GridPoint2 destinationCoordinates;
     private final GridPoint2 movementCoordinates;
     private float movementProgress = 1f;
 
@@ -21,7 +21,7 @@ public class Bullet extends OnScreenObject{
         return destinationCoordinates;
     }
 
-    private OnScreenObject collides (ArrayList<? extends OnScreenObject> objects, GridPoint2 newCoordinates) {
+    private OnScreenObject collides(ArrayList<? extends OnScreenObject> objects, GridPoint2 newCoordinates) {
         for (var object : objects) {
             if (Objects.equals(object.coordinates, newCoordinates) || (!this.equals(object) && object instanceof Tank && Objects.equals(((Tank) object).getDestinationCoordinates(), newCoordinates))) {
                 return object;
@@ -59,20 +59,16 @@ public class Bullet extends OnScreenObject{
             GridPoint2 coordinatesAfterMove = new GridPoint2(this.coordinates).add(this.movementCoordinates);
             OnScreenObject collidesWith;
 
-            if (collides(tanks, coordinatesAfterMove) != null && (collidesWith = collides(tanks, coordinatesAfterMove)) instanceof Tank) {
+            this.destinationCoordinates.set(coordinatesAfterMove);
+            this.movementProgress = 0f;
+
+            if (collides(tanks, coordinates) != null && (collidesWith = collides(tanks, coordinates)) instanceof Tank) {
                 alive = false;
                 Tank collidedTank = (Tank) collidesWith;
                 collidedTank.decreaseHealth();
-                return;
-            }
-
-            if ((collides(obstacles, coordinatesAfterMove) != null) || outOfBattlefield(coordinatesAfterMove)) {
+            }else if ((collides(obstacles, coordinates) != null) || outOfBattlefield(coordinates)) {
                 alive = false;
-                return;
             }
-
-            this.destinationCoordinates.set(coordinatesAfterMove);
-            this.movementProgress = 0f;
         }
     }
 }

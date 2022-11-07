@@ -99,7 +99,6 @@ public class Tank extends OnScreenObject {
             if (action == TankAction.WAIT) return null;
 
             if (action == TankAction.SHOOT) {
-                System.out.println("BANG");
                 Bullet bullet = new Bullet(bulletImage, new GridPoint2(this.coordinates).add(getBulletMovementDirection()),
                         battlefieldDimensions, getBulletMovementDirection());
                 return bullet;

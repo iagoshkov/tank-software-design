@@ -18,7 +18,7 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float MOVEMENT_SPEED = 0.4f;
-    private static final float BULLET_MOVEMENT_SPEED = 0.1f;
+    private static final float BULLET_MOVEMENT_SPEED = 0.3f;
     GameGraphics gameGraphics;
     private final ArrayList<Tank> tanks = new ArrayList<>();
     private final ArrayList<OnScreenObject> obstacles = new ArrayList<>();
