@@ -124,7 +124,6 @@ public class Player {
 
     public void updateCoordinates(){
         if (finishCheck()) {
-            // record that the player has reached his/her destination
             coordinates.set(destination);
         }
     }

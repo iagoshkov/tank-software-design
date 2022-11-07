@@ -1,11 +1,12 @@
 package ru.mipt.bit.platformer.AI;
 
-import org.awesome.ai.Action;
-import org.awesome.ai.Recommendation;
-import org.awesome.ai.state.GameState;
-import org.awesome.ai.strategy.NotRecommendingAI;
 
-import org.awesome.ai.AI;
+import ru.mipt.bit.platformer.AI.Action;
+import ru.mipt.bit.platformer.AI.Recommendation;
+import ru.mipt.bit.platformer.AI.state.GameState;
+import ru.mipt.bit.platformer.AI.strategy.NotRecommendingAI;
+
+import ru.mipt.bit.platformer.AI.AI;
 import ru.mipt.bit.platformer.AI.commands.Down;
 import ru.mipt.bit.platformer.AI.commands.Left;
 import ru.mipt.bit.platformer.AI.commands.Right;
@@ -15,6 +16,9 @@ import ru.mipt.bit.platformer.util.objects.Tree;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static ru.mipt.bit.platformer.AI.Action.*;
+
 
 public class AIMovement implements AiInterface {
     private GameState gameState;

@@ -7,12 +7,11 @@ import java.util.List;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.GridPoint2;
-import org.awesome.ai.state.GameState;
-import org.awesome.ai.state.immovable.Obstacle;
-import org.awesome.ai.state.movable.Bot;
-import org.awesome.ai.state.movable.Orientation;
-import org.awesome.ai.state.movable.Player;
-import ru.mipt.bit.platformer.util.objects.Player;
+import ru.mipt.bit.platformer.AI.state.GameState;
+import ru.mipt.bit.platformer.AI.state.immovable.Obstacle;
+import ru.mipt.bit.platformer.AI.state.movable.Bot;
+import ru.mipt.bit.platformer.AI.state.movable.Orientation;
+import ru.mipt.bit.platformer.AI.state.movable.Player;
 import ru.mipt.bit.platformer.util.objects.Tree;
 
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.List;
 public class EnvSet {
 
 
-    public GameState envSet (List<Tree> trees, List<Player> tanks, int screenSide1, int screenSide2){
+    public GameState envSet (List<Tree> trees, List<ru.mipt.bit.platformer.util.objects.Player> tanks, int screenSide1, int screenSide2){
         GameState.GameStateBuilder gameStateBuilder = new GameState.GameStateBuilder();
         return gameStateBuilder
                 .obstacles(treeList(trees))
@@ -40,7 +39,7 @@ public class EnvSet {
         return obstacles;
     }
 
-    List<Bot> botList(List<Player> tanks){
+    List<Bot> botList(List<ru.mipt.bit.platformer.util.objects.Player> tanks){
         List<Bot> bots = new ArrayList<>();
         for (int i = 1; i < tanks.size(); i++) {
             bots.add(createBot(tanks.get(i)));
@@ -62,7 +61,7 @@ public class EnvSet {
         }
     }
 
-    Player createPlayer(Player tank){
+    Player createPlayer(ru.mipt.bit.platformer.util.objects.Player tank){
         return new Player.PlayerBuilder()
                 .source(tank)
                 .x(tank.getCoordinates().x)
@@ -73,7 +72,7 @@ public class EnvSet {
                 .build();
     }
 
-    public Bot createBot(Player tank) {
+    public Bot createBot(ru.mipt.bit.platformer.util.objects.Player tank) {
         return new Bot.BotBuilder()
                 .source(tank)
                 .x(tank.getCoordinates().x)
