@@ -17,7 +17,7 @@ import java.util.Map;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameDesktopLauncher implements ApplicationListener {
-    private static final float MOVEMENT_SPEED = 0.4f;
+    private static final float TANK_INITIAL_MOVEMENT_SPEED = 0.4f;
     private static final float BULLET_MOVEMENT_SPEED = 0.3f;
     GameGraphics gameGraphics;
     private final ArrayList<Tank> tanks = new ArrayList<>();
@@ -37,7 +37,7 @@ public class GameDesktopLauncher implements ApplicationListener {
             obstacles.add(o);
         }
         for (var coordinatePair : generator.getPlayersCoordinates()) {
-            var o = new Tank("images/tank_blue.png", coordinatePair,
+            var o = new Tank("images/tank_blue.png", coordinatePair, TANK_INITIAL_MOVEMENT_SPEED,
                     new GridPoint2(gameGraphics.getFieldWidth(), gameGraphics.getFieldHeight()));
             tanks.add(o);
         }
@@ -65,7 +65,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private void updateTanksPositions(float deltaTime) {
         MovementCommand automaticMovement = new RandomMovementCommand();
-//        AiMovementCommand automaticMovement = new AiMovementCommand(obstacles, tanks, fieldWidth, fieldHeight);
+//        AiMovementCommand aiMovement = new AiMovementCommand(obstacles, tanks, fieldWidth, fieldHeight);
         MovementCommand userInputMovement = new UserInputMovementCommand(Gdx.input);
 
         Map<Tank, TankAction> userControlledTanksActions = userInputMovement.getTankActions(obstacles, tanks,
@@ -79,24 +79,32 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private void updateTanksInMap(Map<Tank, TankAction> actions, float deltaTime) {
         for (var tank : actions.keySet()) {
+            if (tank.isDead()) {
+                gameGraphics.removeDrawableObject(tank);
+                tanks.remove(tank);
+                continue;
+            }
             TankAction tankAction = actions.get((tank));
-            Bullet bullet = tank.update(tankAction, obstacles, tanks, deltaTime, MOVEMENT_SPEED);
+            Bullet bullet = tank.update(tankAction, obstacles, tanks, deltaTime);
             if (bullet != null) {
                 bullets.add(bullet);
-                gameGraphics.addDrawableObjects(bullet);
-            }
-            if (!tank.isAlive()) {
-                tanks.remove(tank);
+                gameGraphics.addDrawableObject(bullet);
             }
         }
     }
 
     private void updateBullets(float deltaTime) {
+        ArrayList<Bullet> toRemove = new ArrayList<>();
         for (var bullet : bullets) {
-            if (!bullet.isAlive()) {
+            if (bullet.isDead()) {
+                gameGraphics.removeDrawableObject(bullet);
+                toRemove.add(bullet);
                 continue;
             }
             bullet.update(obstacles, tanks, deltaTime, BULLET_MOVEMENT_SPEED);
+        }
+        for (var bullet : toRemove) {
+            bullets.remove(bullet);
         }
     }
 

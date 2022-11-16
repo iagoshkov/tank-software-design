@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.GridPoint2;
 public class OnScreenObject {
     protected ObjectGraphics objectGraphics;
 
-    public boolean isAlive() {
-        return alive;
+    public boolean isDead() {
+        return !alive;
     }
 
     protected boolean alive = true;
@@ -19,11 +19,12 @@ public class OnScreenObject {
         return rotation;
     }
     protected GridPoint2 coordinates;
-    public OnScreenObject (GridPoint2 coordinates) {
-        this.coordinates = new GridPoint2(coordinates);
-    }
+
     public OnScreenObject (String path, GridPoint2 coordinates) {
+        this(coordinates);
         this.objectGraphics = new ObjectGraphics(path);
+    }
+    public OnScreenObject (GridPoint2 coordinates) {
         this.coordinates = new GridPoint2(coordinates);
     }
 

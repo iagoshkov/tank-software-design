@@ -2,6 +2,8 @@ package ru.mipt.bit.platformer.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.movementCommand.TankAction;
+import ru.mipt.bit.platformer.objects.state.HealthyState;
+import ru.mipt.bit.platformer.objects.state.TankState;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -10,12 +12,15 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Tank extends OnScreenObject {
     private static String bulletImage = "images/bullet.png";
-    public void decreaseHealth() {
+    private float initialMovementSpeed;
+    TankState currentState;
+    public void wasShot() {
         if (health == 0) {
             this.alive = false;
             return;
         }
         this.health--;
+        this.currentState = TankState.dispatch(health, maxHealth, initialMovementSpeed);
     }
 
     private GridPoint2 getBulletMovementDirection() {
@@ -31,27 +36,25 @@ public class Tank extends OnScreenObject {
         return new GridPoint2();
     }
 
-    private int health = 3;
-    private GridPoint2 battlefieldDimensions;
-    private final GridPoint2 destinationCoordinates;
-    private float movementProgress = 1f;
+    private int health, maxHealth;
+    private GridPoint2 battlefieldDimensions, destinationCoordinates;
+    public GridPoint2 getDestinationCoordinates() {
+        return destinationCoordinates;
+    }
 
+    private boolean manuallyControlled = false;
     public boolean isManuallyControlled() {
         return manuallyControlled;
     }
-
     public void setManuallyControlled(boolean manuallyControlled) {
         this.manuallyControlled = manuallyControlled;
     }
 
-    private boolean manuallyControlled = false;
-
+    private float movementProgress = 1f;
     public float getMovementProgress() {
         return movementProgress;
     }
-    public GridPoint2 getDestinationCoordinates() {
-        return destinationCoordinates;
-    }
+
     private void setRotation(GridPoint2 movement) {
         if (movement.x > 0) {
             this.rotation = 0;
@@ -74,31 +77,19 @@ public class Tank extends OnScreenObject {
     }
 
     private boolean outOfBattlefield (GridPoint2 newCoordinates) {
-        return newCoordinates.x < 0 || newCoordinates.y < 0 || newCoordinates.x >= battlefieldDimensions.x ||
-                newCoordinates.y >= battlefieldDimensions.y;
+        return newCoordinates.x < 0 || newCoordinates.y < 0 || newCoordinates.x >= battlefieldDimensions.x
+                || newCoordinates.y >= battlefieldDimensions.y;
     }
 
-    public Tank(String path, GridPoint2 coordinates, GridPoint2 battlefieldDimensions) {
-        super(path, coordinates);
-        this.destinationCoordinates = new GridPoint2(coordinates);
-        this.battlefieldDimensions = battlefieldDimensions;
-    }
-
-    public Tank(GridPoint2 coordinates, GridPoint2 battlefieldDimensions) {
-        super(coordinates);
-        this.destinationCoordinates = new GridPoint2(coordinates);
-        this.battlefieldDimensions = battlefieldDimensions;
-    }
-
-    public Bullet update(TankAction action, ArrayList<OnScreenObject> obstacles, ArrayList<Tank> tanks,
-                       float deltaTime, float movementSpeed) {
-        this.movementProgress = continueProgress(this.movementProgress, deltaTime, movementSpeed);
+    public Bullet update(TankAction action, ArrayList<OnScreenObject> obstacles, ArrayList<Tank> tanks, float deltaTime) {
+        this.movementProgress = continueProgress(this.movementProgress, deltaTime, currentState.getMovementSpeed());
 
         if (movementProgress == 1f) {
             this.coordinates.set(destinationCoordinates);
             if (action == TankAction.WAIT) return null;
 
             if (action == TankAction.SHOOT) {
+                if (!currentState.shootingAllowed()) return null;
                 Bullet bullet = new Bullet(bulletImage, new GridPoint2(this.coordinates).add(getBulletMovementDirection()),
                         battlefieldDimensions, getBulletMovementDirection());
                 return bullet;
@@ -112,5 +103,31 @@ public class Tank extends OnScreenObject {
             this.setRotation(action.getMovement());
         }
         return null;
+    }
+
+    public Tank(String path, GridPoint2 coordinates, float initialMovementSpeed, GridPoint2 battlefieldDimensions) {
+        this(path, coordinates, initialMovementSpeed, battlefieldDimensions, 5);
+    }
+    public Tank(String path, GridPoint2 coordinates, float initialMovementSpeed, GridPoint2 battlefieldDimensions, int maxHealth) {
+        super(path, coordinates);
+        setProperties(coordinates, initialMovementSpeed, battlefieldDimensions, maxHealth);
+    }
+    public Tank(GridPoint2 coordinates, float initialMovementSpeed, GridPoint2 battlefieldDimensions) {
+        this(coordinates, initialMovementSpeed, battlefieldDimensions, 5);
+    }
+    public Tank(GridPoint2 coordinates, float initialMovementSpeed, GridPoint2 battlefieldDimensions, int maxHealth) {
+        super(coordinates);
+        setProperties(coordinates, initialMovementSpeed, battlefieldDimensions, maxHealth);
+    }
+
+    private void setProperties(GridPoint2 coordinates, float initialMovementSpeed, GridPoint2 battlefieldDimensions, int maxHealth) {
+        this.destinationCoordinates = new GridPoint2(coordinates);
+        this.battlefieldDimensions = battlefieldDimensions;
+
+        this.initialMovementSpeed = initialMovementSpeed;
+        this.currentState = new HealthyState(initialMovementSpeed);
+
+        this.health = maxHealth;
+        this.maxHealth = maxHealth;
     }
 }

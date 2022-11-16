@@ -45,14 +45,23 @@ public class GameGraphics {
 
     public void addDrawableObjects(ArrayList<? extends OnScreenObject> objects) {
         for (var object : objects) {
-            this.drawableObjects.add(object);
-            moveRectangleAtTileCenter(this.groundLayer, object.getObjectGraphics().getRectangle(), object.getCoordinates());
+            addDrawableObject(object);
         }
     }
 
-    public void addDrawableObjects(OnScreenObject object) {
+    public void addDrawableObject(OnScreenObject object) {
         this.drawableObjects.add(object);
         moveRectangleAtTileCenter(this.groundLayer, object.getObjectGraphics().getRectangle(), object.getCoordinates());
+    }
+
+    public void removeDrawableObjects(ArrayList<? extends OnScreenObject> objects) {
+        for (var object : objects) {
+            removeDrawableObject(object);
+        }
+    }
+
+    public void removeDrawableObject(OnScreenObject object) {
+        this.drawableObjects.remove(object);
     }
 
     public GameGraphics() {
@@ -68,20 +77,13 @@ public class GameGraphics {
     public void drawAllObjects() {
         levelRenderer.render();
         batch.begin();
-        ArrayList<OnScreenObject> toDelete = new ArrayList<>();
         for (var o : this.drawableObjects) {
             if (o instanceof Tank) {
                 Tank tank = (Tank) o;
-                if (!tank.isAlive()) {
-                    continue;
-                }
                 tileMovement.moveRectangleBetweenTileCenters(tank.getObjectGraphics().getRectangle(), tank.getCoordinates(),
                         tank.getDestinationCoordinates(), tank.getMovementProgress());
             } else if (o instanceof Bullet) {
                 Bullet bullet = (Bullet) o;
-                if (!bullet.isAlive()) {
-                    continue;
-                }
                 tileMovement.moveRectangleBetweenTileCenters(bullet.getObjectGraphics().getRectangle(), bullet.getCoordinates(),
                         bullet.getDestinationCoordinates(), bullet.getMovementProgress());
             }

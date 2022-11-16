@@ -10,7 +10,7 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 public class Bullet extends OnScreenObject{
     private GridPoint2 battlefieldDimensions;
     private volatile GridPoint2 destinationCoordinates;
-    private final GridPoint2 movementCoordinates;
+    private GridPoint2 movementCoordinates;
     private float movementProgress = 1f;
 
 
@@ -35,20 +35,6 @@ public class Bullet extends OnScreenObject{
                 newCoordinates.y >= battlefieldDimensions.y;
     }
 
-    public Bullet(String path, GridPoint2 coordinates, GridPoint2 battlefieldDimensions, GridPoint2 movementCoordinates) {
-        super(path, coordinates);
-        this.destinationCoordinates = new GridPoint2(coordinates);
-        this.battlefieldDimensions = battlefieldDimensions;
-        this.movementCoordinates = movementCoordinates;
-    }
-
-    public Bullet(GridPoint2 coordinates, GridPoint2 battlefieldDimensions, GridPoint2 movementCoordinates) {
-        super(coordinates);
-        this.destinationCoordinates = new GridPoint2(coordinates);
-        this.battlefieldDimensions = battlefieldDimensions;
-        this.movementCoordinates = movementCoordinates;
-    }
-
     public void update(ArrayList<OnScreenObject> obstacles, ArrayList<Tank> tanks,
                        float deltaTime, float movementSpeed) {
         this.movementProgress = continueProgress(this.movementProgress, deltaTime, movementSpeed);
@@ -65,10 +51,26 @@ public class Bullet extends OnScreenObject{
             if (collides(tanks, coordinates) != null && (collidesWith = collides(tanks, coordinates)) instanceof Tank) {
                 alive = false;
                 Tank collidedTank = (Tank) collidesWith;
-                collidedTank.decreaseHealth();
+                collidedTank.wasShot();
             }else if ((collides(obstacles, coordinates) != null) || outOfBattlefield(coordinates)) {
                 alive = false;
             }
         }
+    }
+
+    public Bullet(String path, GridPoint2 coordinates, GridPoint2 battlefieldDimensions, GridPoint2 movementCoordinates) {
+        super(path, coordinates);
+        setProperties(coordinates, battlefieldDimensions, movementCoordinates);
+    }
+
+    public Bullet(GridPoint2 coordinates, GridPoint2 battlefieldDimensions, GridPoint2 movementCoordinates) {
+        super(coordinates);
+        setProperties(coordinates, battlefieldDimensions, movementCoordinates);
+    }
+
+    private void setProperties(GridPoint2 coordinates, GridPoint2 battlefieldDimensions, GridPoint2 movementCoordinates) {
+        this.destinationCoordinates = new GridPoint2(coordinates);
+        this.battlefieldDimensions = battlefieldDimensions;
+        this.movementCoordinates = movementCoordinates;
     }
 }
