@@ -8,11 +8,11 @@ public class LightlyDamagedState implements TankState{
     }
 
     @Override
-    public boolean shootingAllowed() {
-        return true;
+    public float getMinShootInterval() {
+        return 0.5f;
     }
 
     public LightlyDamagedState(float initialMovementSpeed) {
-        this.movementSpeed = 0.5f * initialMovementSpeed;
+        this.movementSpeed = initialMovementSpeed * 2;
     }
 }

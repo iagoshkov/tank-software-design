@@ -8,11 +8,11 @@ public class SeverelyDamagedState implements TankState{
     }
 
     @Override
-    public boolean shootingAllowed() {
-        return false;
+    public float getMinShootInterval() {
+        return 0;
     }
 
     public SeverelyDamagedState(float initialMovementSpeed) {
-        this.movementSpeed = 0.33f * initialMovementSpeed;
+        this.movementSpeed = initialMovementSpeed * 3;
     }
 }

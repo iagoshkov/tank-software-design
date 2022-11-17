@@ -2,7 +2,7 @@ package ru.mipt.bit.platformer.objects.state;
 
 public interface TankState {
     float getMovementSpeed();
-    boolean shootingAllowed();
+    float getMinShootInterval();
 
     static TankState dispatch(int health, int maxHealth, float initialMovementSpeed) {
         if (health >= 0.7f * maxHealth) {

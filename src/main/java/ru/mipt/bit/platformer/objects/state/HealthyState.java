@@ -8,8 +8,8 @@ public class HealthyState implements TankState{
     }
 
     @Override
-    public boolean shootingAllowed() {
-        return true;
+    public float getMinShootInterval() {
+        return 0.5f;
     }
 
     public HealthyState(float initialMovementSpeed) {

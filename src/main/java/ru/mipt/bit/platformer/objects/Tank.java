@@ -50,6 +50,8 @@ public class Tank extends OnScreenObject {
         this.manuallyControlled = manuallyControlled;
     }
 
+    private float shootingProgress = 1f;
+
     private float movementProgress = 1f;
     public float getMovementProgress() {
         return movementProgress;
@@ -68,8 +70,8 @@ public class Tank extends OnScreenObject {
     }
 
     private boolean collides (ArrayList<? extends OnScreenObject> allCoordinates, GridPoint2 newCoordinates) {
-        for (var coord : allCoordinates) {
-            if (Objects.equals(coord.coordinates, newCoordinates) || (!this.equals(coord) && coord instanceof Tank && Objects.equals(((Tank) coord).destinationCoordinates, newCoordinates))) {
+        for (var coordinatePair : allCoordinates) {
+            if (Objects.equals(coordinatePair.coordinates, newCoordinates) || (!this.equals(coordinatePair) && coordinatePair instanceof Tank && Objects.equals(((Tank) coordinatePair).destinationCoordinates, newCoordinates))) {
                 return true;
             }
         }
@@ -77,19 +79,25 @@ public class Tank extends OnScreenObject {
     }
 
     private boolean outOfBattlefield (GridPoint2 newCoordinates) {
-        return newCoordinates.x < 0 || newCoordinates.y < 0 || newCoordinates.x >= battlefieldDimensions.x
-                || newCoordinates.y >= battlefieldDimensions.y;
+        return newCoordinates.x < 0 ||
+                newCoordinates.y < 0 ||
+                newCoordinates.x >= battlefieldDimensions.x ||
+                newCoordinates.y >= battlefieldDimensions.y;
     }
 
     public Bullet update(TankAction action, ArrayList<OnScreenObject> obstacles, ArrayList<Tank> tanks, float deltaTime) {
-        this.movementProgress = continueProgress(this.movementProgress, deltaTime, currentState.getMovementSpeed());
+        movementProgress = continueProgress(movementProgress, deltaTime, currentState.getMovementSpeed());
+        shootingProgress = continueProgress(shootingProgress, deltaTime, 1);
 
         if (movementProgress == 1f) {
             this.coordinates.set(destinationCoordinates);
             if (action == TankAction.WAIT) return null;
 
             if (action == TankAction.SHOOT) {
-                if (!currentState.shootingAllowed()) return null;
+                float shootingInterval = currentState.getMinShootInterval();
+                if (shootingInterval == 0 || shootingProgress < shootingInterval) return null;
+
+                shootingProgress = 0;
                 Bullet bullet = new Bullet(bulletImage, new GridPoint2(this.coordinates).add(getBulletMovementDirection()),
                         battlefieldDimensions, getBulletMovementDirection());
                 return bullet;
