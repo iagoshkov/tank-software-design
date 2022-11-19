@@ -1,6 +1,5 @@
 package ru.mipt.bit.platformer.movementCommand;
 
-import com.badlogic.gdx.math.GridPoint2;
 import org.awesome.ai.AI;
 import org.awesome.ai.Action;
 import org.awesome.ai.Recommendation;
@@ -12,6 +11,7 @@ import ru.mipt.bit.platformer.objects.OnScreenObject;
 import ru.mipt.bit.platformer.objects.Tank;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,10 +25,10 @@ public class AiMovementCommand {
     private final int levelWidth;
     private final int levelHeight;
     private List<Bot> botsConverted;
-    public HashMap<Tank, TankAction> getTankActions(ArrayList<OnScreenObject> obstacles, ArrayList<Tank> tanks) {
+    public HashMap<Tank, TankAction> getTankActions(Collection<OnScreenObject> obstacles, Collection<Tank> tanks) {
         HashMap<Tank, TankAction> ret = new HashMap<>();
-        this.obstaclesInGame = obstacles;
-        this.playersInGame = tanks;
+        this.obstaclesInGame = new ArrayList<>(obstacles);
+        this.playersInGame = new ArrayList<>(tanks);
 
         convertObstacles();
         convertBots();

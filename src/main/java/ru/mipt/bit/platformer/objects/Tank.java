@@ -6,13 +6,16 @@ import ru.mipt.bit.platformer.objects.state.HealthyState;
 import ru.mipt.bit.platformer.objects.state.TankState;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Tank extends OnScreenObject {
+public class Tank extends MovableObject {
     private static String bulletImage = "images/bullet.png";
-    private float initialMovementSpeed;
+    private boolean manuallyControlled = false;
+    private float initialMovementSpeed, shootingProgress = 1f;
+    private int health, maxHealth;
     TankState currentState;
     public void wasShot() {
         if (health == 0) {
@@ -35,26 +38,11 @@ public class Tank extends OnScreenObject {
         }
         return new GridPoint2();
     }
-
-    private int health, maxHealth;
-    private GridPoint2 battlefieldDimensions, destinationCoordinates;
-    public GridPoint2 getDestinationCoordinates() {
-        return destinationCoordinates;
-    }
-
-    private boolean manuallyControlled = false;
     public boolean isManuallyControlled() {
         return manuallyControlled;
     }
     public void setManuallyControlled(boolean manuallyControlled) {
         this.manuallyControlled = manuallyControlled;
-    }
-
-    private float shootingProgress = 1f;
-
-    private float movementProgress = 1f;
-    public float getMovementProgress() {
-        return movementProgress;
     }
 
     private void setRotation(GridPoint2 movement) {
@@ -69,28 +57,12 @@ public class Tank extends OnScreenObject {
         }
     }
 
-    private boolean collides (ArrayList<? extends OnScreenObject> allCoordinates, GridPoint2 newCoordinates) {
-        for (var coordinatePair : allCoordinates) {
-            if (Objects.equals(coordinatePair.coordinates, newCoordinates) || (!this.equals(coordinatePair) && coordinatePair instanceof Tank && Objects.equals(((Tank) coordinatePair).destinationCoordinates, newCoordinates))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean outOfBattlefield (GridPoint2 newCoordinates) {
-        return newCoordinates.x < 0 ||
-                newCoordinates.y < 0 ||
-                newCoordinates.x >= battlefieldDimensions.x ||
-                newCoordinates.y >= battlefieldDimensions.y;
-    }
-
-    public Bullet update(TankAction action, ArrayList<OnScreenObject> obstacles, ArrayList<Tank> tanks, float deltaTime) {
+    public Bullet update(TankAction action, Collection<OnScreenObject> obstacles, Collection<Tank> tanks, float deltaTime) {
         movementProgress = continueProgress(movementProgress, deltaTime, currentState.getMovementSpeed());
         shootingProgress = continueProgress(shootingProgress, deltaTime, 1);
 
         if (movementProgress == 1f) {
-            this.coordinates.set(destinationCoordinates);
+            coordinates.set(destinationCoordinates);
             if (action == TankAction.WAIT) return null;
 
             if (action == TankAction.SHOOT) {
@@ -98,17 +70,18 @@ public class Tank extends OnScreenObject {
                 if (shootingInterval == 0 || shootingProgress < shootingInterval) return null;
 
                 shootingProgress = 0;
-                Bullet bullet = new Bullet(bulletImage, new GridPoint2(this.coordinates).add(getBulletMovementDirection()),
+                Bullet bullet = new Bullet(bulletImage, new GridPoint2(coordinates).add(getBulletMovementDirection()),
                         battlefieldDimensions, getBulletMovementDirection());
                 return bullet;
             }
 
-            GridPoint2 coordinatesAfterMove = new GridPoint2(this.coordinates).add(action.getMovement());
-            if (!collides(obstacles, coordinatesAfterMove) && !collides(tanks, coordinatesAfterMove) && !outOfBattlefield(coordinatesAfterMove)) {
-                this.destinationCoordinates.set(coordinatesAfterMove);
-                this.movementProgress = 0f;
+            GridPoint2 coordinatesAfterMove = new GridPoint2(coordinates).add(action.getMovement());
+            if (collides(obstacles, coordinatesAfterMove) == null && collides(tanks, coordinatesAfterMove) == null &&
+                    !outOfBattlefield(coordinatesAfterMove)) {
+                destinationCoordinates.set(coordinatesAfterMove);
+                movementProgress = 0;
             }
-            this.setRotation(action.getMovement());
+            setRotation(action.getMovement());
         }
         return null;
     }
@@ -117,14 +90,14 @@ public class Tank extends OnScreenObject {
         this(path, coordinates, initialMovementSpeed, battlefieldDimensions, 5);
     }
     public Tank(String path, GridPoint2 coordinates, float initialMovementSpeed, GridPoint2 battlefieldDimensions, int maxHealth) {
-        super(path, coordinates);
+        super(path, coordinates, battlefieldDimensions);
         setProperties(coordinates, initialMovementSpeed, battlefieldDimensions, maxHealth);
     }
     public Tank(GridPoint2 coordinates, float initialMovementSpeed, GridPoint2 battlefieldDimensions) {
         this(coordinates, initialMovementSpeed, battlefieldDimensions, 5);
     }
     public Tank(GridPoint2 coordinates, float initialMovementSpeed, GridPoint2 battlefieldDimensions, int maxHealth) {
-        super(coordinates);
+        super(coordinates, battlefieldDimensions);
         setProperties(coordinates, initialMovementSpeed, battlefieldDimensions, maxHealth);
     }
 

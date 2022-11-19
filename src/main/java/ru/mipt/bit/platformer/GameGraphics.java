@@ -13,37 +13,34 @@ import ru.mipt.bit.platformer.objects.Tank;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameGraphics {
-    private Batch batch;
-    private TiledMap level;
-    private MapRenderer levelRenderer;
-    private TileMovement tileMovement;
+    public void toggleLegend() {
+        this.displayLegend = !this.displayLegend;
+    }
+
+    private boolean displayLegend = false;
+    private final Batch batch;
+    private final TiledMap level;
+    private final MapRenderer levelRenderer;
+    private final TileMovement tileMovement;
     TiledMapTileLayer groundLayer;
 
     public int getFieldWidth() {
         return fieldWidth;
     }
-
-    public void setFieldWidth(int fieldWidth) {
-        this.fieldWidth = fieldWidth;
-    }
-
     public int getFieldHeight() {
         return fieldHeight;
-    }
-
-    public void setFieldHeight(int fieldHeight) {
-        this.fieldHeight = fieldHeight;
     }
 
     private int fieldWidth, fieldHeight;
     private final HashSet<OnScreenObject> drawableObjects = new HashSet<>();
 
-    public void addDrawableObjects(ArrayList<? extends OnScreenObject> objects) {
+    public void addDrawableObjects(Collection<? extends OnScreenObject> objects) {
         for (var object : objects) {
             addDrawableObject(object);
         }
@@ -54,7 +51,7 @@ public class GameGraphics {
         moveRectangleAtTileCenter(this.groundLayer, object.getObjectGraphics().getRectangle(), object.getCoordinates());
     }
 
-    public void removeDrawableObjects(ArrayList<? extends OnScreenObject> objects) {
+    public void removeDrawableObjects(Collection<? extends OnScreenObject> objects) {
         for (var object : objects) {
             removeDrawableObject(object);
         }

@@ -7,8 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Random;
 
 public class FromFileGenerator implements LevelGenerator {
     private final ArrayList<GridPoint2> obstaclesCoordinates = new ArrayList<>();

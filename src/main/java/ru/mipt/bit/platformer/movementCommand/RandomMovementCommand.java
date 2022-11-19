@@ -5,16 +5,15 @@ import ru.mipt.bit.platformer.objects.OnScreenObject;
 import ru.mipt.bit.platformer.objects.Tank;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
-
-import static com.badlogic.gdx.Input.Keys.*;
 
 public class RandomMovementCommand implements MovementCommand {
     private final Random rd = new Random();
 
     @Override
-    public HashMap<Tank, TankAction> getTankActions(ArrayList<OnScreenObject> obstacles, ArrayList<Tank> tanks, int fieldWidth, int fieldHeight) {
+    public HashMap<Tank, TankAction> getTankActions(Collection<OnScreenObject> obstacles, Collection<Tank> tanks, int fieldWidth, int fieldHeight) {
         HashMap<Tank, TankAction> actions = new HashMap<>();
         for (var player : tanks) {
             if (player.isManuallyControlled())
