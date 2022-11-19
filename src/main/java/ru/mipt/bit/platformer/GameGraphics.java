@@ -124,7 +124,7 @@ public class GameGraphics {
 
     private void listenToUserCommand(float deltaTime) {
         legendToggleTimePassed = continueProgress(legendToggleTimePassed, deltaTime, 1f);
-        if (legendToggleTimePassed == 1f) {
+        if (legendToggleTimePassed >= 0.3f) {
             var input = Gdx.input;
             if (input.isKeyPressed(L)) {
                 legendToggleTimePassed = 0;
