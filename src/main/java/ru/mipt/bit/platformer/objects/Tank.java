@@ -5,9 +5,7 @@ import ru.mipt.bit.platformer.movementCommand.TankAction;
 import ru.mipt.bit.platformer.objects.state.HealthyState;
 import ru.mipt.bit.platformer.objects.state.TankState;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
@@ -15,7 +13,18 @@ public class Tank extends MovableObject {
     private static String bulletImage = "images/bullet.png";
     private boolean manuallyControlled = false;
     private float initialMovementSpeed, shootingProgress = 1f;
-    private int health, maxHealth;
+
+    public int getHealth() {
+        return health;
+    }
+
+    private int health;
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    private int maxHealth;
     TankState currentState;
     public void wasShot() {
         if (health == 0) {

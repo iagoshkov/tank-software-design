@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.objects.OnScreenObject;
 import ru.mipt.bit.platformer.objects.Tank;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;

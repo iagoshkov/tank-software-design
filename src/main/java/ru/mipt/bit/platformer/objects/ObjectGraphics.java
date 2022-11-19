@@ -41,7 +41,6 @@ public class ObjectGraphics {
 
     public void draw(Batch batch, float rotation) {
         drawTextureRegionUnscaled(batch, this.getGraphics(), this.getRectangle(), rotation);
-
     }
 
     public void dispose() {

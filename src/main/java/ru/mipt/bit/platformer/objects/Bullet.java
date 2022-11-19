@@ -2,9 +2,7 @@ package ru.mipt.bit.platformer.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 

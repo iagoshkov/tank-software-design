@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
-import static ru.mipt.bit.platformer.GameDesktopLauncher.TANK_INITIAL_MOVEMENT_SPEED;
 import static ru.mipt.bit.platformer.GameDesktopLauncher.BULLET_MOVEMENT_SPEED;
+import static ru.mipt.bit.platformer.GameDesktopLauncher.TANK_INITIAL_MOVEMENT_SPEED;
 
 public class GameLogic {
     private final HashSet<Tank> tanks = new HashSet<>();
@@ -94,6 +94,6 @@ public class GameLogic {
         updateTanksPositions(deltaTime);
         updateBullets(deltaTime);
 
-        gameGraphics.drawAllObjects();
+        gameGraphics.updateScreen(deltaTime);
     }
 }

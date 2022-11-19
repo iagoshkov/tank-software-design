@@ -4,18 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.generator.LevelGenerator;
-import ru.mipt.bit.platformer.movementCommand.MovementCommand;
-import ru.mipt.bit.platformer.movementCommand.RandomMovementCommand;
-import ru.mipt.bit.platformer.movementCommand.TankAction;
-import ru.mipt.bit.platformer.movementCommand.UserInputMovementCommand;
-import ru.mipt.bit.platformer.objects.Bullet;
-import ru.mipt.bit.platformer.objects.OnScreenObject;
-import ru.mipt.bit.platformer.objects.Tank;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
