@@ -10,31 +10,33 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
 public class TREE {
-    private static Texture treeTexture;
-    private static TextureRegion treeGraphics;
+    private Texture treeTexture;
+    private TextureRegion treeGraphics;
     private GridPoint2 treeCoordinates;
-    private static Rectangle treeRectangle = new Rectangle();
+    private Rectangle treeRectangle = new Rectangle();
 
     public TREE(GridPoint2 StartCoordinates){
-
         this.treeCoordinates = StartCoordinates;
+        //System.out.println("do tree");
         System.out.println(StartCoordinates);
     }
-    public void CreateObstacleGraphics(String PathTexture){
+    public void CreateTreeGraphics(String PathTexture){
         this.treeTexture = new Texture(PathTexture);
         this.treeGraphics = new TextureRegion(this.treeTexture);
-        this.treeRectangle = createBoundingRectangle(treeGraphics);
+        this.treeRectangle = createBoundingRectangle(this.treeGraphics);
     }
-    public GridPoint2 ObstacleCoordinates() {
-        return treeCoordinates;
+    public GridPoint2 TreeCoordinates() {
+        return this.treeCoordinates;
     }
 
-    public static Rectangle ObstacleRectangle() {
-        return treeRectangle;
+    public Rectangle TreeRectangle() {
+        return this.treeRectangle;
     }
 
     public void Render(Batch batch){
-        drawTextureRegionUnscaled(batch, treeGraphics, treeRectangle, 0f);
+        //System.out.println("Render tree");
+        //System.out.println(treeCoordinates);
+        drawTextureRegionUnscaled(batch, this.treeGraphics, this.treeRectangle, 0f);
     }
     public void dispose() {
         treeTexture.dispose();

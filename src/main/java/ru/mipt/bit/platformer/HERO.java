@@ -50,7 +50,7 @@ public class HERO {
         return TankRectangle;
     }
 
-    public void checkMove(ANGLE direction, TREE tree) {
+    public void checkMove(ANGLE direction, TREE tree, TREES trees) {
         if (!isEqual(TankMovementProgress, 1f))
             return;
         GridPoint2 new_xy = new GridPoint2(TankCoordinates);
@@ -58,22 +58,23 @@ public class HERO {
 
         TankRotation = direction.ANGLE();
         GridPoint2 estimatedCoordinates = TankCoordinates.add(direction.Coordinates());
-        if (tree.ObstacleCoordinates().equals(estimatedCoordinates))
-            return;
+        for (TREE _tree : trees.treeslist)
+            if (_tree.TreeCoordinates().equals(estimatedCoordinates))
+                return;
         TankMovementProgress = 0f;
         TankDestinationCoordinates = new_xy;
     }
 
-    public void Move(TREE tree) {
+    public void Move(TREE tree, TREES trees) {
         float deltaTime = Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W))
-            checkMove(new ANGLE(0, 1), tree);
+            checkMove(new ANGLE(0, 1), tree, trees);
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A))
-            checkMove(new ANGLE(-1, 0), tree);
+            checkMove(new ANGLE(-1, 0), tree, trees);
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S))
-            checkMove(new ANGLE(0, -1), tree);
+            checkMove(new ANGLE(0, -1), tree, trees);
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D))
-            checkMove(new ANGLE(1, 0), tree);
+            checkMove(new ANGLE(1, 0), tree, trees);
 
         TankMovementProgress = continueProgress(TankMovementProgress, deltaTime, MOVEMENT_SPEED);
         if (isEqual(TankMovementProgress, 1f)) {
