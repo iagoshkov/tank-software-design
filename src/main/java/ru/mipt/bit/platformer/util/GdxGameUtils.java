@@ -49,6 +49,9 @@ public final class GdxGameUtils {
 
     public static Rectangle moveRectangleAtTileCenter(TiledMapTileLayer tileLayer, Rectangle rectangle, GridPoint2 tileCoordinates) {
         Vector2 tileCenter = calculateTileCenter(tileLayer, tileCoordinates);
+        //return rectangle.setCenter(new Vector2(600, 600));
+//        System.out.println("Rectangle func");
+//        System.out.println(tileCenter);
         return rectangle.setCenter(tileCenter);
     }
 
