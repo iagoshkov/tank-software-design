@@ -37,29 +37,20 @@ public class TREES {
             treeslist.add(new_tree);
         }
     }
-    public TREES(boolean generate_from_file, Integer ... count_tree_for_rnd_way) throws FileNotFoundException { //если вписать число, будет генерировать случайные деревья
-        if (generate_from_file) {
-            SaveLevelFromTxt("level.txt");
-        } else {
-            create_rnd_xy_list(count_tree_for_rnd_way[0]);
-        }
+    public TREES(boolean generate_from_file, Scanner scanner) throws FileNotFoundException { //если вписать Scanner, считает из файла
+        assert generate_from_file == false: "should use other constructor by Integer, not by Scanner";
+        SaveLevelFromTxt(scanner);
 
         create_treeslist_from_xylist();
     }
-    public void TREES2(String file_path) throws FileNotFoundException { //если вписать строчку, будет считывать файл
-        SaveLevelFromTxt(file_path);
+    public TREES(boolean generate_from_file, Integer count_tree_for_rnd_way) { //если вписать число, будет генерировать случайные деревья
+        assert generate_from_file == true: "should use other constructor by Scanner, not by Integer";
+        create_rnd_xy_list(count_tree_for_rnd_way);
 
-        //create_treeslist_from_xylist();
+        create_treeslist_from_xylist();
     }
-    public void SaveLevelFromTxt(String file_name) throws FileNotFoundException {
 
-        File global_path = new File(new File(new File(new File(System.getProperty("user.dir"), "src"), "main"), "resources"), file_name);
-        System.out.println(global_path.getAbsolutePath());
-        if (global_path.exists())
-            System.out.println("File is present.");
-        else
-            System.out.println("File is not present"); // файл отсутствуе
-        Scanner scanner = new Scanner(global_path);
+    public void SaveLevelFromTxt(Scanner scanner) throws FileNotFoundException {
         Integer y = 7;
         while (scanner.hasNextLine()) {
             String line_txt = scanner.nextLine();

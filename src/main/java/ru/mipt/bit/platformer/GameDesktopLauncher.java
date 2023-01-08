@@ -9,8 +9,12 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import java.util.Scanner;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
@@ -23,8 +27,17 @@ public class GameDesktopLauncher implements ApplicationListener {
     private LEVEL level1;
     private TileMovement tileMovement;
     private HERO hero;
-
-
+    private String level_file_name = "level.txt";
+    public Scanner get_Scanner_for_txt(String level_file_name) throws FileNotFoundException {
+        File global_path = new File(new File(new File(new File(System.getProperty("user.dir"), "src"), "main"), "resources"), level_file_name);
+        System.out.println(global_path.getAbsolutePath());
+        if (global_path.exists())
+            System.out.println("File is present.");
+        else
+            System.out.println("File is not present"); // файл отсутствует
+        Scanner scanner = new Scanner(global_path);
+        return scanner;
+    }
     @Override
     public void create() {
         System.out.println("CREATION");
@@ -32,15 +45,29 @@ public class GameDesktopLauncher implements ApplicationListener {
         level1 = new LEVEL("level.tmx", batch);
 
         tileMovement = new TileMovement(level1.GroundLayer(), Interpolation.smooth);
+        hero = new HERO();
+        Integer hero_x = 0, hero_y = 0;
+        boolean generate_from_file = true; // выбираем каким образом будем создавать уровень: из файла или случайно
 
-        hero = new HERO(new GridPoint2(2,2), 90f);
-
-        try {
-            trees = new TREES(false, 10);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        if (generate_from_file) {
+            try {
+                Scanner scanner1 = get_Scanner_for_txt(level_file_name);
+                trees = new TREES(generate_from_file, scanner1);
+                Scanner scanner2 = get_Scanner_for_txt(level_file_name);
+                Integer[] hero_xy = hero.get_coordinates_from_file(scanner2);
+                hero_x = hero_xy[0];
+                hero_y = hero_xy[1];
+                System.out.println(hero_xy);
+                System.out.println(hero_xy[0]);
+                System.out.println(hero_xy[1]);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            trees = new TREES(generate_from_file, 12);
         }
 
+        hero.set_coordinates(new GridPoint2(hero_x, hero_y), 90f);
         for (TREE tree : trees.treeslist) {
             tree.CreateTreeGraphics("images/greenTree.png");
             moveRectangleAtTileCenter(level1.GroundLayer(), tree.TreeRectangle(), tree.TreeCoordinates());

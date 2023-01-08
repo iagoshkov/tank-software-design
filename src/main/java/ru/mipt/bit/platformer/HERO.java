@@ -7,6 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
@@ -27,13 +31,26 @@ public class HERO {
         this.TankRectangle = createBoundingRectangle(this.TankGraphics);
     }
 
-    public HERO(GridPoint2 coordinates, float rotation) {
+    public HERO() {}
+    public void set_coordinates(GridPoint2 coordinates, float rotation) {
+
         this.TankDestinationCoordinates = coordinates;
         this.TankCoordinates = coordinates;
         this.TankRotation = rotation;
         this.CreateTankGraphics();
     }
-
+    public static Integer[] get_coordinates_from_file(Scanner scanner) {
+        Integer y = 7;
+        while (scanner.hasNextLine()) {
+            String line_txt = scanner.nextLine();
+            for (Integer x = 0; x < line_txt.length(); x++)
+                if (line_txt.charAt(x) == 'X')
+                    return new Integer[] {x, y};
+            y -= 1;
+        }
+        scanner.close();
+        return new Integer[] {0, 0};
+    };
     public static GridPoint2 TankCoordinates() {
         return TankCoordinates;
     }
