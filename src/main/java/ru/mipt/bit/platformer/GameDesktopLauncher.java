@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
@@ -34,7 +35,11 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         hero = new HERO(new GridPoint2(2,2), 90f);
 
-        trees = new TREES(8);
+        try {
+            trees = new TREES(false, 10);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         for (TREE tree : trees.treeslist) {
             tree.CreateTreeGraphics("images/greenTree.png");
