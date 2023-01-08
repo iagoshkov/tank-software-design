@@ -9,11 +9,14 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import java.util.Map;
+
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Batch batch;
-    private TREE tree;
+    private TREE tree1;
+    private TREES trees;
     private LEVEL level1;
     private TileMovement tileMovement;
     private HERO hero;
@@ -28,24 +31,34 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         hero = new HERO(new GridPoint2(5,5), 90f);
 
-//        listOfObstacles = new ListOfObstacles();
-        tree = new TREE(new GridPoint2(1,3));
-//        listOfObstacles.addObstacle(tree);
-        tree.CreateObstacleGraphics("images/greenTree.png");
-        moveRectangleAtTileCenter(level1.GroundLayer(), tree.ObstacleRectangle(), tree.ObstacleCoordinates());
+        trees = new TREES(4);
+
+        tree1 = trees.treeslist.get(0);//new TREE(new GridPoint2(1,3));
+        tree1.CreateObstacleGraphics("images/greenTree.png");
+        moveRectangleAtTileCenter(level1.GroundLayer(), tree1.ObstacleRectangle(), tree1.ObstacleCoordinates());
     }
     @Override
     public void render() {
         level1.ClearScreen();
 
-        hero.Move(tree);
+        hero.Move(tree1);
         tileMovement.moveRectangleBetweenTileCenters(hero.TankRectangle(), hero.TankCoordinates(),
                 hero.TankDestinationCoordinates(), hero.TankMovementProgress());
 
         level1.Render();
         batch.begin();
         hero.Render(batch);
-        tree.Render(batch);
+//        System.out.println(trees.treeslist.size());
+//        for (TREE tree1 : trees.treeslist) {
+//            tree1.Render(batch);
+//            System.out.println(tree1);
+//        }
+//        for (TREE tree : trees.treeslist) {
+//            tree.Render(batch);
+//            System.out.println(tree);
+//        }
+
+        tree1.Render(batch);
         batch.end();
     }
 
@@ -67,7 +80,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
         hero.dispose();
-        tree.dispose();
+        tree1.dispose();
         level1.dispose();
         batch.dispose();
     }

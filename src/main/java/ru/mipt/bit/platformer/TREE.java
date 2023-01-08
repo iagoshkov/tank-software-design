@@ -16,7 +16,9 @@ public class TREE {
     private static Rectangle treeRectangle = new Rectangle();
 
     public TREE(GridPoint2 StartCoordinates){
+
         this.treeCoordinates = StartCoordinates;
+        System.out.println(StartCoordinates);
     }
     public void CreateObstacleGraphics(String PathTexture){
         this.treeTexture = new Texture(PathTexture);
