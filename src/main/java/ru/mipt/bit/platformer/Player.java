@@ -1,20 +1,24 @@
 package ru.mipt.bit.platformer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 
+import static com.badlogic.gdx.Input.Keys.*;
+import static com.badlogic.gdx.Input.Keys.D;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class Player {
-    private TextureRegion graphics;
-    private Rectangle rectangle;
+    private final Texture texture;
+    private final TextureRegion graphics;
+    private final Rectangle rectangle;
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     private GridPoint2 coordinates;
     // which tile the player want to go next
-    private GridPoint2 destinationCoordinates;
+    private final GridPoint2 destinationCoordinates;
     private float movementProgress = 1f;
     private float rotation;
 
@@ -42,63 +46,53 @@ public class Player {
         return rotation;
     }
 
-    public Player(Texture blueTankTexture) {
-        graphics = new TextureRegion(blueTankTexture);
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public Player(String imagePath, GridPoint2 initialCoordinates) {
+        texture = new Texture(imagePath);
+        graphics = new TextureRegion(texture);
         rectangle = createBoundingRectangle(graphics);
         // set player initial position
-        destinationCoordinates = new GridPoint2(1, 1);
+        destinationCoordinates = initialCoordinates;
         coordinates = new GridPoint2(destinationCoordinates);
         rotation = 0f;
     }
 
-    public void TryGoUp(GridPoint2 treeObstacleCoordinates) {
-        if (isEqual(movementProgress, 1f)) {
-            // check potential player destination for collision with obstacles
-            if (!treeObstacleCoordinates.equals(incrementedY(coordinates))) {
-                destinationCoordinates.y++;
-                movementProgress = 0f;
+
+    private boolean canMove(Direction direction, GridPoint2 obstacleCoordinates) {
+        GridPoint2 newCoordinates = new GridPoint2(this.coordinates);
+        direction.move(newCoordinates);
+        return !newCoordinates.equals(obstacleCoordinates);
+    }
+
+    private boolean startMovement() {
+        return isEqual(movementProgress, 1f);
+    }
+
+    private void stopMovement() {
+        movementProgress = 0f;
+    }
+
+    public void tryMove(Obstacle obstacle, Direction direction) {
+        GridPoint2 treeObstacleCoordinates = obstacle.getCoordinates();
+        if (startMovement() && Direction.NODIRECTION != direction) {
+            if (canMove(direction, treeObstacleCoordinates)) {
+                direction.move(destinationCoordinates);
+                stopMovement();
             }
-            rotation = 90f;
+            rotation = direction.getAngle();
         }
     }
 
-
-    public void TryGoLeft(GridPoint2 treeObstacleCoordinates) {
-        if (isEqual(movementProgress, 1f)) {
-            if (!treeObstacleCoordinates.equals(decrementedX(coordinates))) {
-                destinationCoordinates.x--;
-                movementProgress = 0f;
-            }
-            rotation = -180f;
-        }
-    }
-
-    public void TryGoDown(GridPoint2 treeObstacleCoordinates) {
-        if (isEqual(movementProgress, 1f)) {
-            if (!treeObstacleCoordinates.equals(decrementedY(coordinates))) {
-                destinationCoordinates.y--;
-                movementProgress = 0f;
-            }
-            rotation = -90f;
-        }
-    }
-
-    public void TryGoRight(GridPoint2 treeObstacleCoordinates) {
-        if (isEqual(movementProgress, 1f)) {
-            if (!treeObstacleCoordinates.equals(incrementedX(coordinates))) {
-                destinationCoordinates.x++;
-                movementProgress = 0f;
-            }
-            rotation = 0f;
-        }
-    }
-
-    public void continuePlayerProgress(float deltaTime, float MOVEMENT_SPEED) {
+    public void continuePlayerProgress(float MOVEMENT_SPEED) {
+        // get time passed since the last render
+        float deltaTime = Gdx.graphics.getDeltaTime();
         movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
         if (isEqual(movementProgress, 1f)) {
             // record that the player has reached his/her destination
             coordinates = destinationCoordinates;
         }
     }
-
 }
