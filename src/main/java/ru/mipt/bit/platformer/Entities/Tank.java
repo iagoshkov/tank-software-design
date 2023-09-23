@@ -9,23 +9,24 @@ import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Tank implements Movable {
-    private static final float MOVEMENT_SPEED = 0.4f;
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
+    private final float movementSpeed;
     private float movementProgress;
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
     private Direction direction;
 
-    public Tank(GridPoint2 coordinates, Direction direction) {
+    public Tank(GridPoint2 coordinates, Direction direction, float movementSpeed) {
         this.movementProgress = 1;
         this.coordinates = coordinates;
         this.destinationCoordinates = coordinates;
         this.direction = direction;
+        this.movementSpeed = movementSpeed;
     }
 
     public boolean isMoving() {
-        return !isEqual(movementProgress, MOVEMENT_COMPLETED);
+        return isEqual(movementProgress, MOVEMENT_COMPLETED);
     }
 
     public void moveTo(GridPoint2 tankTargetCoordinates) {
@@ -38,7 +39,7 @@ public class Tank implements Movable {
     }
 
     public void moveIfNotCollides(Direction direction, List<MapObject> obstacles) {
-        if (!isMoving()) {
+        if (isMoving()) {
             GridPoint2 targetCoordinates = direction.apply(coordinates);
 
             if (!collides(targetCoordinates, obstacles)) {
@@ -50,8 +51,8 @@ public class Tank implements Movable {
     }
 
     public void updateState(float deltaTime) {
-        movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
-        if (!isMoving()) {
+        movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
+        if (isMoving()) {
             coordinates = destinationCoordinates;
         }
     }
@@ -60,14 +61,10 @@ public class Tank implements Movable {
         return direction;
     }
 
-    public boolean collides(GridPoint2 targetCoordinates, MapObject other) {
-        return targetCoordinates.equals(other.getCoordinates());
-    }
-
     public boolean collides(GridPoint2 targetCoordinates, List<MapObject> others) {
         for (MapObject other: others) {
             if (other != this) {
-                if (collides(targetCoordinates, other)) {
+                if (targetCoordinates.equals(other.getCoordinates())) {
                     return true;
                 }
             }

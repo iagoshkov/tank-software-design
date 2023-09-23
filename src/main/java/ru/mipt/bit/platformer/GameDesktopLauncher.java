@@ -29,8 +29,9 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
-    private Batch batch;
+    private static final float DEFAULT_MOVEMENT_SPEED = 0.4f;
 
+    private Batch batch;
     private TiledMap level;
     private MapRenderer levelRenderer;
     private TiledMapTileLayer groundLayer;
@@ -46,18 +47,20 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
+        initKeyMappings();
+
         batch = new SpriteBatch();
         level = new TmxMapLoader().load("level.tmx");
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
-        playerTank = new Tank(new GridPoint2(2, 1), Direction.RIGHT);
+        playerTank = new Tank(new GridPoint2(2, 1), Direction.RIGHT, DEFAULT_MOVEMENT_SPEED);
         movableObjects.addAll(List.of(
                 playerTank,
-                new Tank(new GridPoint2(2, 4), Direction.UP),
-                new Tank(new GridPoint2(1, 4), Direction.UP),
-                new Tank(new GridPoint2(3, 4), Direction.UP)
+                new Tank(new GridPoint2(2, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED),
+                new Tank(new GridPoint2(1, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED),
+                new Tank(new GridPoint2(3, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED)
         ));
         staticObjects.addAll(List.of(
                 new Tree(new GridPoint2(1, 3)),
@@ -71,7 +74,6 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         initGraphics();
         createStaticObjects();
-        initKeyMappings();
     }
 
     private void createStaticObjects() {

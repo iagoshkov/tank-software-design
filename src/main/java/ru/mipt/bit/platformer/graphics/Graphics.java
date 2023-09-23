@@ -1,20 +1,17 @@
 package ru.mipt.bit.platformer.graphics;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 
-
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
 public class Graphics implements Disposable {
     private final Texture texture;
-
     private final TextureRegion region;
     private final Rectangle rectangle;
+
     public Graphics(String texturePicPath) {
         this.texture = new Texture(texturePicPath);
         this.region = new TextureRegion(texture);
@@ -27,10 +24,6 @@ public class Graphics implements Disposable {
 
     public Rectangle getRectangle() {
         return rectangle;
-    }
-
-    public void Draw(SpriteBatch batch, float rotation) {
-        drawTextureRegionUnscaled(batch, region, rectangle, rotation);
     }
 
     @Override
