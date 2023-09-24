@@ -18,20 +18,22 @@ public enum Direction {
         return angle;
     }
 
-    public void move(GridPoint2 point) {
+    public GridPoint2 apply(GridPoint2 point) {
+        GridPoint2 copyPoint = point.cpy();
         switch (this) {
             case UP:
-                ++point.y;
+                ++copyPoint.y;
                 break;
             case DOWN:
-                --point.y;
+                --copyPoint.y;
                 break;
             case RIGHT:
-                ++point.x;
+                ++copyPoint.x;
                 break;
             case LEFT:
-                --point.x;
+                --copyPoint.x;
                 break;
         }
+        return copyPoint;
     }
 }

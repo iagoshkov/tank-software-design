@@ -1,10 +1,9 @@
 package ru.mipt.bit.platformer;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.GdxGameUtils;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
-public class TankMovement {
+public class Tank {
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
     private static final float MOVEMENT_SPEED = 0.4f;
@@ -25,7 +24,7 @@ public class TankMovement {
         return destinationCoordinates;
     }
 
-    public TankMovement(GridPoint2 initialCoordinates) {
+    public Tank(GridPoint2 initialCoordinates) {
         destinationCoordinates = initialCoordinates;
         coordinates = new GridPoint2(destinationCoordinates);
         rotation = 0f;

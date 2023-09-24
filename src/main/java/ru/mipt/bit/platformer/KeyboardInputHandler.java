@@ -5,8 +5,9 @@ import com.badlogic.gdx.Gdx;
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.Input.Keys.D;
 
-public class InputHandler {
-    public Direction handleKeyboard() {
+public class KeyboardInputHandler implements InputHandler{
+    @Override
+    public Direction handleKeystrokes() {
         Direction direction = Direction.NODIRECTION;
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
             direction = Direction.UP;
