@@ -10,14 +10,15 @@ import ru.mipt.bit.platformer.util.TileMovement;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-public class Graphics {
-    private TextureRegion graphics;
-    private Rectangle rectangle = new Rectangle();
-    private TileMovement tileMovement;
-    public Graphics(Texture texture, TileMovement tileMovement)  {
+public class ObjectGraphics {
+    private final Texture texture;
+    private final TextureRegion graphics;
+    private final Rectangle rectangle;
+
+    public ObjectGraphics(String textureFile)  {
+        texture = new Texture(textureFile);
         graphics = new TextureRegion(texture);
         rectangle = createBoundingRectangle(graphics);
-        this.tileMovement = tileMovement;
     }
     public void draw(Batch batch, float rotation) {
         drawTextureRegionUnscaled(batch, graphics, rectangle, rotation);
@@ -29,5 +30,9 @@ public class Graphics {
 
     public Rectangle getRectangle() {
         return rectangle;
+    }
+
+    public void dispose() {
+        texture.dispose();
     }
 }
