@@ -10,7 +10,7 @@ public enum Direction {
     NODIRECTION(1);
 
     private final float angle;
-    private Direction(float angle){
+    Direction(float angle){
         this.angle = angle;
     }
 
