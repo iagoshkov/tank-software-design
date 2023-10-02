@@ -4,18 +4,42 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import ru.mipt.bit.platformer.graphics.Graphics;
+import ru.mipt.bit.platformer.movement.CollisionChecker;
+import ru.mipt.bit.platformer.movement.Direction;
+import ru.mipt.bit.platformer.objects.Level;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Graphics graphics;
+    private TiledMap map;
+    private CollisionChecker collisionChecker;
     private Level level;
     private final KeyboardInputHandler inputHandler = new KeyboardInputHandler();
     @Override
     public void create() {
-        level = new Level();
-        graphics = new Graphics(level);
+        map = new TmxMapLoader().load("level.tmx");
+        level = new Level(new PlacementFromFile("src/main/resources/placement.txt"));
+        collisionChecker = new CollisionChecker();
+        level.initObjects(collisionChecker);
+        graphics = new Graphics(level, map);
+        initColliders();
+    }
+
+    private void initColliders() {
+        if (level.getPlayableTank() != null) {
+            collisionChecker.addColliding(level.getPlayableTank());
+        }
+        for (var tank : level.getTanks()) {
+            collisionChecker.addColliding(tank);
+        }
+        for (var obstacle : level.getObstacles()) {
+            collisionChecker.addColliding(obstacle);
+        }
     }
 
     @Override
@@ -24,7 +48,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         float deltaTime = Gdx.graphics.getDeltaTime();
         Direction desiredDirection = inputHandler.handleKeystrokes();
-        level.getTank().tryMove(level.getTreeObstacle(), desiredDirection);
+        level.getPlayableTank().tryMove(level.getObstacles(), desiredDirection);
         graphics.calculateInterpolatedCoordinates();
         continueTankProgress(deltaTime);
         // render each tile of the level
@@ -32,9 +56,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     }
 
     private void continueTankProgress(float deltaTime) {
-        float newMovementProgress = continueProgress(level.getTank().getMovementProgress(),
-                                                    deltaTime, level.getTank().getSpeed());
-        level.getTank().tryReachDestinationCoordinates(newMovementProgress);
+        float newMovementProgress = continueProgress(level.getPlayableTank().getMovementProgress(),
+                                                    deltaTime, level.getPlayableTank().getSpeed());
+        level.getPlayableTank().tryReachDestinationCoordinates(newMovementProgress);
     }
     private void renderGame() {
         graphics.renderGame();
@@ -66,7 +90,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
         //tankObjectGraphics.dispose();
         //treeObjectGraphics.dispose();
-        level.dispose();
+        map.dispose();
         graphics.dispose();
     }
 

@@ -1,17 +1,22 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.objects;
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.movement.Colliding;
+import ru.mipt.bit.platformer.movement.CollisionChecker;
+import ru.mipt.bit.platformer.movement.Direction;
+
+import java.util.List;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
-public class Tank {
+public class Tank implements Colliding {
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
     private static final float MOVEMENT_SPEED = 0.4f;
-
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
     private float rotation;
     private float movementProgress = MOVEMENT_COMPLETED;
+    private final CollisionChecker collisionChecker;
 
     public float getSpeed() {
         return MOVEMENT_SPEED;
@@ -24,10 +29,11 @@ public class Tank {
         return destinationCoordinates;
     }
 
-    public Tank(GridPoint2 initialCoordinates) {
+    public Tank(GridPoint2 initialCoordinates, CollisionChecker collisionChecker) {
         destinationCoordinates = initialCoordinates;
         coordinates = new GridPoint2(destinationCoordinates);
         rotation = 0f;
+        this.collisionChecker = collisionChecker;
     }
 
     private boolean canMove(Direction direction, GridPoint2 obstacleCoordinates) {
@@ -36,14 +42,26 @@ public class Tank {
     }
 
 
-    public void tryMove(Obstacle obstacle, Direction direction) {
-        GridPoint2 obstacleCoordinates = obstacle.getCoordinates();
+    public void tryMove(List<Obstacle> obstacles, Direction direction) {
         if (notMoving() && Direction.NODIRECTION != direction) {
-            if (canMove(direction, obstacleCoordinates)) {
-                destinationCoordinates = direction.apply(destinationCoordinates);
+//            boolean canMove = true;
+//            for (Obstacle obstacle : obstacles) {
+//                GridPoint2 obstacleCoordinates = obstacle.getCoordinates();
+//                if (!canMove(direction, obstacleCoordinates)) {
+//                    canMove = false;
+//                    break;
+//                }
+            GridPoint2 newCoordinates = direction.apply(coordinates);
+            if (collisionChecker.isFree(newCoordinates)) {
+                destinationCoordinates = newCoordinates;
                 startMovement();
+                rotation = direction.getAngle();
             }
-            rotation = direction.getAngle();
+//            if (canMove) {
+//                destinationCoordinates = direction.apply(destinationCoordinates);
+//                startMovement();
+//                rotation = direction.getAngle();
+//            }
         }
     }
 
@@ -66,6 +84,12 @@ public class Tank {
             coordinates = destinationCoordinates;
         }
     }
+
+    @Override
+    public boolean collides(GridPoint2 target) {
+        return coordinates.equals(target);
+    }
+
     private void startMovement() {
         movementProgress = MOVEMENT_STARTED;
     }
