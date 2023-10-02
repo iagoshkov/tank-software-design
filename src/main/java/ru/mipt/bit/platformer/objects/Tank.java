@@ -36,32 +36,14 @@ public class Tank implements Colliding {
         this.collisionChecker = collisionChecker;
     }
 
-    private boolean canMove(Direction direction, GridPoint2 obstacleCoordinates) {
-        GridPoint2 newCoordinates = direction.apply(this.coordinates);
-        return !newCoordinates.equals(obstacleCoordinates);
-    }
-
-
     public void tryMove(List<Obstacle> obstacles, Direction direction) {
         if (notMoving() && Direction.NODIRECTION != direction) {
-//            boolean canMove = true;
-//            for (Obstacle obstacle : obstacles) {
-//                GridPoint2 obstacleCoordinates = obstacle.getCoordinates();
-//                if (!canMove(direction, obstacleCoordinates)) {
-//                    canMove = false;
-//                    break;
-//                }
             GridPoint2 newCoordinates = direction.apply(coordinates);
             if (collisionChecker.isFree(newCoordinates)) {
                 destinationCoordinates = newCoordinates;
                 startMovement();
                 rotation = direction.getAngle();
             }
-//            if (canMove) {
-//                destinationCoordinates = direction.apply(destinationCoordinates);
-//                startMovement();
-//                rotation = direction.getAngle();
-//            }
         }
     }
 

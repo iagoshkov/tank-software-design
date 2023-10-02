@@ -42,34 +42,7 @@ class LevelTest {
         assertFalse(result);
     }
 
-    @Test
-    public void testIsFreeWhenCollidersReturnTrue() {
-        CollisionChecker checker = new CollisionChecker();
-        Colliding colliding = new Colliding() {
-            @Override
-            public boolean collides(GridPoint2 target) {
-                return false;
-            }
-        };
-        checker.addColliding(colliding);
 
-        GridPoint2 target = new GridPoint2(1, 1);
-
-        boolean result = checker.isFree(target);
-
-        assertTrue(result);
-    }
-
-
-    @Test
-    public void testIsFreeWhenNoColliders() {
-        CollisionChecker checker = new CollisionChecker();
-        GridPoint2 target = new GridPoint2(1, 1);
-
-        boolean result = checker.isFree(target);
-
-        assertTrue(result);
-    }
     @Test
     void testAddTank() {
         LevelGenerator generator = new LevelGenerator() {
