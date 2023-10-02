@@ -32,7 +32,7 @@ public class GraphicsController implements Disposable {
     private final Map<Class<? extends MapObject>, String> objectTexturesPathMap = new HashMap<>();
     private final Map<MapObject, Graphics> objectToGraphicsMap = new HashMap<>();
 
-    GraphicsController(String mapFile) {
+    public GraphicsController(String mapFile) {
         this.batch = new SpriteBatch();
         this.level = new TmxMapLoader().load(mapFile);
         this.levelRenderer = createSingleLayerMapRenderer(level, batch);

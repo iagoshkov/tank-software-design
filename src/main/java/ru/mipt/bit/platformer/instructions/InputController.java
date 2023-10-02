@@ -15,7 +15,7 @@ public class InputController {
 
     private final MapObject player;
 
-    InputController(MapObject player) {
+    public InputController(MapObject player) {
         this.player = player;
 
         initMappings();

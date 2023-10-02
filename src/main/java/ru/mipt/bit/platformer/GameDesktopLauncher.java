@@ -14,15 +14,16 @@ import ru.mipt.bit.platformer.instructions.InputController;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float DEFAULT_MOVEMENT_SPEED = 0.4f;
-    private InputController inputController;
     private GraphicsController graphicsController;
     private Level level;
 
     @Override
     public void create() {
-        inputController = new InputController();
+        Tank player = new Tank(new GridPoint2(2, 1), Direction.RIGHT, DEFAULT_MOVEMENT_SPEED);
+        InputController inputController = new InputController(player);
+
         graphicsController = new GraphicsController("level.tmx");
-        level = new Level(new Tank(new GridPoint2(2, 1), Direction.RIGHT, DEFAULT_MOVEMENT_SPEED), graphicsController, inputController);
+        level = new Level(player, graphicsController, inputController);
 
         level.add(new Tank(new GridPoint2(2, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED));
         level.add(new Tank(new GridPoint2(1, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED));

@@ -33,7 +33,9 @@ public class Level {
     public void moveObjects(float deltaTime) {
         Map.Entry<Instruction, MapObject> objectInstruction = inputController.getInstruction();
 
-        objectInstruction.getValue().apply(objectInstruction.getKey(), objects);
+        if (objectInstruction != null) {
+            objectInstruction.getValue().apply(objectInstruction.getKey(), objects);
+        }
 
         graphicsController.moveRectangles();
 
