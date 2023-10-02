@@ -1,6 +1,9 @@
-package ru.mipt.bit.platformer.Entities;
+package ru.mipt.bit.platformer.entities;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.instructions.Instruction;
+
+import java.util.List;
 
 public class Tree implements MapObject {
     private final GridPoint2 coordinates;
@@ -13,4 +16,7 @@ public class Tree implements MapObject {
     public GridPoint2 getCoordinates() {
         return coordinates;
     }
+
+    @Override
+    public void apply(Instruction key, List<MapObject> objects) {}
 }

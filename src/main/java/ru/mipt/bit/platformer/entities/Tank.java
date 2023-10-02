@@ -1,7 +1,8 @@
-package ru.mipt.bit.platformer.Entities;
+package ru.mipt.bit.platformer.entities;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.Instructions.Direction;
+import ru.mipt.bit.platformer.instructions.Direction;
+import ru.mipt.bit.platformer.instructions.Instruction;
 
 import java.util.List;
 
@@ -85,6 +86,13 @@ public class Tank implements Movable {
     @Override
     public float getRotation() {
         return getDirection().getRotation();
+    }
+
+    @Override
+    public void apply(Instruction instruction, List<MapObject> objects) {
+        if (instruction instanceof Direction) {
+            moveIfNotCollides((Direction) instruction, objects);
+        }
     }
 
     @Override

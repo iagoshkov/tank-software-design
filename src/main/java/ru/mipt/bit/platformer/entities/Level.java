@@ -1,12 +1,14 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.entities;
 
-import ru.mipt.bit.platformer.Entities.MapObject;
-import ru.mipt.bit.platformer.Entities.Tank;
-import ru.mipt.bit.platformer.Instructions.Direction;
-import ru.mipt.bit.platformer.Instructions.Instruction;
+import ru.mipt.bit.platformer.entities.MapObject;
+import ru.mipt.bit.platformer.entities.Tank;
+import ru.mipt.bit.platformer.graphics.GraphicsController;
+import ru.mipt.bit.platformer.instructions.InputController;
+import ru.mipt.bit.platformer.instructions.Instruction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Level {
     private final GraphicsController graphicsController;
@@ -29,11 +31,9 @@ public class Level {
     }
 
     public void moveObjects(float deltaTime) {
-        Instruction instruction = inputController.getInstruction();
+        Map.Entry<Instruction, MapObject> objectInstruction = inputController.getInstruction();
 
-        if (instruction instanceof Direction) {
-            player.moveIfNotCollides((Direction) instruction, objects);
-        }
+        objectInstruction.getValue().apply(objectInstruction.getKey(), objects);
 
         graphicsController.moveRectangles();
 

@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.graphics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -9,10 +9,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.Disposable;
-import ru.mipt.bit.platformer.Entities.MapObject;
-import ru.mipt.bit.platformer.Entities.Movable;
-import ru.mipt.bit.platformer.Entities.Tank;
-import ru.mipt.bit.platformer.Entities.Tree;
+import ru.mipt.bit.platformer.entities.MapObject;
+import ru.mipt.bit.platformer.entities.Movable;
+import ru.mipt.bit.platformer.entities.Tank;
+import ru.mipt.bit.platformer.entities.Tree;
 import ru.mipt.bit.platformer.graphics.Graphics;
 import ru.mipt.bit.platformer.util.TileMovement;
 

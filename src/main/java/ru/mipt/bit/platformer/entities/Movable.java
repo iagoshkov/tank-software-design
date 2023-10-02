@@ -1,7 +1,7 @@
-package ru.mipt.bit.platformer.Entities;
+package ru.mipt.bit.platformer.entities;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.Instructions.Direction;
+import ru.mipt.bit.platformer.instructions.Direction;
 
 import java.util.List;
 

@@ -5,9 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.Entities.Tank;
-import ru.mipt.bit.platformer.Entities.Tree;
-import ru.mipt.bit.platformer.Instructions.Direction;
+import ru.mipt.bit.platformer.entities.Level;
+import ru.mipt.bit.platformer.entities.Tank;
+import ru.mipt.bit.platformer.entities.Tree;
+import ru.mipt.bit.platformer.graphics.GraphicsController;
+import ru.mipt.bit.platformer.instructions.Direction;
+import ru.mipt.bit.platformer.instructions.InputController;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float DEFAULT_MOVEMENT_SPEED = 0.4f;
