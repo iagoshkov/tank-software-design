@@ -26,19 +26,27 @@ public class Tank implements Movable {
         this.movementSpeed = movementSpeed;
     }
 
-    public boolean isMoving() {
+    private boolean isMoving() {
         return isEqual(movementProgress, MOVEMENT_COMPLETED);
     }
 
-    public void moveTo(GridPoint2 tankTargetCoordinates) {
+    private void moveTo(GridPoint2 tankTargetCoordinates) {
         destinationCoordinates = tankTargetCoordinates;
         movementProgress = MOVEMENT_STARTED;
     }
 
-    public void rotate(Direction direction) {
+    private void rotate(Direction direction) {
         this.direction = direction;
     }
 
+    public void updateState(float deltaTime) {
+        movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
+        if (isMoving()) {
+            coordinates = destinationCoordinates;
+        }
+    }
+
+    @Override
     public void moveIfNotCollides(Direction direction, List<MapObject> obstacles) {
         if (isMoving()) {
             GridPoint2 targetCoordinates = direction.apply(coordinates);
@@ -51,17 +59,7 @@ public class Tank implements Movable {
         }
     }
 
-    public void updateState(float deltaTime) {
-        movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
-        if (isMoving()) {
-            coordinates = destinationCoordinates;
-        }
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
+    @Override
     public boolean collides(GridPoint2 targetCoordinates, List<MapObject> others) {
         for (MapObject other: others) {
             if (other != this) {
@@ -85,7 +83,7 @@ public class Tank implements Movable {
 
     @Override
     public float getRotation() {
-        return getDirection().getRotation();
+        return direction.getRotation();
     }
 
     @Override

@@ -18,5 +18,7 @@ public class Tree implements MapObject {
     }
 
     @Override
-    public void apply(Instruction key, List<MapObject> objects) {}
+    public float getRotation() {
+        return 0f;
+    }
 }

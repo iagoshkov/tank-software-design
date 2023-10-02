@@ -47,21 +47,10 @@ public class GraphicsController implements Disposable {
         objectToGraphicsMap.put(object, new Graphics(objectTexturesPathMap.get(object.getClass())));
     }
 
-    public void drawObject(Batch batch, MapObject object) {
-        drawTextureRegionUnscaled(batch, objectToGraphicsMap.get(object).getRegion(), objectToGraphicsMap.get(object).getRectangle(), object.getRotation());
-    }
-
     public void createObjects() {
         for (Map.Entry<MapObject, Graphics> entry: objectToGraphicsMap.entrySet()) {
             moveRectangleAtTileCenter(groundLayer, entry.getValue().getRectangle(), entry.getKey().getCoordinates());
         }
-    }
-
-    @Override
-    public void dispose() {
-        objectToGraphicsMap.values().forEach(Graphics::dispose);
-        level.dispose();
-        batch.dispose();
     }
 
     public void renderGame() {
@@ -90,5 +79,12 @@ public class GraphicsController implements Disposable {
                 );
             }
         }
+    }
+
+    @Override
+    public void dispose() {
+        objectToGraphicsMap.values().forEach(Graphics::dispose);
+        level.dispose();
+        batch.dispose();
     }
 }

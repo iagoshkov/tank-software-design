@@ -1,7 +1,5 @@
 package ru.mipt.bit.platformer.entities;
 
-import ru.mipt.bit.platformer.entities.MapObject;
-import ru.mipt.bit.platformer.entities.Tank;
 import ru.mipt.bit.platformer.graphics.GraphicsController;
 import ru.mipt.bit.platformer.instructions.InputController;
 import ru.mipt.bit.platformer.instructions.Instruction;
@@ -41,5 +39,4 @@ public class Level {
 
         player.updateState(deltaTime);
     }
-
 }

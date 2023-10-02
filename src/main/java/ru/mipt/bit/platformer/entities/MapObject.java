@@ -7,9 +7,6 @@ import java.util.List;
 
 public interface MapObject {
     GridPoint2 getCoordinates();
-    default float getRotation() {
-        return 0f;
-    }
-
-    void apply(Instruction key, List<MapObject> objects);
+    float getRotation();
+    default void apply(Instruction key, List<MapObject> objects) {}
 }

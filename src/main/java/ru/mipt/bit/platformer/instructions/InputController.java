@@ -30,10 +30,9 @@ public class InputController {
         addMapping(Input.Keys.S, Direction.DOWN, player);
         addMapping(Input.Keys.RIGHT, Direction.RIGHT, player);
         addMapping(Input.Keys.D, Direction.RIGHT, player);
-
     }
 
-    public void addMapping(int key, Instruction instruction, MapObject object) {
+    private void addMapping(int key, Instruction instruction, MapObject object) {
         keyToInstructionMap.put(key, Map.entry(instruction, object));
     }
 
