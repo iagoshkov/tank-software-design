@@ -1,7 +1,8 @@
-package ru.mipt.bit.platformer.instructions;
+package ru.mipt.bit.platformer.controllers;
 
 import com.badlogic.gdx.Gdx;
 import ru.mipt.bit.platformer.entities.MapObject;
+import ru.mipt.bit.platformer.instructions.Instruction;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.graphics;
+package ru.mipt.bit.platformer.controllers;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

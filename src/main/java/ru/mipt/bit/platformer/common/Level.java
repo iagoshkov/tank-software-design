@@ -1,6 +1,7 @@
-package ru.mipt.bit.platformer.entities;
+package ru.mipt.bit.platformer.common;
 
-import ru.mipt.bit.platformer.instructions.InputController;
+import ru.mipt.bit.platformer.controllers.InputController;
+import ru.mipt.bit.platformer.entities.MapObject;
 import ru.mipt.bit.platformer.instructions.Instruction;
 
 import java.util.ArrayList;

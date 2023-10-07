@@ -1,8 +1,8 @@
-package ru.mipt.bit.platformer.graphics;
+package ru.mipt.bit.platformer.controllers;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.entities.MapObject;
-import ru.mipt.bit.platformer.entities.ObjectAddHandler;
+import ru.mipt.bit.platformer.common.ObjectAddHandler;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.instructions.Direction;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
-import static ru.mipt.bit.platformer.graphics.CollisionDetector.collides;
+import static ru.mipt.bit.platformer.controllers.CollisionDetector.collides;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Tank implements MapObject {
