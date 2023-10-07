@@ -28,7 +28,7 @@ public class Level {
         objects.add(object);
     }
 
-    public void moveObjects() {
+    public void applyInstructions() {
         Map.Entry<Instruction, MapObject> objectInstruction = inputController.getInstruction();
         if (objectInstruction != null) {
             objectInstruction.getKey().apply(objectInstruction.getValue());
@@ -36,7 +36,6 @@ public class Level {
     }
 
     public void updateState(float deltaTime) {
-        player.updateState(deltaTime);
         objects.forEach(mapObject -> mapObject.updateState(deltaTime));
     }
 }

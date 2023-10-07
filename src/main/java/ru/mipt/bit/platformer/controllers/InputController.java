@@ -11,11 +11,7 @@ import java.util.Map;
 public class InputController {
     private final Map<Integer, Map.Entry<Instruction, MapObject>> keyToInstructionMap = new HashMap<>();
 
-    private final MapObject player;
-
-    public InputController(MapObject player) {
-        this.player = player;
-    }
+    public InputController() {}
 
     public void addMapping(int key, Instruction instruction, MapObject object) {
         keyToInstructionMap.put(key, Map.entry(instruction, object));
