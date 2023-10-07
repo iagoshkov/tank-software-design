@@ -2,12 +2,15 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.entities.Level;
+import ru.mipt.bit.platformer.entities.MapObject;
 import ru.mipt.bit.platformer.entities.Tank;
 import ru.mipt.bit.platformer.entities.Tree;
+import ru.mipt.bit.platformer.graphics.CollisionDetector;
 import ru.mipt.bit.platformer.graphics.GraphicsController;
 import ru.mipt.bit.platformer.instructions.Direction;
 import ru.mipt.bit.platformer.instructions.InputController;
@@ -15,15 +18,17 @@ import ru.mipt.bit.platformer.instructions.InputController;
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float DEFAULT_MOVEMENT_SPEED = 0.4f;
     private GraphicsController graphicsController;
+    private final CollisionDetector collisionDetector = new CollisionDetector();
     private Level level;
 
     @Override
     public void create() {
         Tank player = new Tank(new GridPoint2(2, 1), Direction.RIGHT, DEFAULT_MOVEMENT_SPEED);
         InputController inputController = new InputController(player);
+        initMappings(inputController, player);
 
         graphicsController = new GraphicsController("level.tmx");
-        level = new Level(player, graphicsController, inputController);
+        level = new Level(player, inputController, graphicsController, collisionDetector);
 
         level.add(new Tank(new GridPoint2(2, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED));
         level.add(new Tank(new GridPoint2(1, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED));
@@ -37,9 +42,24 @@ public class GameDesktopLauncher implements ApplicationListener {
         graphicsController.createObjects();
     }
 
+    void initMappings(InputController inputController, MapObject player) {
+        inputController.addMapping(Input.Keys.UP, Direction.UP, player);
+        inputController.addMapping(Input.Keys.W, Direction.UP, player);
+        inputController.addMapping(Input.Keys.LEFT, Direction.LEFT, player);
+        inputController.addMapping(Input.Keys.A, Direction.LEFT, player);
+        inputController.addMapping(Input.Keys.DOWN, Direction.DOWN, player);
+        inputController.addMapping(Input.Keys.S, Direction.DOWN, player);
+        inputController.addMapping(Input.Keys.RIGHT, Direction.RIGHT, player);
+        inputController.addMapping(Input.Keys.D, Direction.RIGHT, player);
+    }
+
+
     @Override
     public void render() {
-        level.moveObjects(Gdx.graphics.getDeltaTime());
+        level.moveObjects();
+        graphicsController.moveRectangles();
+
+        level.updateState(Gdx.graphics.getDeltaTime());
         graphicsController.renderGame();
     }
 

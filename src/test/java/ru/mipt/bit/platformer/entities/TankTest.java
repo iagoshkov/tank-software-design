@@ -4,11 +4,8 @@ import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import ru.mipt.bit.platformer.instructions.Direction;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.mipt.bit.platformer.graphics.CollisionDetector.collides;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.decrementedY;
 
 class TankTest {
@@ -36,8 +33,8 @@ class TankTest {
 
         Tank tank = new Tank(coordinates, direction, 1);
 
-        assertFalse(tank.collides(coordinates, Collections.singletonList(object)));
-        assertTrue(tank.collides(objectCoordinates, Collections.singletonList(object)));
+        assertFalse(collides(tank, coordinates));
+        assertTrue(collides(tank, objectCoordinates));
     }
 
     @Test
@@ -50,10 +47,10 @@ class TankTest {
 
         Tank tank = new Tank(coordinates, direction, 1);
 
-        tank.moveIfNotCollides(Direction.UP, Collections.singletonList(object));
+        tank.move(Direction.UP);
         tank.updateState(1);
 
-        tank.moveIfNotCollides(Direction.UP, Collections.singletonList(object));
+        tank.move(Direction.UP);
         tank.updateState(1);
 
         assertEquals(decrementedY(objectCoordinates), tank.getCoordinates());

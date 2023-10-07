@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.instructions;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.entities.MapObject;
 
 public enum Direction implements Instruction {
     UP(new GridPoint2(0,1), 90),
@@ -18,6 +19,11 @@ public enum Direction implements Instruction {
 
     public GridPoint2 apply(GridPoint2 point) {
         return point.cpy().add(vector);
+    }
+
+    @Override
+    public void apply(MapObject object) {
+        object.move(this);
     }
 
     public float getRotation() {

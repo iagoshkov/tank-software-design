@@ -1,6 +1,5 @@
 package ru.mipt.bit.platformer.entities;
 
-import ru.mipt.bit.platformer.graphics.GraphicsController;
 import ru.mipt.bit.platformer.instructions.InputController;
 import ru.mipt.bit.platformer.instructions.Instruction;
 
@@ -9,34 +8,34 @@ import java.util.List;
 import java.util.Map;
 
 public class Level {
-    private final GraphicsController graphicsController;
+    private final List<ObjectAddHandler> handlerList = new ArrayList<>();
     private final InputController inputController;
 
-    private final Tank player;
+    private final MapObject player;
     private final List<MapObject> objects = new ArrayList<>();
 
-    public Level(Tank player, GraphicsController graphicsController, InputController inputController) {
+    public Level(MapObject player, InputController inputController, ObjectAddHandler... handlers) {
         this.player = player;
-        this.graphicsController = graphicsController;
+        this.handlerList.addAll(List.of(handlers));
         this.inputController = inputController;
 
         add(player);
     }
 
     public void add(MapObject object) {
-        graphicsController.addGraphicsOf(object);
+        handlerList.forEach(objectAddHandler -> objectAddHandler.add(object));
         objects.add(object);
     }
 
-    public void moveObjects(float deltaTime) {
+    public void moveObjects() {
         Map.Entry<Instruction, MapObject> objectInstruction = inputController.getInstruction();
-
         if (objectInstruction != null) {
-            objectInstruction.getValue().apply(objectInstruction.getKey(), objects);
+            objectInstruction.getKey().apply(objectInstruction.getValue());
         }
+    }
 
-        graphicsController.moveRectangles();
-
+    public void updateState(float deltaTime) {
         player.updateState(deltaTime);
+        objects.forEach(mapObject -> mapObject.updateState(deltaTime));
     }
 }

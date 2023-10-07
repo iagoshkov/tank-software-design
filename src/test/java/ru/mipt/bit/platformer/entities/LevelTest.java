@@ -26,12 +26,12 @@ class LevelTest {
                 .thenReturn(Map.entry(Direction.LEFT, tank))
                 .thenReturn(Map.entry(Direction.UP, tank));
 
-        Level level = new Level(tank, graphicsController, inputController);
+        Level level = new Level(tank, inputController, graphicsController);
 
         level.add(object);
-        level.moveObjects(1.1f);
-        level.moveObjects(1.1f);
-        level.moveObjects(1.1f);
+        level.moveObjects();
+        level.moveObjects();
+        level.moveObjects();
 
         assertEquals(new GridPoint2(1, 3), object.getCoordinates());
         assertEquals(new GridPoint2(2, 4), tank.getDestinationCoordinates());

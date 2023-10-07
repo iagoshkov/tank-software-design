@@ -1,7 +1,6 @@
 package ru.mipt.bit.platformer.graphics;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -9,11 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.Disposable;
-import ru.mipt.bit.platformer.entities.MapObject;
-import ru.mipt.bit.platformer.entities.Movable;
-import ru.mipt.bit.platformer.entities.Tank;
-import ru.mipt.bit.platformer.entities.Tree;
-import ru.mipt.bit.platformer.graphics.Graphics;
+import ru.mipt.bit.platformer.entities.*;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.HashMap;
@@ -22,7 +17,7 @@ import java.util.Map;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-public class GraphicsController implements Disposable {
+public class GraphicsController implements Disposable, ObjectAddHandler {
     private final SpriteBatch batch;
     private final TiledMap level;
     private final MapRenderer levelRenderer;
@@ -43,7 +38,8 @@ public class GraphicsController implements Disposable {
         this.objectTexturesPathMap.put(Tree.class, "images/greenTree.png");
     }
 
-    public void addGraphicsOf(MapObject object) {
+    @Override
+    public void add(MapObject object) {
         objectToGraphicsMap.put(object, new Graphics(objectTexturesPathMap.get(object.getClass())));
     }
 
@@ -70,14 +66,12 @@ public class GraphicsController implements Disposable {
 
     public void moveRectangles() {
         for (MapObject object : objectToGraphicsMap.keySet()) {
-            if (object instanceof Movable) {
-                tileMovement.moveRectangleBetweenTileCenters(
-                        objectToGraphicsMap.get(object).getRectangle(),
-                        object.getCoordinates(),
-                        ((Movable) object).getDestinationCoordinates(),
-                        ((Movable) object).getMovementProgress()
-                );
-            }
+            tileMovement.moveRectangleBetweenTileCenters(
+                    objectToGraphicsMap.get(object).getRectangle(),
+                    object.getCoordinates(),
+                    object.getDestinationCoordinates(),
+                    object.getMovementProgress()
+            );
         }
     }
 

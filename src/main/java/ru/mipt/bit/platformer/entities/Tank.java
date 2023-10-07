@@ -2,14 +2,12 @@ package ru.mipt.bit.platformer.entities;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.instructions.Direction;
-import ru.mipt.bit.platformer.instructions.Instruction;
-
-import java.util.List;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
+import static ru.mipt.bit.platformer.graphics.CollisionDetector.collides;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Tank implements Movable {
+public class Tank implements MapObject {
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
     private final float movementSpeed;
@@ -39,6 +37,7 @@ public class Tank implements Movable {
         this.direction = direction;
     }
 
+    @Override
     public void updateState(float deltaTime) {
         movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
         if (isMoving()) {
@@ -47,28 +46,16 @@ public class Tank implements Movable {
     }
 
     @Override
-    public void moveIfNotCollides(Direction direction, List<MapObject> obstacles) {
+    public void move(Direction direction) {
         if (isMoving()) {
             GridPoint2 targetCoordinates = direction.apply(coordinates);
 
-            if (!collides(targetCoordinates, obstacles)) {
+            if (!collides(this, targetCoordinates)) {
                 moveTo(targetCoordinates);
             }
 
             rotate(direction);
         }
-    }
-
-    @Override
-    public boolean collides(GridPoint2 targetCoordinates, List<MapObject> others) {
-        for (MapObject other: others) {
-            if (other != this) {
-                if (targetCoordinates.equals(other.getCoordinates())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -84,13 +71,6 @@ public class Tank implements Movable {
     @Override
     public float getRotation() {
         return direction.getRotation();
-    }
-
-    @Override
-    public void apply(Instruction instruction, List<MapObject> objects) {
-        if (instruction instanceof Direction) {
-            moveIfNotCollides((Direction) instruction, objects);
-        }
     }
 
     @Override

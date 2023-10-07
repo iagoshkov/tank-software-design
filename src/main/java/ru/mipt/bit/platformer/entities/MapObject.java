@@ -1,12 +1,13 @@
 package ru.mipt.bit.platformer.entities;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.instructions.Instruction;
-
-import java.util.List;
+import ru.mipt.bit.platformer.instructions.Direction;
 
 public interface MapObject {
     GridPoint2 getCoordinates();
-    float getRotation();
-    default void apply(Instruction key, List<MapObject> objects) {}
+    default float getRotation() {return 0f;}
+    default void updateState(float deltaTime) {}
+    default GridPoint2 getDestinationCoordinates() {return getCoordinates();}
+    default float getMovementProgress() {return 1f;}
+    default void move(Direction direction) {};
 }
