@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.level;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlacementFromFile implements LevelGenerator{
-    private static String filePath = "src/main/resources/placement.txt";
+public class GenerateLevelFromCoord implements LevelGenerator {
+    static String filePath = "src/main/resources/placement.txt";
 
-    public PlacementFromFile(String filePath) {
-        PlacementFromFile.filePath = filePath;
+    public GenerateLevelFromCoord(String filePath) {
+        GenerateLevelFromCoord.filePath = filePath;
     }
     @Override
     public List<String> generate() {

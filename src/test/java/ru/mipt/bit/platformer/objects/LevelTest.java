@@ -2,7 +2,8 @@ package ru.mipt.bit.platformer.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
-import ru.mipt.bit.platformer.LevelGenerator;
+import ru.mipt.bit.platformer.level.Level;
+import ru.mipt.bit.platformer.level.LevelGenerator;
 import ru.mipt.bit.platformer.movement.Colliding;
 import ru.mipt.bit.platformer.movement.CollisionChecker;
 

@@ -6,7 +6,7 @@ import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.objects.Level;
+import ru.mipt.bit.platformer.level.Level;
 import ru.mipt.bit.platformer.objects.Obstacle;
 import ru.mipt.bit.platformer.objects.Tank;
 import ru.mipt.bit.platformer.util.TileMovement;
