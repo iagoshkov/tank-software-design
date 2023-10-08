@@ -13,7 +13,6 @@ public class CollisionDetector implements ObjectAddHandler {
     public CollisionDetector() {}
 
     public void add(MapObject object) {
-        System.out.println(object);
         objects.add(object);
     }
 

@@ -5,15 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.common.Level;
-import ru.mipt.bit.platformer.entities.MapObject;
-import ru.mipt.bit.platformer.entities.Tank;
-import ru.mipt.bit.platformer.entities.Tree;
 import ru.mipt.bit.platformer.controllers.CollisionDetector;
 import ru.mipt.bit.platformer.controllers.GraphicsController;
-import ru.mipt.bit.platformer.instructions.Direction;
 import ru.mipt.bit.platformer.controllers.InputController;
+import ru.mipt.bit.platformer.entities.MapObject;
+import ru.mipt.bit.platformer.instructions.Direction;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float DEFAULT_MOVEMENT_SPEED = 0.4f;
@@ -23,22 +20,13 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-        Tank player = new Tank(new GridPoint2(2, 1), Direction.RIGHT, DEFAULT_MOVEMENT_SPEED);
         InputController inputController = new InputController();
-        initMappings(inputController, player);
-
         graphicsController = new GraphicsController("level.tmx");
-        level = new Level(player, inputController, graphicsController, collisionDetector);
 
-        level.add(new Tank(new GridPoint2(2, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED));
-        level.add(new Tank(new GridPoint2(1, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED));
-        level.add(new Tank(new GridPoint2(3, 4), Direction.UP, DEFAULT_MOVEMENT_SPEED));
-        level.add(new Tree(new GridPoint2(1, 3)));
-        level.add(new Tree(new GridPoint2(2, 3)));
-        level.add(new Tree(new GridPoint2(3, 3)));
-        level.add(new Tree(new GridPoint2(4, 4)));
-        level.add(new Tree(new GridPoint2(0, 4)));
+//        level = new Level("src/main/resources/levels/level1.txt", inputController, graphicsController, collisionDetector);
+        level = new Level(8, 8, inputController, graphicsController, collisionDetector);
 
+        initMappings(inputController, level.getPlayer());
         graphicsController.createObjects();
     }
 
