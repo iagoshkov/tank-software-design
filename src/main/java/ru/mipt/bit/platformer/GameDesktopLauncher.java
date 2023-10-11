@@ -23,6 +23,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         InputController inputController = new InputController();
         graphicsController = new GraphicsController("level.tmx");
 
+
 //        level = new Level("src/main/resources/levels/level1.txt", inputController, graphicsController, collisionDetector);
         level = new Level(8, 8, inputController, graphicsController, collisionDetector);
 
