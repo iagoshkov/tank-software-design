@@ -16,14 +16,14 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Level {
-    private final List<ObjectAddHandler> handlerList;
+    private final List<ObjectAddHandler> handlerList = new ArrayList<>();
     private final InputController inputController;
     private final List<MapObject> objects = new ArrayList<>();
 
-    private MapObject player;
+    private final MapObject player;
 
     public Level(MapObject player, InputController inputController, List<ObjectAddHandler> handlers) {
-        this.handlerList = handlers;
+        this.handlerList.addAll(handlers);
         this.inputController = inputController;
         this.player = player;
         add(player);

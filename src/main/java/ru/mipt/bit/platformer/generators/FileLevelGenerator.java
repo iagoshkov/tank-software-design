@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FileLevelGenerator implements LevelObjectsGenerator {
+public class FileLevelGenerator implements LevelGenerator {
 
     private static final Map<Character, Constructor<? extends MapObject>> charToConstructorMap = new HashMap<>();
     private static void initCharToConstructorMap() {
@@ -80,7 +80,7 @@ public class FileLevelGenerator implements LevelObjectsGenerator {
     }
 
     @Override
-    public Level generateAndAdd() {
+    public Level generate() {
         List<MapObject> objects = getObjectsFromFile();
         Level level = new Level(player, inputController, handlerList);
 

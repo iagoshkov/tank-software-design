@@ -11,18 +11,18 @@ import ru.mipt.bit.platformer.entities.Tree;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomLevelObjectsGenerator implements LevelObjectsGenerator {
+public class RandomLevelGenerator implements LevelGenerator {
     private final int width;
     private final int height;
     private final List<ObjectAddHandler> handlerList = new ArrayList<>();
     private final InputController inputController;
     private MapObject player;
 
-    public RandomLevelObjectsGenerator(int width, int height, InputController inputController, ObjectAddHandler... handlers) {
+    public RandomLevelGenerator(int width, int height, InputController inputController, List<ObjectAddHandler> handlers) {
         this.width = width;
         this.height = height;
         this.inputController = inputController;
-        this.handlerList.addAll(List.of(handlers));
+        this.handlerList.addAll(handlers);
     }
 
     private List<MapObject> generateObjects() {
@@ -59,7 +59,7 @@ public class RandomLevelObjectsGenerator implements LevelObjectsGenerator {
     }
 
     @Override
-    public Level generateAndAdd() {
+    public Level generate() {
         List<MapObject> objects = generateObjects();
         Level level = new Level(player, inputController, handlerList);
 

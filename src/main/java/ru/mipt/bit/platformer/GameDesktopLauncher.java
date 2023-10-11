@@ -10,7 +10,12 @@ import ru.mipt.bit.platformer.controllers.CollisionDetector;
 import ru.mipt.bit.platformer.controllers.GraphicsController;
 import ru.mipt.bit.platformer.controllers.InputController;
 import ru.mipt.bit.platformer.entities.MapObject;
+import ru.mipt.bit.platformer.generators.FileLevelGenerator;
+import ru.mipt.bit.platformer.generators.LevelGenerator;
+import ru.mipt.bit.platformer.generators.RandomLevelGenerator;
 import ru.mipt.bit.platformer.instructions.Direction;
+
+import java.util.List;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float DEFAULT_MOVEMENT_SPEED = 0.4f;
@@ -23,9 +28,11 @@ public class GameDesktopLauncher implements ApplicationListener {
         InputController inputController = new InputController();
         graphicsController = new GraphicsController("level.tmx");
 
+//        LevelGenerator generator = new FileLevelGenerator("src/main/resources/levels/level1.txt", inputController, List.of(graphicsController, collisionDetector));
+        LevelGenerator generator = new RandomLevelGenerator(8, 8, inputController, List.of(graphicsController, collisionDetector));
+        level = generator.generate();
 
-//        level = new Level("src/main/resources/levels/level1.txt", inputController, graphicsController, collisionDetector);
-        level = new Level(8, 8, inputController, graphicsController, collisionDetector);
+
 
         initMappings(inputController, level.getPlayer());
         graphicsController.createObjects();

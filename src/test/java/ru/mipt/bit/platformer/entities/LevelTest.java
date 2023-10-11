@@ -10,6 +10,8 @@ import ru.mipt.bit.platformer.instructions.Direction;
 import ru.mipt.bit.platformer.instructions.Instruction;
 
 import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.List;
 
 class LevelTest {
 
@@ -21,7 +23,7 @@ class LevelTest {
         ObjectAddHandler handler1 = Mockito.mock(ObjectAddHandler.class);
         ObjectAddHandler handler2 = Mockito.mock(ObjectAddHandler.class);
 
-        Level level = new Level(player, inputController, handler1, handler2);
+        Level level = new Level(player, inputController, List.of(handler1, handler2));
         level.add(Mockito.mock(Tank.class));
         level.add(Mockito.mock(Tree.class));
 
@@ -37,7 +39,7 @@ class LevelTest {
         InputController inputController = Mockito.mock(InputController.class);
         Mockito.when(inputController.getInstruction()).thenReturn(new AbstractMap.SimpleEntry<>(instruction, player));
 
-        Level level = new Level(player, inputController);
+        Level level = new Level(player, inputController, Collections.emptyList());
 
         level.applyInstructions();
 
@@ -51,7 +53,7 @@ class LevelTest {
         Tree tree = Mockito.mock(Tree.class);
         InputController inputController = Mockito.mock(InputController.class);
 
-        Level level = new Level(player, inputController);
+        Level level = new Level(player, inputController, Collections.emptyList());
         level.add(tank);
         level.add(tree);
 
