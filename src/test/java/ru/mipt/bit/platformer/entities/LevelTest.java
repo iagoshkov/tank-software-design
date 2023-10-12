@@ -37,7 +37,7 @@ class LevelTest {
 
         Instruction instruction = Mockito.mock(Instruction.class);
         InputController inputController = Mockito.mock(InputController.class);
-        Mockito.when(inputController.getInstruction()).thenReturn(new AbstractMap.SimpleEntry<>(instruction, player));
+        Mockito.when(inputController.getInstructions()).thenReturn(new AbstractMap.SimpleEntry<>(instruction, player));
 
         Level level = new Level(player, inputController, Collections.emptyList());
 

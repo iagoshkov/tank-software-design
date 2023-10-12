@@ -31,7 +31,7 @@ public class Tank implements MapObject {
         this.coordinates = coordinates;
         this.destinationCoordinates = coordinates;
         this.direction = DEFAULT_DIRECTION;
-        this.movementSpeed = DEFAULT_MOVEMENT_SPEED;
+        this.movementSpeed = 0.4f;
     }
 
     private boolean isMoving() {

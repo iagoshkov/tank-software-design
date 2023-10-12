@@ -46,7 +46,7 @@ class TankTest {
         float MOVEMENT_SPEED = 1f;
         float MOVEMENT_STARTED = 0f;
         float MOVEMENT_COMPLETED = 1f;
-        CollisionDetector collisionDetector = new CollisionDetector();
+        CollisionDetector collisionDetector = new CollisionDetector(2, 2);
         collisionDetector.add(new Tree(new GridPoint2(1, 2)));
 
 

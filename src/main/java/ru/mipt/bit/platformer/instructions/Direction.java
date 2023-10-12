@@ -3,6 +3,8 @@ package ru.mipt.bit.platformer.instructions;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.entities.MapObject;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public enum Direction implements Instruction {
     UP(new GridPoint2(0,1), 90),
     DOWN(new GridPoint2(0,-1), -90),
@@ -15,6 +17,11 @@ public enum Direction implements Instruction {
     Direction(GridPoint2 vector, float rotation) {
         this.vector = vector;
         this.rotation = rotation;
+    }
+
+    public static Direction randomDirection()  {
+        Direction[] directions = values();
+        return directions[ThreadLocalRandom.current().nextInt(0, directions.length)];
     }
 
     public GridPoint2 apply(GridPoint2 point) {

@@ -52,8 +52,7 @@ public class FileLevelGenerator implements LevelGenerator {
             for (int i = allLines.size() - 1; i >= 0; --i) {
                 String line = allLines.get(i);
                 for (int x = 0; x < line.length(); x++) {
-                    setObjectByChar(objects, line.charAt(x), x,
-                            allLines.size() - i - 1);
+                    setObjectByChar(objects, line.charAt(x), x, allLines.size() - i - 1);
                 }
             }
         } catch (IOException e) {
@@ -63,16 +62,16 @@ public class FileLevelGenerator implements LevelGenerator {
         return objects;
     }
 
-    private void setObjectByChar(List<MapObject> level, char c, int x, int y) {
+    private void setObjectByChar(List<MapObject> objects, char c, int x, int y) {
         try {
             Constructor<? extends MapObject> constructor = charToConstructorMap.get(c);
             if (constructor == null) return;
             constructor.setAccessible(true);
             MapObject object = constructor.newInstance(new GridPoint2(x, y));
-            level.add(object);
-
             if (c == 'X') {
                 this.player = object;
+            } else {
+                objects.add(object);
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
