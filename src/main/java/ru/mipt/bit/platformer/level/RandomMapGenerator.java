@@ -27,6 +27,8 @@ public class RandomMapGenerator{
             for (int j = 0; j < width; j++) {
                 if (random.nextInt(obstacleFrequency) == 0) {
                     row.append("T");
+                } else if (random.nextInt(obstacleFrequency) == 1){
+                    row.append("E");
                 } else {
                     row.append("_");
                 }

@@ -6,12 +6,15 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import ru.mipt.bit.platformer.AI.TankActor;
 import ru.mipt.bit.platformer.graphics.Graphics;
 import ru.mipt.bit.platformer.level.GenerateLevelFromMap;
 import ru.mipt.bit.platformer.level.Level;
 import ru.mipt.bit.platformer.level.RandomMapGenerator;
 import ru.mipt.bit.platformer.movement.CollisionChecker;
 import ru.mipt.bit.platformer.movement.Direction;
+
+import java.util.ArrayList;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
@@ -26,9 +29,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void create() {
         map = new TmxMapLoader().load("level.tmx");
 //        level = new Level(new GenerateLevelFromCoord("src/main/resources/placement.txt"));
-//        level = new Level(new GenerateLevelFromMap("src/main/resources/map.txt"));
-        new RandomMapGenerator(5, 5,4 ).saveMapToFile("randomMap.txt");
-        level = new Level(new GenerateLevelFromMap("src/main/resources/randomMap.txt"));
+        level = new Level(new GenerateLevelFromMap("src/main/resources/map.txt"));
+//        new RandomMapGenerator(10, 8,3 ).saveMapToFile("randomMap.txt");
+//        level = new Level(new GenerateLevelFromMap("src/main/resources/randomMap.txt"));
         collisionChecker = new CollisionChecker();
         level.initObjects(collisionChecker);
         graphics = new Graphics(level, map);
@@ -36,6 +39,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     }
 
     private void initColliders() {
+        collisionChecker.addColliding(level.getBorder());
         if (level.getPlayableTank() != null) {
             collisionChecker.addColliding(level.getPlayableTank());
         }
@@ -52,10 +56,15 @@ public class GameDesktopLauncher implements ApplicationListener {
         clearScreen();
 
         float deltaTime = Gdx.graphics.getDeltaTime();
+
         Direction desiredDirection = inputHandler.handleKeystrokes();
-        level.getPlayableTank().tryMove(level.getObstacles(), desiredDirection);
+        level.getPlayableTank().tryMove(desiredDirection);
         graphics.calculateInterpolatedCoordinates();
         continueTankProgress(deltaTime);
+        for (TankActor actor : level.getActors()) {
+            actor.setDeltaTime(deltaTime);
+            actor.doAction();
+        }
         // render each tile of the level
         renderGame();
     }

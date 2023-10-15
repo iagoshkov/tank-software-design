@@ -22,6 +22,7 @@ public class Graphics {
     private MapRenderer levelRenderer;
     private ObjectGraphics tankObjectGraphics;
     private List<ObjectGraphics> treeObjectGraphics;
+    private List<ObjectGraphics> tanksObjectGraphics;
     private TileMovement tileMovement;
     private Level level;
 
@@ -33,8 +34,12 @@ public class Graphics {
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         tankObjectGraphics = new ObjectGraphics("images/tank_blue.png");
 
+        tanksObjectGraphics = new ArrayList<>();
+        for (Tank tank : level.getTanks()) {
+            tanksObjectGraphics.add(new ObjectGraphics("images/tank_blue.png"));
+//            tanksObjectGraphics.get(tanksObjectGraphics.size() - 1).moveRectangle(groundLayer, tank.getCoordinates());
+        }
         treeObjectGraphics = new ArrayList<>();
-
         for (Obstacle obstacle : level.getObstacles()) {
             treeObjectGraphics.add(new ObjectGraphics("images/greenTree.png"));
             treeObjectGraphics.get(treeObjectGraphics.size() - 1).moveRectangle(groundLayer, obstacle.getCoordinates());
@@ -46,6 +51,9 @@ public class Graphics {
         batch.begin();
         // render player
         tankObjectGraphics.draw(batch, level.getPlayableTank().getRotation());
+        for (int i = 0; i < tanksObjectGraphics.size(); ++i) {
+            tanksObjectGraphics.get(i).draw(batch, level.getTanks().get(i).getRotation());
+        }
         // render tree obstacle
 //        treeObjectGraphics.draw(batch, 0f);
         for (ObjectGraphics treeObject : treeObjectGraphics) {
@@ -57,6 +65,9 @@ public class Graphics {
 
     public void dispose() {
         tankObjectGraphics.dispose();
+        for (ObjectGraphics tankObject : tanksObjectGraphics) {
+            tankObject.dispose();
+        }
         for (ObjectGraphics treeObject : treeObjectGraphics) {
             treeObject.dispose();
         }
@@ -71,5 +82,14 @@ public class Graphics {
                 tank.getCoordinates(),
                 tank.getDestinationCoordinates(),
                 tank.getMovementProgress());
+        List<Tank> tanks = level.getTanks();
+        for (int i = 0; i < level.getTanks().size(); ++i) {
+            tileMovement.moveRectangleBetweenTileCenters(
+                    tanksObjectGraphics.get(i).getRectangle(),
+                    tanks.get(i).getCoordinates(),
+                    tanks.get(i).getDestinationCoordinates(),
+                    tanks.get(i).getMovementProgress()
+            );
+        }
     }
 }

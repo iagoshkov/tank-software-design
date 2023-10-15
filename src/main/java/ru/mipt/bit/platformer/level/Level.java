@@ -1,7 +1,9 @@
 package ru.mipt.bit.platformer.level;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.AI.TankActor;
 import ru.mipt.bit.platformer.movement.CollisionChecker;
+import ru.mipt.bit.platformer.objects.Border;
 import ru.mipt.bit.platformer.objects.Obstacle;
 import ru.mipt.bit.platformer.objects.Tank;
 
@@ -11,13 +13,22 @@ import java.util.List;
 public class Level {
     private final ArrayList<Obstacle> obstacles;
     private Tank playableTank;
-    private final List<Tank> tanks;
+    private final ArrayList<Tank> tanks;
     private final LevelGenerator generator;
-
+    private final ArrayList<TankActor> actors = new ArrayList<>();
+    private Border border;
     public Level(LevelGenerator generator) {
         obstacles = new ArrayList<>();
         tanks = new ArrayList<>();
         this.generator = generator;
+    }
+
+    public Border getBorder() {
+        return border;
+    }
+
+    public ArrayList<TankActor> getActors() {
+        return actors;
     }
 
     public Tank getPlayableTank() {
@@ -28,12 +39,15 @@ public class Level {
         return obstacles;
     }
 
-    public List<Tank> getTanks() {
+    public ArrayList<Tank> getTanks() {
         return tanks;
     }
 
-
+    public void initBorder(int width, int height) {
+        border = new Border(width, height);
+    }
     public void initObjects(CollisionChecker collisionChecker) {
+        initBorder(10, 8);
         List<String> content = generator.generate();
         for (String line : content) {
             String[] parts = line.split(" ");
@@ -43,13 +57,16 @@ public class Level {
 //            float speed = 0.2f;
             switch (type) {
                 case "X":
-                    playableTank = new Tank(new GridPoint2(x, y), collisionChecker); //TODO add speed
+                    playableTank = new Tank(new GridPoint2(x, y), collisionChecker);
                     break;
                 case "T":
                     obstacles.add(new Obstacle(new GridPoint2(x, y)));
                     break;
                 case "E":
-                    tanks.add(new Tank(new GridPoint2(x, y), collisionChecker));
+                    Tank newTank = new Tank(new GridPoint2(x, y), collisionChecker);
+                    tanks.add(newTank);
+                    actors.add(new TankActor(newTank));
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown symbol in content of level");
             }

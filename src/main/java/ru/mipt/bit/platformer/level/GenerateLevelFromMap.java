@@ -36,6 +36,8 @@ public class GenerateLevelFromMap implements LevelGenerator {
                         levelMap.add("T " + x + " " + (ySize - y + 1));
                     } else if (c == 'X') {
                         levelMap.add("X " + x + " " + (ySize - y + 1));
+                    } else if (c == 'E') {
+                        levelMap.add("E " + x + " " + (ySize - y + 1));
                     }
                 }
                 y++;
