@@ -3,7 +3,6 @@ package ru.mipt.bit.platformer.controllers;
 import ru.mipt.bit.platformer.entities.MapObject;
 import ru.mipt.bit.platformer.instructions.Instruction;
 
-import java.util.List;
 import java.util.Map;
 
 public interface InstructionsGenerator {

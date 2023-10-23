@@ -9,9 +9,7 @@ import ru.mipt.bit.platformer.controllers.InputController;
 import ru.mipt.bit.platformer.instructions.Direction;
 import ru.mipt.bit.platformer.instructions.Instruction;
 
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 class LevelTest {
 
@@ -36,8 +34,11 @@ class LevelTest {
         Tank player = new Tank(new GridPoint2(0, 0), Direction.RIGHT, 1f);
 
         Instruction instruction = Mockito.mock(Instruction.class);
+        Map<MapObject, Instruction> instructions = new HashMap<>();
+        instructions.put(player, instruction);
+
         InputController inputController = Mockito.mock(InputController.class);
-        Mockito.when(inputController.getInstructions()).thenReturn(new AbstractMap.SimpleEntry<>(instruction, player));
+        Mockito.when(inputController.getInstructions()).thenReturn(instructions);
 
         Level level = new Level(player, inputController, Collections.emptyList());
 
