@@ -6,15 +6,16 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import ru.mipt.bit.platformer.AI.TankActor;
+import org.awesome.ai.AI;
+import org.awesome.ai.strategy.NotRecommendingAI;
+import ru.mipt.bit.platformer.AI.AIAdapter;
+import ru.mipt.bit.platformer.AI.RandomAI;
 import ru.mipt.bit.platformer.graphics.Graphics;
+import ru.mipt.bit.platformer.input.KeyboardInputHandler;
 import ru.mipt.bit.platformer.level.GenerateLevelFromMap;
 import ru.mipt.bit.platformer.level.Level;
-import ru.mipt.bit.platformer.level.RandomMapGenerator;
 import ru.mipt.bit.platformer.movement.CollisionChecker;
-import ru.mipt.bit.platformer.movement.Direction;
-
-import java.util.ArrayList;
+import ru.mipt.bit.platformer.input.Direction;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
@@ -29,6 +30,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void create() {
         map = new TmxMapLoader().load("level.tmx");
 //        level = new Level(new GenerateLevelFromCoord("src/main/resources/placement.txt"));
+        AI aiAdapter = new NotRecommendingAI();
         level = new Level(new GenerateLevelFromMap("src/main/resources/map.txt"));
 //        new RandomMapGenerator(10, 8,3 ).saveMapToFile("randomMap.txt");
 //        level = new Level(new GenerateLevelFromMap("src/main/resources/randomMap.txt"));
@@ -61,7 +63,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         level.getPlayableTank().tryMove(desiredDirection);
         graphics.calculateInterpolatedCoordinates();
         continueTankProgress(deltaTime);
-        for (TankActor actor : level.getActors()) {
+        for (RandomAI actor : level.getActors()) {
             actor.setDeltaTime(deltaTime);
             actor.doAction();
         }

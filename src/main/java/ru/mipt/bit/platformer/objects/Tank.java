@@ -2,7 +2,7 @@ package ru.mipt.bit.platformer.objects;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.movement.Colliding;
 import ru.mipt.bit.platformer.movement.CollisionChecker;
-import ru.mipt.bit.platformer.movement.Direction;
+import ru.mipt.bit.platformer.input.Direction;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 

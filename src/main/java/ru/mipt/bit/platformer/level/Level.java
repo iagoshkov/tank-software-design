@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.level;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.AI.TankActor;
+import ru.mipt.bit.platformer.AI.RandomAI;
 import ru.mipt.bit.platformer.movement.CollisionChecker;
 import ru.mipt.bit.platformer.objects.Border;
 import ru.mipt.bit.platformer.objects.Obstacle;
@@ -15,7 +15,7 @@ public class Level {
     private Tank playableTank;
     private final ArrayList<Tank> tanks;
     private final LevelGenerator generator;
-    private final ArrayList<TankActor> actors = new ArrayList<>();
+    private final ArrayList<RandomAI> actors = new ArrayList<>();
     private Border border;
     public Level(LevelGenerator generator) {
         obstacles = new ArrayList<>();
@@ -27,7 +27,7 @@ public class Level {
         return border;
     }
 
-    public ArrayList<TankActor> getActors() {
+    public ArrayList<RandomAI> getActors() {
         return actors;
     }
 
@@ -35,7 +35,7 @@ public class Level {
         return playableTank;
     }
 
-    public ArrayList<Obstacle> getObstacles() {
+    public List<Obstacle> getObstacles() {
         return obstacles;
     }
 
@@ -65,7 +65,7 @@ public class Level {
                 case "E":
                     Tank newTank = new Tank(new GridPoint2(x, y), collisionChecker);
                     tanks.add(newTank);
-                    actors.add(new TankActor(newTank));
+                    actors.add(new RandomAI(newTank));
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown symbol in content of level");

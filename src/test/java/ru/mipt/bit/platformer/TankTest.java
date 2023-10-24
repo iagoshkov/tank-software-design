@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import ru.mipt.bit.platformer.movement.CollisionChecker;
-import ru.mipt.bit.platformer.movement.Direction;
+import ru.mipt.bit.platformer.input.Direction;
 import ru.mipt.bit.platformer.objects.Obstacle;
 import ru.mipt.bit.platformer.objects.Tank;
 
@@ -30,20 +30,20 @@ class TankTest {
         assertEquals(tankCoordinates, tank.getCoordinates());
         List<Obstacle> obstacles = new ArrayList<>();
 
-        tank.tryMove(obstacles, Direction.RIGHT);
+        tank.tryMove(Direction.RIGHT);
         tank.tryReachDestinationCoordinates(1f);
         assertEquals( new GridPoint2(3, 2), tank.getCoordinates());
 
-        tank.tryMove(obstacles, Direction.LEFT);
+        tank.tryMove(Direction.LEFT);
         assertEquals(0f, tank.getMovementProgress());
         tank.tryReachDestinationCoordinates(1f);
         assertEquals(1f, tank.getMovementProgress());
         assertEquals( new GridPoint2(2, 2), tank.getCoordinates());
 
-        tank.tryMove(obstacles, Direction.UP);
+        tank.tryMove(Direction.UP);
         tank.tryReachDestinationCoordinates(1f);
         assertEquals( new GridPoint2(2, 3), tank.getCoordinates());
-        tank.tryMove(obstacles, Direction.DOWN);
+        tank.tryMove(Direction.DOWN);
         tank.tryReachDestinationCoordinates(1f);
         assertEquals( new GridPoint2(2, 2), tank.getCoordinates());
     }
@@ -57,7 +57,7 @@ class TankTest {
 
         ArrayList<Obstacle> obstacles = new ArrayList<>();
         obstacles.add(new Obstacle(new GridPoint2(1, 1)));
-        tank.tryMove(obstacles, Direction.LEFT);
+        tank.tryMove(Direction.LEFT);
 
         assertEquals(tank.getCoordinates(), tankCoordinates);
     }
@@ -71,7 +71,7 @@ class TankTest {
 
         ArrayList<Obstacle> obstacles = new ArrayList<>();
         obstacles.add(new Obstacle(new GridPoint2(3, 2)));
-        tank.tryMove(obstacles, Direction.RIGHT);
+        tank.tryMove(Direction.RIGHT);
 
         assertEquals(tank.getCoordinates(), tankCoordinates);
     }
@@ -85,7 +85,7 @@ class TankTest {
 
         ArrayList<Obstacle> obstacles = new ArrayList<>();
         obstacles.add(new Obstacle(new GridPoint2(2, 3)));
-        tank.tryMove(obstacles, Direction.UP);
+        tank.tryMove(Direction.UP);
 
         assertEquals(tank.getCoordinates(), tankCoordinates);
     }
@@ -100,7 +100,7 @@ class TankTest {
         ArrayList<Obstacle> obstacles = new ArrayList<>();
         obstacles.add(new Obstacle(new GridPoint2(2, 3)));
         obstacles.add(new Obstacle(new GridPoint2(2, 1)));
-        tank.tryMove(obstacles, Direction.DOWN);
+        tank.tryMove(Direction.DOWN);
 
         assertEquals(tank.getCoordinates(), tankCoordinates);
     }
@@ -115,16 +115,16 @@ class TankTest {
         ArrayList<Obstacle> obstacles = new ArrayList<>();
         obstacles.add(new Obstacle(new GridPoint2(1, 2)));
 
-        tank.tryMove(obstacles, Direction.RIGHT);
+        tank.tryMove(Direction.RIGHT);
         assertEquals(tankCoordinates, tank.getCoordinates());
 
-        tank.tryMove(obstacles, Direction.LEFT);
+        tank.tryMove(Direction.LEFT);
         assertEquals(tankCoordinates, tank.getCoordinates());
 
-        tank.tryMove(obstacles, Direction.UP);
+        tank.tryMove(Direction.UP);
         assertEquals(tankCoordinates, tank.getCoordinates());
 
-        tank.tryMove(obstacles, Direction.DOWN);
+        tank.tryMove(Direction.DOWN);
         assertEquals(tankCoordinates, tank.getCoordinates());
     }
 

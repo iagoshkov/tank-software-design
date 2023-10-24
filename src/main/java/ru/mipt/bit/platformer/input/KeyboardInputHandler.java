@@ -1,12 +1,11 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.input;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.movement.Direction;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.Input.Keys.D;
 
-public class KeyboardInputHandler implements InputHandler{
+public class KeyboardInputHandler implements InputHandler {
     @Override
     public Direction handleKeystrokes() {
         Direction direction = Direction.NODIRECTION;
