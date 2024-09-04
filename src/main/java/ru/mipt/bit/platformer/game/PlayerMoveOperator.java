@@ -14,22 +14,25 @@ public class PlayerMoveOperator {
 
     private static final float MOVEMENT_SPEED = 0.4f;
     private final Player player;
+    private GridPoint2 playerDestination;
     private final List<LevelObject> obstacles;
     private float playerMovementProgress = 1f;
 
     public PlayerMoveOperator(Player player, List<LevelObject> obstacles) {
         this.player = player;
         this.obstacles = obstacles;
+
+        this.playerDestination = player.getCoordinates();
     }
 
     public void makeMove(PlayerMove move) {
-        GridPoint2 oldCoordinates = player.getDestination().cpy();
+        GridPoint2 oldCoordinates = playerDestination.cpy();
         if (isEqual(playerMovementProgress, 1f)) {
             movePlayer(move);
             if (!hasHitObstacle()) {
                 playerMovementProgress = 0f;
             } else {
-                player.setDestination(oldCoordinates);
+                playerDestination = oldCoordinates;
             }
         }
     }
@@ -37,13 +40,13 @@ public class PlayerMoveOperator {
     public void confirmMove(float deltaTime) {
         playerMovementProgress = continueProgress(playerMovementProgress, deltaTime, MOVEMENT_SPEED);
         if (isEqual(playerMovementProgress, 1f)) {
-            player.setCoordinates(player.getDestination());
+            player.setCoordinates(playerDestination);
         }
     }
 
     private boolean hasHitObstacle() {
         for (LevelObject obstacle : obstacles) {
-            if (obstacle.getCoordinates().equals(player.getDestination())) {
+            if (obstacle.getCoordinates().equals(playerDestination)) {
                 return true;
             }
         }
@@ -51,7 +54,7 @@ public class PlayerMoveOperator {
     }
 
     private void movePlayer(PlayerMove move) {
-        GridPoint2 destCoordinates = player.getDestination();
+        GridPoint2 destCoordinates = playerDestination;
         switch (move) {
             case UP:
                 destCoordinates.y++;
@@ -74,5 +77,9 @@ public class PlayerMoveOperator {
 
     public float getMovementProgress() {
         return playerMovementProgress;
+    }
+
+    public GridPoint2 getDestination() {
+        return playerDestination;
     }
 }

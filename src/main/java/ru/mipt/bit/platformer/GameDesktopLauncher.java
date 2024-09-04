@@ -52,7 +52,9 @@ public class GameDesktopLauncher implements ApplicationListener {
             playerMoveOperator.makeMove(playerMove);
         }
         playerMoveOperator.confirmMove(deltaTime);
-        levelRenderer.shiftEntity(player.getPlayerObject(), player.getDestination(), playerMoveOperator.getMovementProgress());
+        levelRenderer.shiftEntity(
+                player.getPlayerObject(), playerMoveOperator.getDestination(), playerMoveOperator.getMovementProgress()
+        );
 
         levelRenderer.render();
     }
