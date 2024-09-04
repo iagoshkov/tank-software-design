@@ -1,13 +1,14 @@
-package ru.mipt.bit.platformer.game;
+package ru.mipt.bit.platformer.game.player;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.game.level.LevelEntity;
 
 import java.util.List;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class PlayerMoveOperator {
+public class PlayerMoveCoordinator {
     /*
     Класс, ответственный за перемещение игрока по полю. Также следит, чтобы игрок не врезался в препятствия.
      */
@@ -15,10 +16,10 @@ public class PlayerMoveOperator {
     private static final float MOVEMENT_SPEED = 0.4f;
     private final Player player;
     private GridPoint2 playerDestination;
-    private final List<LevelObject> obstacles;
+    private final List<LevelEntity> obstacles;
     private float playerMovementProgress = 1f;
 
-    public PlayerMoveOperator(Player player, List<LevelObject> obstacles) {
+    public PlayerMoveCoordinator(Player player, List<LevelEntity> obstacles) {
         this.player = player;
         this.obstacles = obstacles;
 
@@ -45,7 +46,7 @@ public class PlayerMoveOperator {
     }
 
     private boolean hasHitObstacle() {
-        for (LevelObject obstacle : obstacles) {
+        for (LevelEntity obstacle : obstacles) {
             if (obstacle.getCoordinates().equals(playerDestination)) {
                 return true;
             }

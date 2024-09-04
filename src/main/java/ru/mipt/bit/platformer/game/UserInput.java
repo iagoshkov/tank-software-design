@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.game;
 
 import com.badlogic.gdx.Gdx;
+import ru.mipt.bit.platformer.game.player.PlayerMove;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.Input.Keys.D;

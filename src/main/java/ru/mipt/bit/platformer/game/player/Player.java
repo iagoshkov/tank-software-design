@@ -1,15 +1,16 @@
-package ru.mipt.bit.platformer.game;
+package ru.mipt.bit.platformer.game.player;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.game.level.LevelEntity;
 
 public class Player {
     /*
     Класс игрока. Мог быть отнаследован от LevelObject, но вы сказали так не делать. Хотя с наследованием бы вышло
     меньше кода.
      */
-    private final LevelObject playerObject;
+    private final LevelEntity playerObject;
 
-    public Player(LevelObject playerObject) {
+    public Player(LevelEntity playerObject) {
         this.playerObject = playerObject;
     }
 
@@ -17,7 +18,7 @@ public class Player {
         this.playerObject.setCoordinates(coordinates.x, coordinates.y);
     }
 
-    public LevelObject getPlayerObject() {
+    public LevelEntity getPlayerObject() {
         return playerObject;
     }
 

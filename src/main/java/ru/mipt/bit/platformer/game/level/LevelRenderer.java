@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.game;
+package ru.mipt.bit.platformer.game.level;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -21,16 +21,16 @@ public class LevelRenderer {
     private final Level level;
     private final Batch batch;
     private final TileMovement tileMovement;
-    private final List<LevelObject> levelObjects;
+    private final List<LevelEntity> levelEntities;
 
-    public LevelRenderer(Level level, Batch batch, List<LevelObject> levelObjects) {
+    public LevelRenderer(Level level, Batch batch, List<LevelEntity> levelEntities) {
         this.level = level;
         this.batch = batch;
         this.renderer = createSingleLayerMapRenderer(level.getLevelObject(), batch);
         this.tileMovement = new TileMovement(level.getGroundLayer(), Interpolation.smooth);
 
-        this.levelObjects = levelObjects;
-        for (LevelObject object : levelObjects) {
+        this.levelEntities = levelEntities;
+        for (LevelEntity object : levelEntities) {
             moveRectangleAtTileCenter(level.getGroundLayer(), object.getRectangle(), object.getCoordinates());
         }
     }
@@ -50,7 +50,7 @@ public class LevelRenderer {
         // start recording all drawing commands
         batch.begin();
 
-        for (LevelObject object : levelObjects) {
+        for (LevelEntity object : levelEntities) {
             drawTextureRegionUnscaled(batch, object.getGraphics(), object.getRectangle(), object.getRotation());
         }
 
@@ -58,9 +58,9 @@ public class LevelRenderer {
         batch.end();
     }
 
-    public void shiftEntity(LevelObject levelObject, GridPoint2 destination, float progress) {
+    public void shiftEntity(LevelEntity levelEntity, GridPoint2 destination, float progress) {
         tileMovement.moveRectangleBetweenTileCenters(
-                levelObject.getRectangle(), levelObject.getCoordinates(), destination, progress
+                levelEntity.getRectangle(), levelEntity.getCoordinates(), destination, progress
         );
     }
 
@@ -68,7 +68,7 @@ public class LevelRenderer {
         level.dispose();
         batch.dispose();
 
-        for (LevelObject object : levelObjects)
+        for (LevelEntity object : levelEntities)
             object.dispose();
     }
 }

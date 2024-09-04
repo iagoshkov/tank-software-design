@@ -5,9 +5,15 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import ru.mipt.bit.platformer.game.*;
+import ru.mipt.bit.platformer.game.level.Level;
+import ru.mipt.bit.platformer.game.level.LevelEntity;
+import ru.mipt.bit.platformer.game.level.LevelEntityDatabase;
+import ru.mipt.bit.platformer.game.level.LevelRenderer;
+import ru.mipt.bit.platformer.game.player.Player;
+import ru.mipt.bit.platformer.game.player.PlayerMove;
+import ru.mipt.bit.platformer.game.player.PlayerMoveCoordinator;
+import ru.mipt.bit.platformer.game.UserInput;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class GameDesktopLauncher implements ApplicationListener {
@@ -16,7 +22,7 @@ public class GameDesktopLauncher implements ApplicationListener {
      */
 
     private LevelRenderer levelRenderer;
-    private PlayerMoveOperator playerMoveOperator;
+    private PlayerMoveCoordinator playerMoveCoordinator;
     private Player player;
 
     @Override
@@ -24,21 +30,20 @@ public class GameDesktopLauncher implements ApplicationListener {
         Level level = new Level("level.tmx");
         Batch batch = new SpriteBatch();
 
-        LevelObject blueTank = LevelObjectDatabase.getBlueTank();
+        LevelEntity blueTank = LevelEntityDatabase.getBlueTank();
         blueTank.setCoordinates(1, 1);
 
-        LevelObject greenTree = LevelObjectDatabase.getGreenTree();
+        LevelEntity greenTree = LevelEntityDatabase.getGreenTree();
         greenTree.setCoordinates(1, 3);
-        LevelObject greenTree2 = LevelObjectDatabase.getGreenTree();
-        greenTree2.setCoordinates(3, 3);
 
         player = new Player(blueTank);
 //        player = new Player(greenTree);  // Можно двигаться кустом :)
 
-        List<LevelObject> obstacles = Arrays.asList(greenTree, greenTree2);
+        List<LevelEntity> obstacles = LevelEntityDatabase.createdObjects;  // Пока препятствия - все объекты
+//        List<LevelObject> obstacles = Arrays.asList(greenTree);
 
-        levelRenderer = new LevelRenderer(level, batch, LevelObjectDatabase.createdObjects);
-        playerMoveOperator = new PlayerMoveOperator(player, obstacles);
+        levelRenderer = new LevelRenderer(level, batch, LevelEntityDatabase.createdObjects);
+        playerMoveCoordinator = new PlayerMoveCoordinator(player, obstacles);
     }
 
     @Override
@@ -49,11 +54,11 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         PlayerMove playerMove = UserInput.handleUserInput();
         if (playerMove != null) {
-            playerMoveOperator.makeMove(playerMove);
+            playerMoveCoordinator.makeMove(playerMove);
         }
-        playerMoveOperator.confirmMove(deltaTime);
+        playerMoveCoordinator.confirmMove(deltaTime);
         levelRenderer.shiftEntity(
-                player.getPlayerObject(), playerMoveOperator.getDestination(), playerMoveOperator.getMovementProgress()
+                player.getPlayerObject(), playerMoveCoordinator.getDestination(), playerMoveCoordinator.getMovementProgress()
         );
 
         levelRenderer.render();

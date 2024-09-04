@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.game;
+package ru.mipt.bit.platformer.game.level;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -7,14 +7,14 @@ import com.badlogic.gdx.math.Rectangle;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 
-public class LevelObject {
+public class LevelEntity {
     /*
     Класс объекта, размещенного на карте. Может быть кем угодно, лишь бы была нужная текстурка.
     */
     private final Texture texture;
     private final Layout layout;
 
-    public LevelObject(String texturePath) {
+    public LevelEntity(String texturePath) {
         this.texture = new Texture(texturePath);
         TextureRegion graphics = new TextureRegion(texture);
         Rectangle rectangle = createBoundingRectangle(graphics);
