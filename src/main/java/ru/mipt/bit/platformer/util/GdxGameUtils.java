@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import ru.mipt.bit.platformer.LevelTiles;
 
 import java.util.NoSuchElementException;
 
@@ -23,7 +24,7 @@ public final class GdxGameUtils {
     }
 
     public static MapRenderer createSingleLayerMapRenderer(TiledMap tiledMap, Batch batch) {
-        TiledMapTileLayer tileLayer = getSingleLayer(tiledMap);
+        TiledMapTileLayer tileLayer = LevelTiles.getSingleLayer(tiledMap);
         float viewWidth = tileLayer.getWidth() * tileLayer.getTileWidth();
         float viewHeight = tileLayer.getHeight() * tileLayer.getTileHeight();
 
@@ -31,20 +32,6 @@ public final class GdxGameUtils {
         mapRenderer.getViewBounds().set(0f, 0f, viewWidth, viewHeight);
 
         return mapRenderer;
-    }
-
-    public static <L extends MapLayer> L getSingleLayer(Map map) {
-        MapLayers layers = map.getLayers();
-        switch (layers.size()) {
-            case 0:
-                throw new NoSuchElementException("Map has no layers");
-            case 1:
-                @SuppressWarnings("unchecked")
-                L layer = (L) layers.iterator().next();
-                return layer;
-            default:
-                throw new IllegalArgumentException("Map has more than one layer");
-        }
     }
 
     public static Rectangle moveRectangleAtTileCenter(TiledMapTileLayer tileLayer, Rectangle rectangle, GridPoint2 tileCoordinates) {
