@@ -8,9 +8,6 @@ import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher extends GameLauncher {
-
-    private static final float MOVEMENT_SPEED = 0.4f;
-
     private LevelTiles levelTiles;
 
     private Player player;
@@ -19,9 +16,9 @@ public class GameDesktopLauncher extends GameLauncher {
 
     @Override
     public void create() {
-        levelTiles = new LevelTiles("level.tmx");
-        player = new Player("images/tank_blue.png");
-        mapRendering = new MapRendering("images/greenTree.png");
+        levelTiles = new LevelTiles(GameConfig.mapFileName);
+        player = new Player(GameConfig.textureFileName);
+        mapRendering = new MapRendering(GameConfig.objectTextureFileName);
 
         moveRectangleAtTileCenter(levelTiles.getGroundLayer(), mapRendering.getObjectObstacleRectangle(), mapRendering.getObjectObstacleCoordinates());
     }
@@ -54,11 +51,7 @@ public class GameDesktopLauncher extends GameLauncher {
         // calculate interpolated player screen coordinates
         levelTiles.getTileMovement().moveRectangleBetweenTileCenters(player);
 
-        player.setMovementProgress(continueProgress(player.getMovementProgress(), deltaTime, MOVEMENT_SPEED));
-        if (isEqual(player.getMovementProgress(), 1f)) {
-            // record that the player has reached his/her destination
-            player.getCoordinates().set(player.getDestinationCoordinates());
-        }
+        player.applyMovementPerDeltaTime(deltaTime);
 
         // render each tile of the level
         levelTiles.getLevelRenderer().render();

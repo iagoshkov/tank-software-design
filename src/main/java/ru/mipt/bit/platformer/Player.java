@@ -128,4 +128,12 @@ public class Player {
             setRotation(0f);
         }
     }
+
+    public void applyMovementPerDeltaTime(float deltaTime) {
+        setMovementProgress(continueProgress(movementProgress, deltaTime, GameConfig.MOVEMENT_SPEED));
+        if (isEqual(movementProgress, 1f)) {
+            // record that the player has reached his/her destination
+            coordinates.set(getDestinationCoordinates());
+        }
+    }
 }

@@ -8,7 +8,7 @@ public class Main {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         GameLauncher gameLauncher = new GameDesktopLauncher();
         // level width: 10 tiles x 128px, height: 8 tiles x 128px
-        config.setWindowedMode(1280, 1024);
+        config.setWindowedMode(GameConfig.windowWidth, GameConfig.windowHeight);
         new Lwjgl3Application(gameLauncher, config);
     }
 }
