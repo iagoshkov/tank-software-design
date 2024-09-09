@@ -35,58 +35,46 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void create() {
         batch = new SpriteBatch();
 
-        // Load level tiles
         level = new TmxMapLoader().load("level.tmx");
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
-        // Create tank and tree objects
         playerTank = new Tank("images/tank_blue.png", groundLayer, tileMovement, MOVEMENT_SPEED, 1, 1);
         treeObstacle = new Tree("images/greenTree.png", groundLayer, 1, 3);
     }
 
     @Override
     public void render() {
-        // Clear the screen
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
-        // Handle player input and movement
         playerTank.handleInput(treeObstacle.getCoordinates());
 
-        // Render each tile of the level
         levelRenderer.render();
 
-        // Start recording all drawing commands
         batch.begin();
 
-        // Render objects
         playerTank.render(batch);
         treeObstacle.render(batch);
 
-        // Submit all drawing requests
         batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
-        // Do not react to window resizing
     }
 
     @Override
     public void pause() {
-        // Game doesn't get paused
     }
 
     @Override
     public void resume() {
-        // Game doesn't get paused
     }
 
     @Override
     public void dispose() {
-        // Dispose of all the native resources
         playerTank.dispose();
         treeObstacle.dispose();
         level.dispose();
