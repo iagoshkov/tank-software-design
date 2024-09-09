@@ -27,7 +27,8 @@ public class Tank extends GameObject {
 
     public void handleInput(GridPoint2 obstacleCoordinates) {
         for (Direction direction : Direction.values()) {
-            if (Gdx.input.isKeyPressed(direction.getKeyCode()) && isEqual(movementProgress, 1f)) {
+            if ((Gdx.input.isKeyPressed(direction.getKeyCode()) || Gdx.input.isKeyPressed(direction.getSecondaryKeyCode())) 
+                 && isEqual(movementProgress, 1f)) {
                 GridPoint2 potentialDestination = direction.getNextCoordinates(coordinates);
                 if (!obstacleCoordinates.equals(potentialDestination)) {
                     destinationCoordinates.set(potentialDestination);
