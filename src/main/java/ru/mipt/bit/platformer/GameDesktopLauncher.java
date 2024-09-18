@@ -5,14 +5,14 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ru.mipt.bit.platformer.game.UserInput;
 import ru.mipt.bit.platformer.game.level.Level;
 import ru.mipt.bit.platformer.game.level.LevelEntity;
 import ru.mipt.bit.platformer.game.level.LevelEntityDatabase;
 import ru.mipt.bit.platformer.game.level.LevelRenderer;
 import ru.mipt.bit.platformer.game.player.Player;
-import ru.mipt.bit.platformer.game.player.PlayerMove;
+import ru.mipt.bit.platformer.game.player.Direction;
 import ru.mipt.bit.platformer.game.player.PlayerMoveCoordinator;
-import ru.mipt.bit.platformer.game.UserInput;
 
 import java.util.List;
 
@@ -37,10 +37,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         greenTree.setCoordinates(1, 3);
 
         player = new Player(blueTank);
-//        player = new Player(greenTree);  // Можно двигаться кустом :)
 
-        List<LevelEntity> obstacles = LevelEntityDatabase.createdObjects;  // Пока препятствия - все объекты
-//        List<LevelObject> obstacles = Arrays.asList(greenTree);
+        List<LevelEntity> obstacles = List.of(greenTree);  // Пока препятствия - все объекты
 
         levelRenderer = new LevelRenderer(level, batch, LevelEntityDatabase.createdObjects);
         playerMoveCoordinator = new PlayerMoveCoordinator(player, obstacles);
@@ -52,16 +50,21 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         float deltaTime = levelRenderer.getDeltaTime();
 
-        PlayerMove playerMove = UserInput.handleUserInput();
-        if (playerMove != null) {
-            playerMoveCoordinator.makeMove(playerMove);
+        renderUserMove(deltaTime);
+
+        levelRenderer.render();
+    }
+
+    private void renderUserMove(float deltaTime) {
+        Direction direction = UserInput.handleUserInput();
+        if (direction != null) {
+            playerMoveCoordinator.makeMove(direction);
         }
+
         playerMoveCoordinator.confirmMove(deltaTime);
         levelRenderer.shiftEntity(
                 player.getPlayerObject(), playerMoveCoordinator.getDestination(), playerMoveCoordinator.getMovementProgress()
         );
-
-        levelRenderer.render();
     }
 
     @Override

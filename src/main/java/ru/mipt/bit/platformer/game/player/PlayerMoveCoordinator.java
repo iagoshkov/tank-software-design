@@ -26,10 +26,10 @@ public class PlayerMoveCoordinator {
         this.playerDestination = player.getCoordinates();
     }
 
-    public void makeMove(PlayerMove move) {
+    public void makeMove(Direction direction) {
         GridPoint2 oldCoordinates = playerDestination.cpy();
         if (isEqual(playerMovementProgress, 1f)) {
-            movePlayer(move);
+            movePlayer(direction);
             if (!hasHitObstacle()) {
                 playerMovementProgress = 0f;
             } else {
@@ -54,26 +54,10 @@ public class PlayerMoveCoordinator {
         return false;
     }
 
-    private void movePlayer(PlayerMove move) {
-        GridPoint2 destCoordinates = playerDestination;
-        switch (move) {
-            case UP:
-                destCoordinates.y++;
-                player.setRotation(90f);
-                break;
-            case DOWN:
-                destCoordinates.y--;
-                player.setRotation(-90f);
-                break;
-            case LEFT:
-                destCoordinates.x--;
-                player.setRotation(-180f);
-                break;
-            case RIGHT:
-                destCoordinates.x++;
-                player.setRotation(0f);
-                break;
-        }
+    private void movePlayer(Direction direction) {
+        player.setRotation(direction.getRotation());
+        playerDestination.x += direction.getShiftX();
+        playerDestination.y += direction.getShiftY();
     }
 
     public float getMovementProgress() {
