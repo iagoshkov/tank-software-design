@@ -1,21 +1,21 @@
 package ru.mipt.bit.platformer.game.controls;
 
-import ru.mipt.bit.platformer.game.level.Point;
+import ru.mipt.bit.platformer.game.objects.Coordinates;
 
 public enum MoveCommand implements UserCommand {
     /*
-    Enum с командой перемещения от пользователя и направлением перемещения
+    Enum с командой перемещения от пользователя и направлением перемещения.
      */
 
-    UP(new Point(0, 1), 90f),
-    DOWN(new Point(0, -1), -90f),
-    LEFT(new Point(-1, 0), -180f),
-    RIGHT(new Point(1, 0), 0f);
+    UP(new Coordinates(0, 1), 90f),
+    DOWN(new Coordinates(0, -1), -90f),
+    LEFT(new Coordinates(-1, 0), -180f),
+    RIGHT(new Coordinates(1, 0), 0f);
 
-    private final Point directionChange;
+    private final Coordinates directionChange;
     private final float rotation;
 
-    MoveCommand(Point direction, float rotation) {
+    MoveCommand(Coordinates direction, float rotation) {
         this.directionChange = direction;
         this.rotation = rotation;
     }

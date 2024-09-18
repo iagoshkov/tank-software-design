@@ -9,6 +9,8 @@ import ru.mipt.bit.platformer.game.controls.InputController;
 import ru.mipt.bit.platformer.game.controls.MoveCommand;
 import ru.mipt.bit.platformer.game.controls.UserCommand;
 import ru.mipt.bit.platformer.game.level.*;
+import ru.mipt.bit.platformer.game.objects.Coordinates;
+import ru.mipt.bit.platformer.game.objects.GameEntity;
 import ru.mipt.bit.platformer.game.player.Player;
 import ru.mipt.bit.platformer.game.player.PlayerMoveLogic;
 import ru.mipt.bit.platformer.game.player.PlayerRenderer;
@@ -30,19 +32,18 @@ public class GameDesktopLauncher implements ApplicationListener {
         Level level = new Level("level.tmx");
         Batch batch = new SpriteBatch();
 
-        LevelEntity blueTank = LevelEntityDatabase.getBlueTank();
-        blueTank.setCoordinates(new Point(1, 1));
+        Player player = new Player(new Coordinates(1, 1));
+        GameEntity obstacle = new GameEntity(new Coordinates(1, 3));
 
-        LevelEntity greenTree = LevelEntityDatabase.getGreenTree();
-        greenTree.setCoordinates(new Point(1, 3));
+        LevelEntity blueTank = LevelEntityDatabase.getBlueTank(player);
+        LevelEntity greenTree = LevelEntityDatabase.getGreenTree(obstacle);
 
-        Player player = new Player(blueTank);
+        List<LevelEntity> textures = List.of(blueTank, greenTree);
+        List<GameEntity> obstacles = List.of(obstacle);
 
-        List<LevelEntity> obstacles = List.of(greenTree);  // Пока препятствия - все объекты
-
-        levelRenderer = new LevelRenderer(level, batch, LevelEntityDatabase.createdObjects);
+        levelRenderer = new LevelRenderer(level, batch, textures);
         playerMoveLogic = new PlayerMoveLogic(player, obstacles);
-        playerRenderer = new PlayerRenderer(player, playerMoveLogic, levelRenderer);
+        playerRenderer = new PlayerRenderer(blueTank, playerMoveLogic, levelRenderer);
     }
 
     @Override

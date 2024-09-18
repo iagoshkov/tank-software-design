@@ -1,8 +1,8 @@
 package ru.mipt.bit.platformer.game.player;
 
 import ru.mipt.bit.platformer.game.controls.MoveCommand;
-import ru.mipt.bit.platformer.game.level.LevelEntity;
-import ru.mipt.bit.platformer.game.level.Point;
+import ru.mipt.bit.platformer.game.objects.Coordinates;
+import ru.mipt.bit.platformer.game.objects.GameEntity;
 
 import java.util.List;
 
@@ -12,10 +12,10 @@ public class PlayerMoveLogic {
      */
 
     private final Player player;
-    private Point playerDestination;
-    private final List<LevelEntity> obstacles;
+    private Coordinates playerDestination;
+    private final List<GameEntity> obstacles;
 
-    public PlayerMoveLogic(Player player, List<LevelEntity> obstacles) {
+    public PlayerMoveLogic(Player player, List<GameEntity> obstacles) {
         this.player = player;
         this.obstacles = obstacles;
 
@@ -23,7 +23,7 @@ public class PlayerMoveLogic {
     }
 
     public boolean makeMove(MoveCommand direction) {
-        Point oldCoordinates = new Point(playerDestination.x, playerDestination.y);
+        Coordinates oldCoordinates = new Coordinates(playerDestination.x, playerDestination.y);
         movePlayer(direction);
         if (!hasHitObstacle()) {
             return true;
@@ -38,7 +38,7 @@ public class PlayerMoveLogic {
     }
 
     private boolean hasHitObstacle() {
-        for (LevelEntity obstacle : obstacles) {
+        for (GameEntity obstacle : obstacles) {
             if (obstacle.getCoordinates().equals(playerDestination)) {
                 return true;
             }
@@ -52,7 +52,7 @@ public class PlayerMoveLogic {
         playerDestination.y += direction.getShiftY();
     }
 
-    public Point getDestination() {
+    public Coordinates getDestination() {
         return playerDestination;
     }
 }

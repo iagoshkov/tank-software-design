@@ -5,5 +5,5 @@ public interface InputHandler {
     Интерфейс считывания нажатия кнопок с устройства.
      */
 
-    public UserCommand handleUserInput();
+    UserCommand handleUserInput();
 }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.game.objects.Coordinates;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class LevelRenderer {
 
         this.levelEntities = levelEntities;
         for (LevelEntity object : levelEntities) {
-            Point coord = object.getCoordinates();
+            Coordinates coord = object.getCoordinates();
             moveRectangleAtTileCenter(level.getGroundLayer(), object.getRectangle(), new GridPoint2(coord.x, coord.y));
         }
     }
@@ -59,8 +60,8 @@ public class LevelRenderer {
         batch.end();
     }
 
-    public void shiftEntity(LevelEntity levelEntity, Point dest, float progress) {
-        Point coords = levelEntity.getCoordinates();
+    public void shiftEntity(LevelEntity levelEntity, Coordinates dest, float progress) {
+        Coordinates coords = levelEntity.getCoordinates();
         tileMovement.moveRectangleBetweenTileCenters(
                 levelEntity.getRectangle(), new GridPoint2(coords.x, coords.y), new GridPoint2(dest.x, dest.y), progress
         );
