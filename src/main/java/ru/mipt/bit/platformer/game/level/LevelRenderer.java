@@ -31,7 +31,8 @@ public class LevelRenderer {
 
         this.levelEntities = levelEntities;
         for (LevelEntity object : levelEntities) {
-            moveRectangleAtTileCenter(level.getGroundLayer(), object.getRectangle(), object.getCoordinates());
+            Point coord = object.getCoordinates();
+            moveRectangleAtTileCenter(level.getGroundLayer(), object.getRectangle(), new GridPoint2(coord.x, coord.y));
         }
     }
 
@@ -58,9 +59,10 @@ public class LevelRenderer {
         batch.end();
     }
 
-    public void shiftEntity(LevelEntity levelEntity, GridPoint2 destination, float progress) {
+    public void shiftEntity(LevelEntity levelEntity, Point dest, float progress) {
+        Point coords = levelEntity.getCoordinates();
         tileMovement.moveRectangleBetweenTileCenters(
-                levelEntity.getRectangle(), levelEntity.getCoordinates(), destination, progress
+                levelEntity.getRectangle(), new GridPoint2(coords.x, coords.y), new GridPoint2(dest.x, dest.y), progress
         );
     }
 

@@ -1,25 +1,24 @@
-package ru.mipt.bit.platformer.game;
+package ru.mipt.bit.platformer.game.controls;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.game.player.Direction;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.Input.Keys.D;
 
-public class UserInput {
+public class KeyboardHandler implements InputHandler {
     /*
     Класс, считывающий нажатие игроком клавиш клавиатуры.
      */
 
-    public static Direction handleUserInput() {
+    public UserCommand handleUserInput() {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W))
-            return Direction.UP;
+            return MoveCommand.UP;
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A))
-            return Direction.LEFT;
+            return MoveCommand.LEFT;
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S))
-            return Direction.DOWN;
+            return MoveCommand.DOWN;
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D))
-            return Direction.RIGHT;
+            return MoveCommand.RIGHT;
         return null;
     }
 

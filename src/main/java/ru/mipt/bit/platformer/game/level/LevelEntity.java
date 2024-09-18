@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer.game.level;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
@@ -21,14 +20,14 @@ public class LevelEntity {
         this.layout = new Layout(graphics, rectangle);
     }
 
-    public void setCoordinates(int x, int y) {
-        this.layout.coordinates = new GridPoint2(x, y);
+    public void setCoordinates(Point coordinate) {
+        this.layout.coordinates = new Point(coordinate.x, coordinate.y);
     }
 
     private static class Layout {
         TextureRegion graphics;
         Rectangle rectangle;
-        GridPoint2 coordinates = new GridPoint2();
+        Point coordinates;
         float rotation = 0f;
 
         public Layout(TextureRegion graphics, Rectangle rectangle) {
@@ -41,8 +40,8 @@ public class LevelEntity {
         texture.dispose();
     }
 
-    public GridPoint2 getCoordinates() {
-        return layout.coordinates;
+    public Point getCoordinates() {
+        return new Point(layout.coordinates.x, layout.coordinates.y);
     }
 
     public Rectangle getRectangle() {
