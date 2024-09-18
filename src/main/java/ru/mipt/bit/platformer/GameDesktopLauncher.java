@@ -10,7 +10,8 @@ import ru.mipt.bit.platformer.game.controls.MoveCommand;
 import ru.mipt.bit.platformer.game.controls.UserCommand;
 import ru.mipt.bit.platformer.game.level.*;
 import ru.mipt.bit.platformer.game.player.Player;
-import ru.mipt.bit.platformer.game.player.PlayerMoveHandler;
+import ru.mipt.bit.platformer.game.player.PlayerMoveLogic;
+import ru.mipt.bit.platformer.game.player.PlayerRenderer;
 
 import java.util.List;
 
@@ -20,8 +21,8 @@ public class GameDesktopLauncher implements ApplicationListener {
      */
 
     private LevelRenderer levelRenderer;
-    private PlayerMoveHandler playerMoveHandler;
-    private Player player;
+    private PlayerMoveLogic playerMoveLogic;
+    private PlayerRenderer playerRenderer;
     private final InputController userInputController = new InputController();
 
     @Override
@@ -35,12 +36,13 @@ public class GameDesktopLauncher implements ApplicationListener {
         LevelEntity greenTree = LevelEntityDatabase.getGreenTree();
         greenTree.setCoordinates(new Point(1, 3));
 
-        player = new Player(blueTank);
+        Player player = new Player(blueTank);
 
         List<LevelEntity> obstacles = List.of(greenTree);  // Пока препятствия - все объекты
 
         levelRenderer = new LevelRenderer(level, batch, LevelEntityDatabase.createdObjects);
-        playerMoveHandler = new PlayerMoveHandler(player, obstacles);
+        playerMoveLogic = new PlayerMoveLogic(player, obstacles);
+        playerRenderer = new PlayerRenderer(player, playerMoveLogic, levelRenderer);
     }
 
     @Override
@@ -57,13 +59,10 @@ public class GameDesktopLauncher implements ApplicationListener {
     private void renderUserInput(float deltaTime) {
         UserCommand userCommand = userInputController.getUserCommand();
         if (userCommand instanceof MoveCommand) {
-            playerMoveHandler.makeMove((MoveCommand) userCommand);
+            playerRenderer.startMove((MoveCommand) userCommand);
         }
 
-        playerMoveHandler.confirmMove(deltaTime);
-        levelRenderer.shiftEntity(
-                player.getPlayerEntity(), playerMoveHandler.getDestination(), playerMoveHandler.getMovementProgress()
-        );
+        playerRenderer.movePlayer(deltaTime);
     }
 
     @Override
