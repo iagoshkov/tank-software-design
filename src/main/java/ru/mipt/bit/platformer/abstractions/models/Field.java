@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.abstractions;
+package ru.mipt.bit.platformer.abstractions.models;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapRenderer;
@@ -10,8 +10,8 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRende
 import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 public class Field {
-    private TiledMap map;
-    private MapRenderer renderer;
+    private final TiledMap map;
+    private final MapRenderer renderer;
 
     public Field(String mapPath, Batch batch) {
         this.map = new TmxMapLoader().load(mapPath);
