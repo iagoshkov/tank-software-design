@@ -62,4 +62,9 @@ public class Tank extends BaseModel implements Moveable {
     public GridPoint2 getDestination() {
         return new GridPoint2(destinationCoordinates);
     }
+
+    @Override
+    public void render(Batch batch) {
+        graphicsController.render(batch, getGraphics(), getRectangle(), rotation);
+    }
 }

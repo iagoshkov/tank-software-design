@@ -56,7 +56,7 @@ public abstract class BaseModel {
     }
 
     public void render(Batch batch) {
-        graphicsController.render(batch, getGraphics(), getRectangle());
+        graphicsController.render(batch, getGraphics(), getRectangle(), 0f);
     }
 
     public void dispose() {

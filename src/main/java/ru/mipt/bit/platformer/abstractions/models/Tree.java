@@ -5,7 +5,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.abstractions.graphics.GraphicsController;
 
-import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class Tree extends BaseModel{
@@ -16,7 +15,7 @@ public class Tree extends BaseModel{
     }
 
     public void render(Batch batch) {
-        graphicsController.render(batch, getGraphics(), getRectangle());
+        graphicsController.render(batch, getGraphics(), getRectangle(), 0f);
     }
 
     public void dispose() {
