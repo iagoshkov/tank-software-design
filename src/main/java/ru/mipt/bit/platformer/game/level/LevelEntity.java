@@ -3,8 +3,8 @@ package ru.mipt.bit.platformer.game.level;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.game.objects.Coordinates;
-import ru.mipt.bit.platformer.game.objects.GameEntity;
+import ru.mipt.bit.platformer.game.entities.Coordinates;
+import ru.mipt.bit.platformer.game.entities.GameEntity;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 

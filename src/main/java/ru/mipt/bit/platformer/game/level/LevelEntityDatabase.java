@@ -1,6 +1,6 @@
 package ru.mipt.bit.platformer.game.level;
 
-import ru.mipt.bit.platformer.game.objects.GameEntity;
+import ru.mipt.bit.platformer.game.entities.GameEntity;
 
 import java.util.ArrayList;
 import java.util.List;

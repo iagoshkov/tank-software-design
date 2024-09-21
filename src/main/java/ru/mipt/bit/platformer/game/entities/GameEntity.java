@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.game.objects;
+package ru.mipt.bit.platformer.game.entities;
 
 public class GameEntity {
     /*

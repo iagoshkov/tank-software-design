@@ -1,8 +1,8 @@
 package ru.mipt.bit.platformer.game.player;
 
 import ru.mipt.bit.platformer.game.controls.MoveCommand;
-import ru.mipt.bit.platformer.game.objects.Coordinates;
-import ru.mipt.bit.platformer.game.objects.GameEntity;
+import ru.mipt.bit.platformer.game.entities.Coordinates;
+import ru.mipt.bit.platformer.game.entities.GameEntity;
 
 import java.util.List;
 
@@ -54,5 +54,10 @@ public class PlayerMoveLogic {
 
     public Coordinates getDestination() {
         return playerDestination;
+    }
+
+    public void setPlayerCoordinates(Coordinates destination) {
+        this.playerDestination = destination;
+        confirmMove();
     }
 }

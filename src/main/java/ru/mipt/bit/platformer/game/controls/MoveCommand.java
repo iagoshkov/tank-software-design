@@ -1,6 +1,6 @@
 package ru.mipt.bit.platformer.game.controls;
 
-import ru.mipt.bit.platformer.game.objects.Coordinates;
+import ru.mipt.bit.platformer.game.entities.Coordinates;
 
 public enum MoveCommand implements UserCommand {
     /*

@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.game.objects.Coordinates;
+import ru.mipt.bit.platformer.game.entities.Coordinates;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.List;
