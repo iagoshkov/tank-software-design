@@ -8,10 +8,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ru.mipt.bit.platformer.game.controls.InputController;
 import ru.mipt.bit.platformer.game.controls.MoveCommand;
 import ru.mipt.bit.platformer.game.controls.UserCommand;
-import ru.mipt.bit.platformer.game.level.*;
 import ru.mipt.bit.platformer.game.entities.Coordinates;
 import ru.mipt.bit.platformer.game.entities.GameEntity;
-import ru.mipt.bit.platformer.game.player.Player;
+import ru.mipt.bit.platformer.game.entities.Obstacle;
+import ru.mipt.bit.platformer.game.entities.Tank;
+import ru.mipt.bit.platformer.game.level.Level;
+import ru.mipt.bit.platformer.game.level.LevelEntity;
+import ru.mipt.bit.platformer.game.level.LevelEntityDatabase;
+import ru.mipt.bit.platformer.game.level.LevelRenderer;
 import ru.mipt.bit.platformer.game.player.PlayerMoveLogic;
 import ru.mipt.bit.platformer.game.player.PlayerRenderer;
 
@@ -23,7 +27,6 @@ public class GameDesktopLauncher implements ApplicationListener {
      */
 
     private LevelRenderer levelRenderer;
-    private PlayerMoveLogic playerMoveLogic;
     private PlayerRenderer playerRenderer;
     private final InputController userInputController = new InputController();
 
@@ -32,8 +35,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         Level level = new Level("level.tmx");
         Batch batch = new SpriteBatch();
 
-        Player player = new Player(new Coordinates(1, 1));
-        GameEntity obstacle = new GameEntity(new Coordinates(1, 3));
+        Tank player = new Tank(new Coordinates(1, 1));
+        GameEntity obstacle = new Obstacle(new Coordinates(1, 3));
 
         LevelEntity blueTank = LevelEntityDatabase.getBlueTank(player);
         LevelEntity greenTree = LevelEntityDatabase.getGreenTree(obstacle);
@@ -42,7 +45,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         List<GameEntity> obstacles = List.of(obstacle);
 
         levelRenderer = new LevelRenderer(level, batch, textures);
-        playerMoveLogic = new PlayerMoveLogic(player, obstacles);
+        PlayerMoveLogic playerMoveLogic = new PlayerMoveLogic(player, obstacles);
         playerRenderer = new PlayerRenderer(blueTank, playerMoveLogic, levelRenderer);
     }
 

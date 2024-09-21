@@ -1,29 +1,13 @@
 package ru.mipt.bit.platformer.game.entities;
 
-public class GameEntity {
+public interface GameEntity {
     /*
     Класс сущности игры без привязки к графике.
      */
-    private Coordinates coordinates;
-    private float rotation = 0f;
 
-    public GameEntity(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
+    Coordinates getCoordinates();
 
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
+    void setCoordinates(Coordinates coordinates);
 
-    public float getRotation() {
-        return rotation;
-    }
-
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = new Coordinates(coordinates.x, coordinates.y);
-    }
-
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
-    }
+    float getRotation();
 }

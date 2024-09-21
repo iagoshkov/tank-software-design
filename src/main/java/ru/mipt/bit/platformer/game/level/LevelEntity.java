@@ -52,10 +52,6 @@ public class LevelEntity {
         return gameEntity.getCoordinates();
     }
 
-    public void setRotation(float rotation) {
-        gameEntity.setRotation(rotation);
-    }
-
     public float getRotation() {
         return gameEntity.getRotation();
     }

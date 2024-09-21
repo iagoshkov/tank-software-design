@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import ru.mipt.bit.platformer.game.controls.MoveCommand;
 import ru.mipt.bit.platformer.game.entities.Coordinates;
 import ru.mipt.bit.platformer.game.entities.GameEntity;
+import ru.mipt.bit.platformer.game.entities.Obstacle;
+import ru.mipt.bit.platformer.game.entities.Tank;
 
 import java.util.List;
 
@@ -18,10 +20,10 @@ class PlayerMovePositiveTest {
 
     @BeforeAll
     static void beforeAll() {
-        GameEntity obstacle1 = new GameEntity(new Coordinates(1, 3));
-        GameEntity obstacle2 = new GameEntity(new Coordinates(3, 3));
+        GameEntity obstacle1 = new Obstacle(new Coordinates(1, 3));
+        GameEntity obstacle2 = new Obstacle(new Coordinates(3, 3));
 
-        player = new Player(new Coordinates(1, 10));
+        player = new Tank(new Coordinates(1, 10));
         List<GameEntity> obstacles = List.of(obstacle1, obstacle2);
 
         moveLogic = new PlayerMoveLogic(player, obstacles);

@@ -31,9 +31,9 @@ public class LevelRenderer {
         this.tileMovement = new TileMovement(level.getGroundLayer(), Interpolation.smooth);
 
         this.levelEntities = levelEntities;
-        for (LevelEntity object : levelEntities) {
-            Coordinates coord = object.getCoordinates();
-            moveRectangleAtTileCenter(level.getGroundLayer(), object.getRectangle(), new GridPoint2(coord.x, coord.y));
+        for (LevelEntity entity : levelEntities) {
+            Coordinates coords = entity.getCoordinates();
+            moveRectangleAtTileCenter(level.getGroundLayer(), entity.getRectangle(), new GridPoint2(coords.x, coords.y));
         }
     }
 
