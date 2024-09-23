@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.utils.compression.lzma.Base;
 import ru.mipt.bit.platformer.abstractions.graphics.GraphicsController;
 import ru.mipt.bit.platformer.abstractions.models.BaseModel;
 import ru.mipt.bit.platformer.abstractions.models.Field;
@@ -54,11 +55,16 @@ public class GameDesktopLauncher implements ApplicationListener {
             if (model instanceof Tank) {
                 Tank tank = (Tank) model;
                 tank.handleInput();
-                if (!isColliding(tank)) {
+
+                if (isColliding(tank)) {
+                    tank.cancelMovement();
+                }
+                else {
                     tank.updatePosition(tileMovement, deltaTime);
                 }
             }
         }
+
         models.sort(Comparator.comparingInt(model -> -model.getPosition().y));
         field.render();
 
@@ -100,4 +106,3 @@ public class GameDesktopLauncher implements ApplicationListener {
         new Lwjgl3Application(new GameDesktopLauncher(), config);
     }
 }
-

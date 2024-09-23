@@ -26,6 +26,7 @@ public class Tank extends BaseModel implements Moveable {
         this.movementSpeed = movementSpeed;
         this.rotation = 0f;
     }
+
     @Override
     public void handleInput() {
         if (isEqual(movementProgress, 1f)) {
@@ -57,6 +58,10 @@ public class Tank extends BaseModel implements Moveable {
         if (isEqual(movementProgress, 1f)) {
             currentCoordinates.set(destinationCoordinates);
         }
+    }
+
+    public void cancelMovement() {
+        movementProgress = 1f;
     }
 
     public GridPoint2 getDestination() {

@@ -14,7 +14,6 @@ public class GraphicsController {
     }
 
     public void dispose() {
-//        getTexture().dispose();
     }
 
     public boolean collidesWith(GridPoint2 firstObjPoint, GridPoint2 secondObjPoint) {
