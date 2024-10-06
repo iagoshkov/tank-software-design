@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer.abstractions.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.abstractions.Direction;
+import ru.mipt.bit.platformer.abstractions.models.Direction;
 import ru.mipt.bit.platformer.abstractions.graphics.GraphicsController;
 import ru.mipt.bit.platformer.abstractions.movement.Moveable;
 import ru.mipt.bit.platformer.util.TileMovement;
