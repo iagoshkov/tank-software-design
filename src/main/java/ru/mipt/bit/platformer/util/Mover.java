@@ -14,7 +14,7 @@ public class Mover {
 
     public static void move(float deltaTime, final Collection<Movable> movables) {
         for (Movable movable : movables) {
-            movable.move(deltaTime);
+            movable.changeMovementState(deltaTime);
         }
     }
 

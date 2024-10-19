@@ -23,14 +23,11 @@ public class TreeGenerator implements ObjectGenerator<Tree> {
     }
 
     public TreeGenerator(CoordinatesGenerator coordinatesGenerator, List<String> textures, TiledMapTileLayer groundLayer) {
-        this.coordinatesGenerator = coordinatesGenerator;
-        this.integerGenerator = coordinatesGenerator.getIntegerGenerator();
-        this.textures = textures;
-        this.groundLayer = groundLayer;
+        this(coordinatesGenerator, coordinatesGenerator.getIntegerGenerator(), textures, groundLayer);
     }
 
     @Override
-    public void generate(int n, Collection<? super Tree> destination) {
+    public Collection<? super Tree> generate(int n, Collection<? super Tree> destination) {
         final int size = destination.size();
         while (destination.size() < min(n + size, coordinatesGenerator.getHeight() * coordinatesGenerator.getWidth())) {
             destination.add(new Tree(
@@ -39,6 +36,7 @@ public class TreeGenerator implements ObjectGenerator<Tree> {
                     groundLayer
             ));
         }
+        return destination;
     }
 
     @Override

@@ -10,11 +10,6 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.decrementedY;
 public class DOWN extends MovementKey {
 
     public DOWN(Collection<? extends GameObject> obstacles, Collection<Movable> movables, int[] keys, Direction dir) {
-        super(obstacles, movables, keys, dir);
-    }
-
-    @Override
-    boolean existCollisions(Movable movable) {
-        return obstacles.stream().anyMatch(obstacle -> obstacle.getCoordinates().equals(decrementedY(movable.getCoordinates())));
+        super(obstacles, movables, keys, dir, null);
     }
 }

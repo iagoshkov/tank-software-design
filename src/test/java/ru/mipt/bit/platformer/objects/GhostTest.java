@@ -20,7 +20,7 @@ class GhostTest {
     }
 
     @Test
-    void move() {
+    void changeMovementState() {
         Ghost ghost = new Ghost
                 (
                         new GridPoint2(2, 3),
@@ -28,11 +28,11 @@ class GhostTest {
                         1f
                 );
         ghost.changeDestinationCoordinates(new GridPoint2(3, 7));
-        ghost.move(2f);
+        ghost.changeMovementState(2f);
         assertEquals(new GridPoint2(5, 10), ghost.getCoordinates());
     }
     @Test
-    void dontMoveNoTime() {
+    void dontChangeMovementStateNoTime() {
         Ghost ghost = new Ghost
                 (
                         new GridPoint2(2, 3),
@@ -40,13 +40,13 @@ class GhostTest {
                         0f
                 );
         ghost.changeDestinationCoordinates(new GridPoint2(3, 7));
-        ghost.move(0f);
+        ghost.changeMovementState(0f);
         assertEquals(new GridPoint2(2, 3), ghost.getCoordinates());
 
     }
 
     @Test
-    void dontMoveTooFast() {
+    void dontChangeMovementStateTooFast() {
         Ghost ghost = new Ghost
                 (
                         new GridPoint2(2, 3),
@@ -54,7 +54,7 @@ class GhostTest {
                         0f
                 );
         ghost.changeDestinationCoordinates(new GridPoint2(3, 7));
-        ghost.move(1f);
+        ghost.changeMovementState(1f);
         assertEquals(new GridPoint2(2, 3), ghost.getCoordinates());
 
     }

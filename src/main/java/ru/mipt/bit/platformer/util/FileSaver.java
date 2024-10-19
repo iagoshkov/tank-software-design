@@ -1,5 +1,5 @@
 package ru.mipt.bit.platformer.util;
 
 public interface FileSaver {
-    void saveToFile();
+    void saveToFile(String fileName);
 }

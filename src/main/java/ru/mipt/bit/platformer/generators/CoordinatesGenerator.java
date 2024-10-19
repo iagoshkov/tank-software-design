@@ -18,11 +18,12 @@ public class CoordinatesGenerator implements ObjectGenerator<GridPoint2> {
     }
 
     @Override
-    public void generate(int n, Collection<? super GridPoint2> destination) {
+    public Collection<? super GridPoint2> generate(int n, Collection<? super GridPoint2> destination) {
         final int size = destination.size();
         while (destination.size() < min(n + size, width * height)) {
             destination.add(new GridPoint2(integerGenerator.generate(0, width - 1), integerGenerator.generate(0, height - 1)));
         }
+        return destination;
     }
 
     @Override

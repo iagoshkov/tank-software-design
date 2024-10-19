@@ -8,13 +8,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 
 import ru.mipt.bit.platformer.generators.CoordinatesGenerator;
 import ru.mipt.bit.platformer.generators.ObjectGenerator;
 import ru.mipt.bit.platformer.generators.SimpleIntegerGenerator;
 import ru.mipt.bit.platformer.generators.TreeGenerator;
+import ru.mipt.bit.platformer.levels.EmptyDrawableLevel;
+import ru.mipt.bit.platformer.levels.DrawableLevel;
+import ru.mipt.bit.platformer.levels.FromFileDrawableLevel;
 import ru.mipt.bit.platformer.util.*;
 import ru.mipt.bit.platformer.objects.*;
 import ru.mipt.bit.platformer.keys.*;
@@ -27,43 +29,19 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
-    private Batch batch;
-    private DrawableLevel level;
+    private Batch batch = null;
+    private DrawableLevel level = null;
 
-    private Collection<Drawable> drawables;
-    private Collection< Movable>  movables;
+    private Collection<Drawable> drawables = new HashSet<>();
+    private Collection<Movable>   movables = new HashSet<>();
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        level = new DrawableLevel(new TmxMapLoader().load("level.tmx"), batch);
-        final Mover mover = new Mover(new TileMovement(level.getGroundLayer(), Interpolation.smooth));
-
-        final CoordinatesGenerator coordinatesGenerator = new CoordinatesGenerator(new SimpleIntegerGenerator(), level.getHeight(), level.getWidth());
-
-        final Tank tank = new Tank
-                (
-                        new Texture("images/tank_blue.png"),
-                        coordinatesGenerator.generate(),
-                        0.4f,
-                        1f,
-                        0,
-                        mover.getTileMovement()
-                );
-
-        final ObjectGenerator<Tree> treeGenerator = new TreeGenerator(
-                coordinatesGenerator,
-                List.of("images/greenTree.png"),
-                level.getGroundLayer()
-        );
-
-        drawables = new HashSet<>(List.of(tank));
-        movables  = new HashSet<>(List.of(tank));
-        treeGenerator.generate(30, drawables);
-        System.out.println(drawables.size());
-
-        final FileSaver fileSaver = new TxtSaver(level, drawables);
-        fileSaver.saveToFile();
+        GameLoader gameLoader = new RandomGeneratedGameLoader();
+        batch     = gameLoader.getBatch();
+        level     = gameLoader.getLevel();
+        drawables = gameLoader.getDrawables();
+        movables  = gameLoader.getMovables();
     }
 
     @Override
@@ -77,34 +55,38 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         KeyPressHandler.handleKeyPress
                 (
-                        new UP
-                        (
-                                drawables,
-                                movables,
-                                new int[]{UP, W},
-                                Direction.UP
-                        ),
-                        new DOWN
-                        (
-                                drawables,
-                                movables,
-                                new int[]{DOWN, S},
-                                Direction.DOWN
-                        ),
-                        new LEFT
-                        (
-                                drawables,
-                                movables,
-                                new int[]{LEFT, A},
-                                Direction.LEFT
-                        ),
-                        new RIGHT
-                        (
-                                drawables,
-                                movables,
-                                new int[]{RIGHT, D},
-                                Direction.RIGHT
-                        )
+                        new MovementKey
+                                (
+                                        drawables,
+                                        movables,
+                                        new int[]{UP, W},
+                                        Direction.UP,
+                                        level
+                                ),
+                        new MovementKey
+                                (
+                                        drawables,
+                                        movables,
+                                        new int[]{DOWN, S},
+                                        Direction.DOWN,
+                                        level
+                                ),
+                        new MovementKey
+                                (
+                                        drawables,
+                                        movables,
+                                        new int[]{LEFT, A},
+                                        Direction.LEFT,
+                                        level
+                                ),
+                        new MovementKey
+                                (
+                                        drawables,
+                                        movables,
+                                        new int[]{RIGHT, D},
+                                        Direction.RIGHT,
+                                        level
+                                )
                 );
 
         Mover.move(deltaTime, movables);

@@ -1,39 +1,42 @@
 package ru.mipt.bit.platformer.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.keys.Direction;
+import ru.mipt.bit.platformer.levels.Level;
 import ru.mipt.bit.platformer.util.TileMovement;
+
+import java.util.Collection;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedX;
 
-public class Ghost implements Movable {
+public class Ghost extends GameObjectAbt implements Movable {
 
-    private final float movementSpeed;
-    private final GridPoint2 coordinates;
-    private float rotation;
-    private final GridPoint2 destinationCoordinates;
-    private float movementProgress;
+    protected final float movementSpeed;
+    protected final GridPoint2 destinationCoordinates;
+    protected float movementProgress;
 
     public Ghost(GridPoint2 coordinates, float movementSpeed, float movementProgress) {
+        super(coordinates, 0f);
         this.movementProgress = movementProgress;
         this.movementSpeed = movementSpeed;
-        this.coordinates = coordinates;
         destinationCoordinates = new GridPoint2(coordinates);
     }
 
     @Override
     public float getMovementSpeed() {
-        return this.movementSpeed;
+        return movementSpeed;
     }
 
     @Override
     public GridPoint2 getDestinationCoordinates() {
-        return this.destinationCoordinates;
+        return destinationCoordinates;
     }
 
     @Override
     public float getMovementProgress() {
-        return this.movementProgress;
+        return movementProgress;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class Ghost implements Movable {
     }
 
     @Override
-    public void move(float deltaTime) {
+    public void changeMovementState(float deltaTime) {
         setMovementProgress(continueProgress(movementProgress, deltaTime, movementSpeed));
         if (isEqual(movementProgress, 1f)) {
             setCoordinates(destinationCoordinates);
@@ -56,22 +59,31 @@ public class Ghost implements Movable {
     }
 
     @Override
-    public GridPoint2 getCoordinates() {
-        return this.coordinates;
+    public void move(Direction direction) {
+        changeDestinationCoordinates(direction.getDirection());
+        setMovementProgress(0f);
+    }
+
+    private void canRotateToDirection(Direction direction) {
+        if (isEqual(movementProgress, 1f)) {
+            setRotation(direction.getRotation());
+        }
     }
 
     @Override
-    public void setCoordinates(GridPoint2 coordinates) {
-        this.coordinates.set(coordinates);
+    public boolean canMoveToDirection(Direction direction, Collection<? extends GameObject> obstacles, Level level) {
+        canRotateToDirection(direction);
+        return isEqual(movementProgress, 1f) && !existCollisions(direction, obstacles) && !outOfBorders(direction, level);
     }
 
-    @Override
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
+    private boolean outOfBorders(Direction direction, Level level) {
+        GridPoint2 destCoordinates = new GridPoint2(coordinates).add(direction.getDirection());
+        return (destCoordinates.x > level.getWidth() - 1 || destCoordinates.y > level.getHeight() - 1) ||
+               (destCoordinates.x < 0                    || destCoordinates.y < 0);
     }
 
-    @Override
-    public float getRotation() {
-        return rotation;
+    private boolean existCollisions(Direction direction, Collection<? extends GameObject> obstacles) {
+        return obstacles.stream().anyMatch(obstacle -> obstacle.getCoordinates().equals(new GridPoint2(coordinates).add(direction.getDirection())));
     }
+
 }

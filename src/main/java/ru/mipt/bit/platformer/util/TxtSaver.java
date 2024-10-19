@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.levels.DrawableLevel;
 import ru.mipt.bit.platformer.objects.Drawable;
 import ru.mipt.bit.platformer.objects.Tank;
 import ru.mipt.bit.platformer.objects.Tree;
@@ -27,11 +28,11 @@ public class TxtSaver implements FileSaver {
     }
 
     @Override
-    public void saveToFile() {
+    public void saveToFile(String fileName) {
         initField(level);
         drawObjects(level, drawables);
         try {
-            saveFieldToFile(level, "src/main/res/level.txt");
+            saveFieldToFile(level, fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,9 +42,9 @@ public class TxtSaver implements FileSaver {
         for (Drawable drawable : drawables) {
             GridPoint2 coordinates = drawable.getCoordinates();
             if (drawable instanceof Tank) {
-                field.set(coordinates.x + level.getWidth() * coordinates.y, 'X');
+                field.set(coordinates.x + level.getWidth() * coordinates.y, CharToDrawableConverter.getCharFromDrawable((Tank) drawable));
             } else if (drawable instanceof Tree) {
-                field.set(coordinates.x + level.getWidth() * coordinates.y, 'T');
+                field.set(coordinates.x + level.getWidth() * coordinates.y, CharToDrawableConverter.getCharFromDrawable((Tree) drawable));
             }
         }
     }
@@ -63,13 +64,15 @@ public class TxtSaver implements FileSaver {
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            for (int y = level.getHeight() - 1; y > 0; y--) {
+            for (int y = level.getHeight() - 1; y > -1; y--) {
                 String row = field.subList(y * level.getWidth(), (y + 1) * level.getWidth())
                                   .stream()
                                   .map(String::valueOf)
                                   .collect(Collectors.joining());
                 writer.write(row);
-                writer.newLine();
+                if (y > 0) {
+                    writer.newLine();
+                }
             }
         }
     }

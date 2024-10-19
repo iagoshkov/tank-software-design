@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.util;
+package ru.mipt.bit.platformer.levels;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapRenderer;
@@ -8,20 +8,18 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
-public class DrawableLevel {
-    final private TiledMap level;
-    final private MapRenderer levelRenderer;
-    final private TiledMapTileLayer groundLayer;
-    final private int width, height;
+public class EmptyDrawableLevel implements DrawableLevel {
+    final protected TiledMap level;
+    final protected MapRenderer levelRenderer;
+    final protected TiledMapTileLayer groundLayer;
+    final protected int width, height;
 
-    public DrawableLevel(TiledMap level, Batch batch) {
+    public EmptyDrawableLevel(TiledMap level, Batch batch) {
         this.level = level;
-        //Don't know how to get them from file info. Should I parse it by myself or what?
-        width = 10;
-        height = 8;
-
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         groundLayer = getSingleLayer(level);
+        width = groundLayer.getWidth();
+        height = groundLayer.getHeight();
     }
 
     public MapRenderer getLevelRenderer() {
@@ -32,22 +30,27 @@ public class DrawableLevel {
         return level;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public TiledMapTileLayer getGroundLayer() {
         return groundLayer;
     }
 
+    @Override
     public void dispose() {
         level.dispose();
     }
 
+    @Override
     public void render() {
         levelRenderer.render();
     }
