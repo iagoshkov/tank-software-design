@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer.generators;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.objects.Tree;
 
 import java.util.*;

@@ -7,8 +7,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 
-import java.util.Objects;
-
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class Tree extends GameObjectAbt implements Drawable, GameObject {
@@ -16,23 +14,7 @@ public class Tree extends GameObjectAbt implements Drawable, GameObject {
     private Texture texture;
     private TextureRegion graphics;
     private Rectangle rectangle;
-    private static Character drawableCharacter = 'T';
-
-    public Tree
-            (
-                    Texture greenTreeTexture,
-                    GridPoint2 coordinates,
-                    TiledMapTileLayer groundLayer,
-                    Character drawableCharacter
-            )
-    {
-        super(coordinates, 0f);
-        this.texture = greenTreeTexture;
-        this.graphics = new TextureRegion(greenTreeTexture);
-        this.rectangle = createBoundingRectangle(graphics);
-        this.drawableCharacter = drawableCharacter;
-        this.placeOnLayer(groundLayer);
-    }
+    private static final Character drawableCharacter = 'T';
 
     public Tree
             (
@@ -41,7 +23,11 @@ public class Tree extends GameObjectAbt implements Drawable, GameObject {
                     TiledMapTileLayer groundLayer
             )
     {
-        this(greenTreeTexture, coordinates, groundLayer, 'T');
+        super(coordinates, 0f);
+        this.texture = greenTreeTexture;
+        this.graphics = new TextureRegion(greenTreeTexture);
+        this.rectangle = createBoundingRectangle(graphics);
+        this.placeOnLayer(groundLayer);
     }
 
     public void placeOnLayer(TiledMapTileLayer groundLayer) {
@@ -85,11 +71,6 @@ public class Tree extends GameObjectAbt implements Drawable, GameObject {
 
     public static Character getDrawableCharacterStatic() {
         return drawableCharacter;
-    }
-
-    @Override
-    public void setDrawableCharacter(Character character) {
-        drawableCharacter = character;
     }
 
     @Override

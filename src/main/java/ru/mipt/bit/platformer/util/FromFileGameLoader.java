@@ -14,11 +14,10 @@ import java.util.HashSet;
 
 public class FromFileGameLoader implements GameLoader {
 
-    private Batch batch;
-    private DrawableLevel level;
-
-    private Collection<Drawable> drawables = new HashSet<>();
-    private Collection<Movable>   movables = new HashSet<>();
+    private final Batch batch;
+    private final DrawableLevel level;
+    private final Collection<Drawable> drawables = new HashSet<>();
+    private final Collection<Movable>   movables = new HashSet<>();
 
 
     public FromFileGameLoader() {
@@ -34,7 +33,6 @@ public class FromFileGameLoader implements GameLoader {
                         objects
                 );
 
-        System.out.println(level.getHeight());
         for (GameObjectAbt object : objects) {
             if (object instanceof Movable) {
                 movables.add((Movable) object);

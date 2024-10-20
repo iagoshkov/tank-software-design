@@ -1,10 +1,8 @@
 package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.objects.Drawable;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 
 public interface FileParser {

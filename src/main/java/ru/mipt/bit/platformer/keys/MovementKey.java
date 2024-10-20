@@ -9,8 +9,6 @@ import ru.mipt.bit.platformer.objects.GameObject;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.badlogic.gdx.math.MathUtils.isEqual;
-
 public class MovementKey implements Key {
 
     protected final Collection<? extends GameObject> obstacles;

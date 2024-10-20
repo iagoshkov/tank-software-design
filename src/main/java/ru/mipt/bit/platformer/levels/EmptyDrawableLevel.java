@@ -9,12 +9,15 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRende
 import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 public class EmptyDrawableLevel implements DrawableLevel {
-    final protected TiledMap level;
-    final protected MapRenderer levelRenderer;
-    final protected TiledMapTileLayer groundLayer;
-    final protected int width, height;
+    protected TiledMap level;
+    protected MapRenderer levelRenderer;
+    protected TiledMapTileLayer groundLayer;
+    protected int width, height;
 
     public EmptyDrawableLevel(TiledMap level, Batch batch) {
+        if (level == null || batch == null) {
+            return;
+        }
         this.level = level;
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         groundLayer = getSingleLayer(level);

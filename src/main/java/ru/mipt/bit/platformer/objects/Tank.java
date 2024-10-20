@@ -4,14 +4,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 
-import java.util.Objects;
-
-import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class Tank extends Ghost implements Drawable, Movable {
@@ -24,26 +20,7 @@ public class Tank extends Ghost implements Drawable, Movable {
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     // which tile the player want to go next
     private final TileMovement tileMovement;
-    private static Character drawableCharacter = 'X';
-
-    public Tank
-            (
-                    Texture texture,
-                    GridPoint2 coordinates,
-                    float movementSpeed,
-                    float movementProgress,
-                    float rotation,
-                    TileMovement tileMovement,
-                    Character drawableCharacter
-            ) {
-        super(coordinates, movementSpeed, movementProgress);
-        this.rotation = rotation;
-        this.texture = texture;
-        this.graphics = new TextureRegion(texture);
-        this.tileMovement = tileMovement;
-        this.rectangle = createBoundingRectangle(graphics);
-        this.drawableCharacter = drawableCharacter;
-    }
+    private static final Character drawableCharacter = 'X';
 
     public Tank
             (
@@ -54,7 +31,12 @@ public class Tank extends Ghost implements Drawable, Movable {
                     float rotation,
                     TileMovement tileMovement
             ) {
-        this(texture, coordinates, movementSpeed, movementProgress, rotation, tileMovement, 'X');
+        super(coordinates, movementSpeed, movementProgress);
+        this.rotation = rotation;
+        this.texture = texture;
+        this.graphics = new TextureRegion(texture);
+        this.tileMovement = tileMovement;
+        this.rectangle = createBoundingRectangle(graphics);
     }
 
     @Override
@@ -94,11 +76,6 @@ public class Tank extends Ghost implements Drawable, Movable {
 
     public static Character getDrawableCharacterStatic() {
         return drawableCharacter;
-    }
-
-    @Override
-    public void setDrawableCharacter(Character character) {
-        drawableCharacter = character;
     }
 
     @Override

@@ -1,13 +1,7 @@
 package ru.mipt.bit.platformer.generators;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import ru.mipt.bit.platformer.levels.DrawableLevel;
-import ru.mipt.bit.platformer.levels.Level;
-import ru.mipt.bit.platformer.objects.Drawable;
-import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.TankAI;
-import ru.mipt.bit.platformer.objects.Tree;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.Collection;
@@ -23,10 +17,6 @@ public class TankAIGenerator implements ObjectGenerator<TankAI> {
     final private IntegerGenerator integerGenerator;
     final private List<Integer> rotations;
     final private TileMovement tileMovement;
-    final private Character character;
-    final private Level level;
-    final private Collection<? extends GameObject> obstacles;
-
 
     public TankAIGenerator(List<String> textures,
                            CoordinatesGenerator coordinatesGenerator,
@@ -34,10 +24,7 @@ public class TankAIGenerator implements ObjectGenerator<TankAI> {
                            float movementProgress,
                            List<Integer> rotations,
                            TileMovement tileMovement,
-                           Character character,
-                           IntegerGenerator integerGenerator,
-                           Level level,
-                           Collection<? extends GameObject> obstacles) {
+                           IntegerGenerator integerGenerator) {
 
         this.textures = textures;
         this.coordinatesGenerator = coordinatesGenerator;
@@ -46,9 +33,6 @@ public class TankAIGenerator implements ObjectGenerator<TankAI> {
         this.integerGenerator = integerGenerator;
         this.rotations = rotations;
         this.tileMovement = tileMovement;
-        this.character = character;
-        this.level = level;
-        this.obstacles = obstacles;
     }
 
     public TankAIGenerator(List<String> textures,
@@ -56,10 +40,7 @@ public class TankAIGenerator implements ObjectGenerator<TankAI> {
                            List<Float> movementSpeeds,
                            float movementProgress,
                            List<Integer> rotations,
-                           TileMovement tileMovement,
-                           Character character,
-                           Level level,
-                           Collection<? extends GameObject> obstacles) {
+                           TileMovement tileMovement) {
 
         this(
                 textures,
@@ -68,10 +49,7 @@ public class TankAIGenerator implements ObjectGenerator<TankAI> {
                 movementProgress,
                 rotations,
                 tileMovement,
-                character,
-                coordinatesGenerator.getIntegerGenerator(),
-                level,
-                obstacles);
+                coordinatesGenerator.getIntegerGenerator());
     }
 
     @Override
@@ -83,13 +61,10 @@ public class TankAIGenerator implements ObjectGenerator<TankAI> {
                             new Texture(textures.get(generateIndex())),
                             coordinatesGenerator.generate(),
                             movementSpeeds.get(generateIndex()),
-                            1f,
+                            movementProgress,
                             rotations.get(generateIndex()),
                             tileMovement,
-                            character,
-                            integerGenerator,
-                            level,
-                            obstacles
+                            integerGenerator
                     ));
         }
         return destination;
@@ -105,10 +80,7 @@ public class TankAIGenerator implements ObjectGenerator<TankAI> {
                         1f,
                         rotations.get(generateIndex()),
                         tileMovement,
-                        character,
-                        integerGenerator,
-                        level,
-                        obstacles
+                        integerGenerator
                 );
     }
 

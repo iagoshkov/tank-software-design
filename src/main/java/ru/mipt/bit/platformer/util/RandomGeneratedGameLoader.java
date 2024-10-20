@@ -55,10 +55,7 @@ public class RandomGeneratedGameLoader implements GameLoader {
                         1f,
                         0,
                         mover.getTileMovement(),
-                        'A',
-                        simpleIntegerGenerator,
-                        level,
-                        drawables
+                        simpleIntegerGenerator
                 );
 
         final ObjectGenerator<TankAI> tankAIGenerator = new TankAIGenerator(
@@ -68,10 +65,7 @@ public class RandomGeneratedGameLoader implements GameLoader {
                 1f,
                 List.of(0),
                 mover.getTileMovement(),
-                'A',
-                simpleIntegerGenerator,
-                level,
-                drawables
+                simpleIntegerGenerator
         );
 
         final ObjectGenerator<Tree> treeGenerator = new TreeGenerator(
@@ -85,9 +79,10 @@ public class RandomGeneratedGameLoader implements GameLoader {
          movables.add(tankMy);
          movables.add(tankAI);
 
-        Collection<TankAI> tmp = (Collection<TankAI>) tankAIGenerator.generate(1, drawables);
+        Collection<TankAI> tmp = (Collection<TankAI>) tankAIGenerator.generate(3, drawables);
         movables.addAll(tmp);
-        drawables = (Collection<Drawable>) treeGenerator.generate(20, drawables); //I dislike how it looks like
+
+        drawables = (Collection<Drawable>) treeGenerator.generate(20, drawables);
 
         final FileSaver fileSaver = new TxtSaver(level, drawables);
         fileSaver.saveToFile("src/main/res/level.txt");

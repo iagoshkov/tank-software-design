@@ -1,8 +1,8 @@
 package ru.mipt.bit.platformer.util;
 
-import jdk.dynalink.Operation;
 import ru.mipt.bit.platformer.objects.Drawable;
 import ru.mipt.bit.platformer.objects.Tank;
+import ru.mipt.bit.platformer.objects.TankAI;
 import ru.mipt.bit.platformer.objects.Tree;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,8 +13,9 @@ public class CharToDrawableConverter {
     public final static Map<Character, Class<? extends Drawable>> charToClass = new HashMap<>();
     static
     {
-        charToClass.put(Tank.getDrawableCharacterStatic(), Tank.class);
-        charToClass.put(Tree.getDrawableCharacterStatic(), Tree.class);
+        charToClass.put(TankAI.getDrawableCharacterStatic(), TankAI.class);
+        charToClass.put(Tank  .getDrawableCharacterStatic(), Tank  .class);
+        charToClass.put(Tree  .getDrawableCharacterStatic(), Tree.class);
     }
 
     public static Character getCharFromClass(Class<? extends Drawable> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {

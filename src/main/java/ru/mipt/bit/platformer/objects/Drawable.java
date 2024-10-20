@@ -20,8 +20,6 @@ public interface Drawable extends GameObject {
 
     Character getDrawableCharacter();
 
-    void setDrawableCharacter(Character character);
-
     void dispose();
 
     void draw(Batch batch);

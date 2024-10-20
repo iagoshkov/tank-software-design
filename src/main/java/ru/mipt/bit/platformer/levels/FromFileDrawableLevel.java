@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.generators.SimpleIntegerGenerator;
 import ru.mipt.bit.platformer.objects.*;
-import ru.mipt.bit.platformer.util.CharToDrawableConverter;
 import ru.mipt.bit.platformer.util.FileParser;
 import ru.mipt.bit.platformer.util.Mover;
 import ru.mipt.bit.platformer.util.TileMovement;
@@ -29,12 +29,13 @@ public class FromFileDrawableLevel extends EmptyDrawableLevel {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         for (GridPoint2 coordinate : objectCoordinates.keySet()) {
             Character character = objectCoordinates.get(coordinate);
             if (character == Tank.getDrawableCharacterStatic()) {
                 destination.add(new Tank
                         (
-                                new Texture("images/tank_blue.png"),
+                                new Texture("src/main/resources/images/tank_blue.png"),
                                 coordinate.set(coordinate.x, height - 1 - coordinate.y),
                                 0.4f,
                                 1f,
@@ -44,9 +45,20 @@ public class FromFileDrawableLevel extends EmptyDrawableLevel {
             } else if (character == Tree.getDrawableCharacterStatic()) {
                 destination.add(new Tree
                         (
-                                new Texture("images/greenTree.png"),
+                                new Texture("src/main/resources/images/greenTree.png"),
                                 coordinate.set(coordinate.x, height - 1 - coordinate.y),
                                 groundLayer
+                        ));
+            } else if (character == TankAI.getDrawableCharacterStatic()) {
+                destination.add(new TankAI
+                        (
+                                new Texture("src/main/resources/images/tank_blue.png"),
+                                coordinate,
+                                0.4f,
+                                1f,
+                                0,
+                                new TileMovement(getGroundLayer(), Interpolation.smooth),
+                                new SimpleIntegerGenerator()
                         ));
             }
         }

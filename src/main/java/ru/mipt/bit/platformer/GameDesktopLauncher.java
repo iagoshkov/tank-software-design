@@ -37,7 +37,8 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-        GameLoader gameLoader = new RandomGeneratedGameLoader();
+//        GameLoader gameLoader = new RandomGeneratedGameLoader();
+        GameLoader gameLoader = new FromFileGameLoader();
         batch     = gameLoader.getBatch();
         level     = gameLoader.getLevel();
         drawables = gameLoader.getDrawables();
@@ -89,7 +90,7 @@ public class GameDesktopLauncher implements ApplicationListener {
                                 )
                 );
 
-        Mover.move(deltaTime, movables);
+        Mover.move(deltaTime, movables, drawables, level);
 
         // render each tile of the level
         level.render();

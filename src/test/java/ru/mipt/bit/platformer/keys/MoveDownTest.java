@@ -2,21 +2,19 @@ package ru.mipt.bit.platformer.keys;
 
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
+import ru.mipt.bit.platformer.levels.BorderLevel;
 import ru.mipt.bit.platformer.objects.Ghost;
-import ru.mipt.bit.platformer.objects.Movable;
 import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.Wall;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.badlogic.gdx.Input.Keys.DOWN;
-import static com.badlogic.gdx.Input.Keys.S;
 import static org.junit.jupiter.api.Assertions.*;
 
-class DOWNTest {
+class MoveDownTest {
     @Test
-    void existCollisions() {
+    void existCollisionsDown() {
         Wall wall = new Wall
                 (
                         new GridPoint2(2, 2)
@@ -29,20 +27,11 @@ class DOWNTest {
                 );
 
         List<GameObject>   objects = new ArrayList<>(List.of( wall));
-        List<Movable> movables = new ArrayList<>(List.of(ghost));
-
-        DOWN down = new DOWN
-                (
-                        objects,
-                        movables,
-                        new int[]{S, DOWN},
-                        Direction.DOWN
-                );
-//        assertTrue(down.existCollisions(ghost));
+        assertFalse(ghost.canMoveToDirection(Direction.DOWN, objects, new BorderLevel(7, 5)));
     }
 
     @Test
-    void notExistCollisions() {
+    void notExistCollisionsDown() {
         Wall wall = new Wall
                 (
                         new GridPoint2(2, 2)
@@ -55,15 +44,6 @@ class DOWNTest {
                 );
 
         List<GameObject>   objects = new ArrayList<>(List.of( wall));
-        List<Movable> movables = new ArrayList<>(List.of(ghost));
-
-        DOWN down = new DOWN
-                (
-                        objects,
-                        movables,
-                        new int[]{S, DOWN},
-                        Direction.DOWN
-                );
-        assertFalse(false);
+        assertTrue(ghost.canMoveToDirection(Direction.DOWN, objects, new BorderLevel(7, 5)));
     }
 }

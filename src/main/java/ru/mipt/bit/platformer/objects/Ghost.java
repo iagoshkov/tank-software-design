@@ -3,13 +3,11 @@ package ru.mipt.bit.platformer.objects;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.keys.Direction;
 import ru.mipt.bit.platformer.levels.Level;
-import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.Collection;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedX;
 
 public class Ghost extends GameObjectAbt implements Movable {
 
@@ -51,17 +49,9 @@ public class Ghost extends GameObjectAbt implements Movable {
     }
 
     @Override
-    public void changeMovementState(float deltaTime) {
-        setMovementProgress(continueProgress(movementProgress, deltaTime, movementSpeed));
-        if (isEqual(movementProgress, 1f)) {
-            setCoordinates(destinationCoordinates);
-        }
-    }
-
-    @Override
-    public void move(Direction direction) {
-        changeDestinationCoordinates(direction.getDirection());
-        setMovementProgress(0f);
+    public boolean canMoveToDirection(Direction direction, Collection<? extends GameObject> obstacles, Level level) {
+        canRotateToDirection(direction);
+        return isEqual(movementProgress, 1f) && !existCollisions(direction, obstacles) && !outOfBorders(direction, level);
     }
 
     private void canRotateToDirection(Direction direction) {
@@ -71,9 +61,17 @@ public class Ghost extends GameObjectAbt implements Movable {
     }
 
     @Override
-    public boolean canMoveToDirection(Direction direction, Collection<? extends GameObject> obstacles, Level level) {
-        canRotateToDirection(direction);
-        return isEqual(movementProgress, 1f) && !existCollisions(direction, obstacles) && !outOfBorders(direction, level);
+    public void move(Direction direction) {
+        changeDestinationCoordinates(direction.getDirection());
+        setMovementProgress(0f);
+    }
+
+    @Override
+    public void changeMovementState(float deltaTime) {
+        setMovementProgress(continueProgress(movementProgress, deltaTime, movementSpeed));
+        if (isEqual(movementProgress, 1f)) {
+            setCoordinates(destinationCoordinates);
+        }
     }
 
     private boolean outOfBorders(Direction direction, Level level) {
@@ -83,7 +81,16 @@ public class Ghost extends GameObjectAbt implements Movable {
     }
 
     private boolean existCollisions(Direction direction, Collection<? extends GameObject> obstacles) {
-        return obstacles.stream().anyMatch(obstacle -> obstacle.getCoordinates().equals(new GridPoint2(coordinates).add(direction.getDirection())));
+        GridPoint2 directionGP = direction.getDirection();
+        return obstacles.stream().anyMatch(
+                (obstacle) ->
+                {
+                    if (obstacle instanceof Movable movable) {
+                        return movable.getCoordinates()           .equals(new GridPoint2(coordinates)           .add(directionGP))
+                            || movable.getDestinationCoordinates().equals(new GridPoint2(destinationCoordinates).add(directionGP));
+                    }
+                    return obstacle.getCoordinates().equals(new GridPoint2(coordinates).add(directionGP));
+                });
     }
 
 }

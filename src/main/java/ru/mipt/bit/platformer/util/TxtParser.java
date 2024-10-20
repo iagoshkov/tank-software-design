@@ -1,8 +1,6 @@
 package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.objects.Drawable;
-import ru.mipt.bit.platformer.objects.Tank;
 
 import java.io.IOException;
 import java.util.*;
