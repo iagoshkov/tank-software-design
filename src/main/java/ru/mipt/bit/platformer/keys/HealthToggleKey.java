@@ -27,7 +27,7 @@ public class HealthToggleKey implements Key {
     }
 
     @Override
-    public void action() {
+    public void action() {//
         for (Drawable drawable : drawables) {
             drawable.showHealth();
         }
