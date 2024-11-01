@@ -23,4 +23,8 @@ public interface Drawable extends GameObject {
     void dispose();
 
     void draw(Batch batch);
+
+    default void showHealth(){
+        return;
+    };
 }

@@ -32,8 +32,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     private Batch batch = null;
     private DrawableLevel level = null;
 
-    private Collection<Drawable> drawables = new HashSet<>();
-    private Collection<Movable>   movables = new HashSet<>();
+    private Collection<Drawable>       drawables = new HashSet<>();
+    private Collection<Movable>         movables = new HashSet<>();
+    private Collection<Destroyable> destroyables = new HashSet<>();
 
     @Override
     public void create() {
@@ -87,6 +88,11 @@ public class GameDesktopLauncher implements ApplicationListener {
                                         new int[]{RIGHT, D},
                                         Direction.RIGHT,
                                         level
+                                ),
+                        new HealthToggleKey
+                                (
+                                        drawables,
+                                        new int[]{L}
                                 )
                 );
 
