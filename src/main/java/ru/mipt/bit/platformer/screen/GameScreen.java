@@ -6,13 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Rectangle;
+import ru.mipt.bit.platformer.assets.IAssetManager;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import ru.mipt.bit.platformer.input.InputController;
@@ -20,6 +18,9 @@ import ru.mipt.bit.platformer.input.GdxKeyboardInputController;
 import ru.mipt.bit.platformer.model.*;
 import ru.mipt.bit.platformer.logic.GameLogic;
 import ru.mipt.bit.platformer.collision.TileCollisionDetector;
+import ru.mipt.bit.platformer.render.*;
+import ru.mipt.bit.platformer.assets.GdxAssetManager;
+import ru.mipt.bit.platformer.assets.AssetKeys;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -30,36 +31,39 @@ public class GameScreen implements Screen {
 
     private Batch batch;
 
-    // Рендеринг
+    // Игровые ресурсы
     private TiledMap level;
-    private MapRenderer levelRenderer;
-    private TileMovement tileMovement;
-
-    // Текстуры и спрайты
     private Texture blueTankTexture;
-    private TextureRegion playerGraphics;
-    private Rectangle playerRectangle;
-
     private Texture greenTreeTexture;
-    private TextureRegion treeObstacleGraphics;
-    private Rectangle treeObstacleRectangle;
 
     // Игровая логика
     private InputController input;
     private World world;
     private GameLogic gameLogic;
 
+    // Рендеринг
+    private LevelRenderer levelRenderer;
+    private EntityRenderer entityRenderer;
+
+    // Управление ресурсами
+    private IAssetManager assetManager;
+
     @Override
     public void show() {
         batch = new SpriteBatch();
 
-        // Загрузка уровня
-        level = new TmxMapLoader().load("level.tmx");
-        levelRenderer = createSingleLayerMapRenderer(level, batch);
-        TiledMapTileLayer groundLayer = getSingleLayer(level);
-        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        // Загрузка ресурсов
+        assetManager = new GdxAssetManager();
+        assetManager.loadAssets();
+
+        // Получение ресурсов
+        level = assetManager.getTiledMap(AssetKeys.LEVEL);
+        blueTankTexture = assetManager.getTexture(AssetKeys.PLAYER_TANK);
+        greenTreeTexture = assetManager.getTexture(AssetKeys.TREE_OBSTACLE);
 
         // Создание игрового мира
+        TiledMapTileLayer groundLayer = getSingleLayer(level);
+        TileMovement tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         TileGrid tileGrid = new TileGrid(groundLayer);
 
         Set<GridPoint2> obstacles = new HashSet<>();
@@ -72,17 +76,12 @@ public class GameScreen implements Screen {
         gameLogic = new GameLogic(new TileCollisionDetector());
         input = new GdxKeyboardInputController();
 
-        // Создание графических объектов
-        blueTankTexture = new Texture("images/tank_blue.png");
-        playerGraphics = new TextureRegion(blueTankTexture);
-        playerRectangle = createBoundingRectangle(playerGraphics);
+        // Создание рендереров
+        levelRenderer = new LevelRenderer(createSingleLayerMapRenderer(level, batch));
 
-        greenTreeTexture = new Texture("images/greenTree.png");
-        treeObstacleGraphics = new TextureRegion(greenTreeTexture);
-        treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
-
-        // Позиционирование препятствия
-        moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, new GridPoint2(1, 3));
+        PlayerRenderer playerRenderer = new PlayerRenderer(new TextureRegion(blueTankTexture));
+        ObstacleRenderer obstacleRenderer = new ObstacleRenderer(new TextureRegion(greenTreeTexture));
+        entityRenderer = new EntityRenderer(tileMovement, playerRenderer, obstacleRenderer);
     }
 
     @Override
@@ -95,23 +94,9 @@ public class GameScreen implements Screen {
         input.pollMove().ifPresent(direction -> gameLogic.processMoveCommand(world, direction));
         gameLogic.updateWorld(world, delta);
 
-        // Обновление позиции для рендеринга
-        Player player = world.getPlayer();
-        tileMovement.moveRectangleBetweenTileCenters(
-                playerRectangle,
-                player.getCoordinates(),
-                player.getDestinationCoordinates(),
-                player.getMovementProgress()
-        );
-
-        // Рендеринг уровня
+        // Рендеринг
         levelRenderer.render();
-
-        // Рендеринг игровых объектов
-        batch.begin();
-        drawTextureRegionUnscaled(batch, playerGraphics, playerRectangle, player.getRotation());
-        drawTextureRegionUnscaled(batch, treeObstacleGraphics, treeObstacleRectangle, 0f);
-        batch.end();
+        entityRenderer.render(world, batch);
     }
 
     @Override
@@ -136,9 +121,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        greenTreeTexture.dispose();
-        blueTankTexture.dispose();
-        level.dispose();
+        assetManager.dispose();
         batch.dispose();
     }
 }
