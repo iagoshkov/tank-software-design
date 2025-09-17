@@ -15,6 +15,10 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import ru.mipt.bit.platformer.input.InputController;
+import ru.mipt.bit.platformer.input.GdxKeyboardInputController;
+import ru.mipt.bit.platformer.model.Direction;
+
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
@@ -42,6 +46,7 @@ public class GameScreen implements Screen {
     private TextureRegion treeObstacleGraphics;
     private GridPoint2 treeObstacleCoordinates = new GridPoint2();
     private Rectangle treeObstacleRectangle = new Rectangle();
+    private InputController input;
 
     @Override
     public void show() {
@@ -64,6 +69,8 @@ public class GameScreen implements Screen {
         treeObstacleCoordinates = new GridPoint2(1, 3);
         treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
         moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, treeObstacleCoordinates);
+
+        input = new GdxKeyboardInputController();
     }
 
     @Override
@@ -71,42 +78,31 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
+        input.pollMove().ifPresent(direction -> {
             if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(incrementedY(playerCoordinates))) {
-                    playerDestinationCoordinates.y++;
+                GridPoint2 candidate = switch (direction) {
+                    case UP -> incrementedY(playerCoordinates);
+                    case LEFT -> decrementedX(playerCoordinates);
+                    case DOWN -> decrementedY(playerCoordinates);
+                    case RIGHT -> incrementedX(playerCoordinates);
+                };
+                if (!treeObstacleCoordinates.equals(candidate)) {
+                    switch (direction) {
+                        case UP -> playerDestinationCoordinates.y++;
+                        case LEFT -> playerDestinationCoordinates.x--;
+                        case DOWN -> playerDestinationCoordinates.y--;
+                        case RIGHT -> playerDestinationCoordinates.x++;
+                    }
                     playerMovementProgress = 0f;
                 }
-                playerRotation = 90f;
+                playerRotation = switch (direction) {
+                    case UP -> 90f;
+                    case LEFT -> -180f;
+                    case DOWN -> -90f;
+                    case RIGHT -> 0f;
+                };
             }
-        }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(decrementedX(playerCoordinates))) {
-                    playerDestinationCoordinates.x--;
-                    playerMovementProgress = 0f;
-                }
-                playerRotation = -180f;
-            }
-        }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(decrementedY(playerCoordinates))) {
-                    playerDestinationCoordinates.y--;
-                    playerMovementProgress = 0f;
-                }
-                playerRotation = -90f;
-            }
-        }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(incrementedX(playerCoordinates))) {
-                    playerDestinationCoordinates.x++;
-                    playerMovementProgress = 0f;
-                }
-                playerRotation = 0f;
-            }
-        }
+        });
 
         tileMovement.moveRectangleBetweenTileCenters(playerRectangle, playerCoordinates, playerDestinationCoordinates, playerMovementProgress);
 
