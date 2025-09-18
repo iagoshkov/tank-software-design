@@ -1,10 +1,10 @@
 package ru.mipt.bit.platformer.logic;
 
+import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.collision.CollisionDetector;
 import ru.mipt.bit.platformer.model.Direction;
+import ru.mipt.bit.platformer.model.GridUtils;
 import ru.mipt.bit.platformer.model.World;
-import com.badlogic.gdx.math.GridPoint2;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameLogic {
     private static final float MOVEMENT_SPEED = 0.4f;
@@ -16,28 +16,21 @@ public class GameLogic {
     }
 
     public void processMoveCommand(World world, Direction direction) {
-        if (!world.getPlayer().isMoving()) {
-            GridPoint2 currentPos = world.getPlayer().getCoordinates();
+        if (world.getPlayer().isMoving()) {
+            return;
+        }
 
-            if (collisionDetector.canMove(world, currentPos, direction)) {
-                GridPoint2 target = getTargetPosition(currentPos, direction);
-                world.getPlayer().setDestination(target);
-                world.getPlayer().setRotation(getRotationForDirection(direction));
-            }
+        GridPoint2 currentPos = world.getPlayer().getCoordinates();
+        GridPoint2 target = GridUtils.move(currentPos, direction);
+
+        if (collisionDetector.canMove(world, currentPos, direction)) {
+            world.getPlayer().setDestination(target);
+            world.getPlayer().setRotation(getRotationForDirection(direction));
         }
     }
 
     public void updateWorld(World world, float deltaTime) {
         world.getPlayer().updateProgress(deltaTime, MOVEMENT_SPEED);
-    }
-
-    private GridPoint2 getTargetPosition(GridPoint2 from, Direction direction) {
-        return switch (direction) {
-            case UP -> incrementedY(from);
-            case LEFT -> decrementedX(from);
-            case DOWN -> decrementedY(from);
-            case RIGHT -> incrementedX(from);
-        };
     }
 
     private float getRotationForDirection(Direction direction) {
