@@ -16,11 +16,13 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.util.Direction;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+
 
 public class GameDesktopLauncher implements ApplicationListener {
 
@@ -83,41 +85,31 @@ public class GameDesktopLauncher implements ApplicationListener {
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            if (isEqual(playerMovementProgress, 1f)) {
-                // check potential player destination for collision with obstacles
-                if (!treeObstacleCoordinates.equals(incrementedY(playerCoordinates))) {
-                    playerDestinationCoordinates.y++;
-                    playerMovementProgress = 0f;
+
+        // check if the player has finished the previous movement
+        if (isEqual(playerMovementProgress, 1f)) {
+
+            Direction direction = null;
+
+            if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) direction = Direction.UP;
+            else if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) direction = Direction.LEFT;
+            else if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) direction = Direction.DOWN;
+            else if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) direction = Direction.RIGHT;
+
+            // if direction is selected — attempt to move
+            if (direction != null) {
+                GridPoint2 nextTile = direction.applyTo(playerCoordinates);
+
+                // check: is there a tree?
+                if (!treeObstacleCoordinates.equals(nextTile)) {
+                    // update destination coordinates
+                    playerDestinationCoordinates.x = nextTile.x;
+                    playerDestinationCoordinates.y = nextTile.y;
+                    playerMovementProgress = 0f; // start movement animation
                 }
-                playerRotation = 90f;
-            }
-        }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(decrementedX(playerCoordinates))) {
-                    playerDestinationCoordinates.x--;
-                    playerMovementProgress = 0f;
-                }
-                playerRotation = -180f;
-            }
-        }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(decrementedY(playerCoordinates))) {
-                    playerDestinationCoordinates.y--;
-                    playerMovementProgress = 0f;
-                }
-                playerRotation = -90f;
-            }
-        }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(incrementedX(playerCoordinates))) {
-                    playerDestinationCoordinates.x++;
-                    playerMovementProgress = 0f;
-                }
-                playerRotation = 0f;
+
+                // in any case — rotate the tank
+                playerRotation = direction.rotation;
             }
         }
 
