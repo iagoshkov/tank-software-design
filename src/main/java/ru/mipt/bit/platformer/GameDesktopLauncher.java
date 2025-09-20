@@ -15,7 +15,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Disposable;
+import ru.mipt.bit.platformer.ui.TexturedItem;
 import ru.mipt.bit.platformer.util.TileMovement;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -50,6 +56,8 @@ public class GameDesktopLauncher implements ApplicationListener {
     private GridPoint2 treeObstacleCoordinates = new GridPoint2();
     private Rectangle treeObstacleRectangle = new Rectangle();
 
+    private final List<Disposable> disposables = new ArrayList<>();
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -74,6 +82,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         treeObstacleGraphics = new TextureRegion(greenTreeTexture);
         treeObstacleCoordinates = new GridPoint2(1, 3);
         treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
+
+        TexturedItem treeObstacle = registerDisposable(() -> new TexturedItem("images/greenTree.png", treeObstacleCoordinates));
+
         moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, treeObstacleCoordinates);
     }
 
@@ -149,6 +160,12 @@ public class GameDesktopLauncher implements ApplicationListener {
         batch.end();
     }
 
+    private <T extends Disposable> T  registerDisposable(Supplier<T> disposableSupplier) {
+        T disposable = disposableSupplier.get();
+        disposables.add(disposable);
+        return disposable;
+    }
+
     @Override
     public void resize(int width, int height) {
         // do not react to window resizing
@@ -171,6 +188,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         blueTankTexture.dispose();
         level.dispose();
         batch.dispose();
+        disposables.forEach(Disposable::dispose);
     }
 
     public static void main(String[] args) {
