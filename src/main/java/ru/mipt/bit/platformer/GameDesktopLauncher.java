@@ -7,17 +7,13 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.util.TileMovement;
-import ru.mipt.bit.platformer.util.Direction;
-import ru.mipt.bit.platformer.util.Tank;
+import ru.mipt.bit.platformer.util.*;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -37,10 +33,8 @@ public class GameDesktopLauncher implements ApplicationListener {
     private Texture playerTexture;
     private Tank player;
 
-    private Texture greenTreeTexture;
-    private TextureRegion treeObstacleGraphics;
-    private GridPoint2 treeObstacleCoordinates = new GridPoint2();
-    private Rectangle treeObstacleRectangle = new Rectangle();
+    private Texture treeTexture;
+    private Obstacle treeObstacle;
 
     @Override
     public void create() {
@@ -56,11 +50,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         playerTexture = new Texture("images/tank_blue.png");
         player = new Tank(playerTexture, new GridPoint2(1, 1));
 
-        greenTreeTexture = new Texture("images/greenTree.png");
-        treeObstacleGraphics = new TextureRegion(greenTreeTexture);
-        treeObstacleCoordinates = new GridPoint2(1, 3);
-        treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
-        moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, treeObstacleCoordinates);
+        treeTexture = new Texture("images/greenTree.png");
+        treeObstacle = new Obstacle(treeTexture, new GridPoint2(1, 3), groundLayer);
     }
 
     @Override
@@ -82,7 +73,7 @@ public class GameDesktopLauncher implements ApplicationListener {
             else if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) direction = Direction.RIGHT;
 
             // if direction is selected — attempt to move
-            if (direction != null) player.tryMove(direction, treeObstacleCoordinates);
+            if (direction != null) player.tryMove(direction, treeObstacle.getCoordinates());
             
         }
 
@@ -98,7 +89,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         drawTextureRegionUnscaled(batch, player.getRegion(), player.getRectangle(), player.getRotation());
 
         // render tree obstacle
-        drawTextureRegionUnscaled(batch, treeObstacleGraphics, treeObstacleRectangle, 0f);
+        drawTextureRegionUnscaled(batch, treeObstacle.getRegion(), treeObstacle.getRectangle(), 0f);
 
         // submit all drawing requests
         batch.end();
@@ -122,7 +113,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        greenTreeTexture.dispose();
+        treeTexture.dispose();
         playerTexture.dispose();
         level.dispose();
         batch.dispose();
