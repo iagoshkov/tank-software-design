@@ -25,6 +25,8 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
+    // level width: 10 tiles x 128px, height: 8 tiles x 128px
+    private static int WINDOW_WIDTH = 1280;
 
     private Batch batch;
 
@@ -172,8 +174,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        // level width: 10 tiles x 128px, height: 8 tiles x 128px
-        config.setWindowedMode(1280, 1024);
+        config.setWindowedMode(WINDOW_WIDTH, 1024);
         new Lwjgl3Application(new GameDesktopLauncher(), config);
     }
 }
