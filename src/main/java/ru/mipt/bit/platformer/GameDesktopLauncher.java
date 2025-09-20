@@ -27,6 +27,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private static final float MOVEMENT_SPEED = 0.4f;
     // level width: 10 tiles x 128px, height: 8 tiles x 128px
     private static int WINDOW_WIDTH = 1280;
+    private static int WINDOW_HEIGHT = 1024;
 
     private Batch batch;
 
@@ -174,7 +175,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setWindowedMode(WINDOW_WIDTH, 1024);
+        config.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
         new Lwjgl3Application(new GameDesktopLauncher(), config);
     }
 }
