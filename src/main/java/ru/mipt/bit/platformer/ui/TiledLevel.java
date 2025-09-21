@@ -30,7 +30,7 @@ public class TiledLevel implements Disposable {
      * @param src Source.
      */
     public TiledLevel(Batch batch, String src) {
-        level = new TmxMapLoader().load("level.tmx");
+        level = new TmxMapLoader().load(src);
         levelRenderer = createSingleLayerMapRenderer(batch);
     }
 
