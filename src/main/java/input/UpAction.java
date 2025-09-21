@@ -19,5 +19,7 @@ public class UpAction implements Action {
         }
 
         player.moveUp();
+        player.resetProgress();
+
     }
 }

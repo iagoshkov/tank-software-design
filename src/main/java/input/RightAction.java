@@ -19,5 +19,7 @@ public class RightAction implements Action {
         }
 
         player.moveRight();
+        player.resetProgress();
+
     }
 }

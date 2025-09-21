@@ -23,7 +23,6 @@ public class MovableTexturedItem extends TexturedItem {
         progress = clamp(progress + deltaTime / speed, 0f, 1f);
         if (progressCompleted()) {
             super.setCoordinates(destination);
-            resetProgress();
         }
     }
 

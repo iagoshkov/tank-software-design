@@ -19,5 +19,7 @@ public class LeftAction implements Action {
         }
 
         player.moveLeft();
+        player.resetProgress();
+
     }
 }

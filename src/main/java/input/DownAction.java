@@ -19,5 +19,6 @@ public class DownAction implements Action {
         }
 
         player.moveDown();
+        player.resetProgress();
     }
 }
