@@ -32,10 +32,10 @@ import main.java.ru.mipt.bit.platformer.Tank;
 import main.java.ru.mipt.bit.platformer.Tree;
 import ru.mipt.bit.platformer.util.TileMovement;
 
-// import static com.badlogic.gdx.Input.Keys.*;
-// import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-// import static com.badlogic.gdx.math.MathUtils.isEqual;
-// import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+import static com.badlogic.gdx.Input.Keys.*;
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+import static com.badlogic.gdx.math.MathUtils.isEqual;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 
 public class GameDesktopLauncher implements ApplicationListener {
