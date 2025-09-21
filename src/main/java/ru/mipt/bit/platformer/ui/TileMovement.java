@@ -33,6 +33,8 @@ public class TileMovement {
         float toTileBottomLeftX = item.rectangle.x;
         float toTileBottomLeftY = item.rectangle.y;
 
+        item.rectangle.setCenter(tileCenter1);
+
         float intermediateBottomLeftX = interpolation.apply(fromTileBottomLeftX, toTileBottomLeftX, item.getProgress());
         float intermediateBottomLeftY = interpolation.apply(fromTileBottomLeftY, toTileBottomLeftY, item.getProgress());
 

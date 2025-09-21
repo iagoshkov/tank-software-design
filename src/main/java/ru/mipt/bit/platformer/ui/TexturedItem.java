@@ -84,7 +84,7 @@ public class TexturedItem implements Disposable {
     }
 
     void setCoordinates(GridPoint2 point) {
-        coordinate = point;
+        coordinate.set(point);
     }
 
     /** {@inheritDoc} */
