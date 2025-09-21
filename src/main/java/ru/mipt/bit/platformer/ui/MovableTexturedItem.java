@@ -12,14 +12,19 @@ public class MovableTexturedItem extends TexturedItem {
     GridPoint2 destination;
     private float intermediateBottomLeftX;
     private float intermediateBottomLeftY;
-
+    private float speed = 0f;
 
     public MovableTexturedItem(String src, GridPoint2 curCoordinate) {
+        this(src, curCoordinate, 0.0F);
+    }
+
+    public MovableTexturedItem(String src, GridPoint2 curCoordinate, float speed) {
         super(src, curCoordinate);
+        this.speed = speed;
         destination = super.coordinate;
     }
 
-    public void continueProgress(float deltaTime, float speed) {
+    public void continueProgress(float deltaTime) {
         progress = clamp(progress + deltaTime / speed, 0f, 1f);
         if (progressCompleted()) {
             super.setCoordinates(destination);
