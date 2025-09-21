@@ -26,121 +26,16 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
+
+import main.java.ru.mipt.bit.platformer.Direction;
+import main.java.ru.mipt.bit.platformer.Tank;
+import main.java.ru.mipt.bit.platformer.Tree;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 // import static com.badlogic.gdx.Input.Keys.*;
 // import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 // import static com.badlogic.gdx.math.MathUtils.isEqual;
 // import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
-
-public abstract class GameObject{
-    protected TextureRegion graphics;
-    protected Rectangle rectangle;
-    protected GridPoint2 coordinates;
-
-    public abstract void render(Batch batch);
-    public abstract void dispose();
-}
-
-public class Tank extends GameObject{
-    private float rotation;
-    private float movementProgress=1f;
-    private GridPoint2 destinationCoordinates;
-    private TileMovement tileMovement;
-
-    public Tank(Texture texture, TiledMapTileLayer layer, GridPoint2 initialPos){
-        this.graphics = new TextureRegion(texture);
-        this.rectangle = GdxGameUtils.createBoundingRectangle(graphics);
-        this.coordinates = new GridPoint2(initialPos);
-        this.destinationCoordinates = new GridPoint2(initialPos);
-        this.tileMovement = new TileMovement(layer, Interpolation.smooth);
-        moveToTile(initialPos);
-    }
-    private void moveToTile(GridPoint2 position) {
-        GdxGameUtils.moveRectangleAtTileCenter(tileMovement.getTileLayer(), rectangle, position);
-    }
-    
-    @Override
-    public void render(Batch batch) {
-        GdxGameUtils.drawTextureRegionUnscaled(batch, graphics, rectangle, rotation);
-    }
-    
-    @Override
-    public void dispose() {
-        graphics.getTexture().dispose();
-    }
-    public boolean move(Direction direction, GridPoint2 obstacleCoordinates){
-        if(movementProgress < 1f) 
-            return false;
-        GridPoint2 target = direction.apply(coordinates);
-        if(obstacleCoordinates.equals(target)) 
-            return false;
-        destinationCoordinates.set(target);
-        movementProgress = 0f;
-        rotation = direction.getRotation();
-        return true;
-    }
-
-    public void update(float deltaTime, float speed) {
-        movementProgress = GdxGameUtils.continueProgress(movementProgress, deltaTime, speed);
-        tileMovement.moveRectangleBetweenTileCenters(rectangle, coordinates, destinationCoordinates, movementProgress);
-        if (movementProgress >= 1f) {
-            coordinates.set(destinationCoordinates);
-        }
-    }
-    public GridPoint2 getCoordinates() {
-        return new GridPoint2(coordinates);
-    }
-    
-    public TiledMapTileLayer getTileLayer() {
-        return tileMovement.getTileLayer();
-    }
-}
-
-public class Tree extends GameObject {
-    public Tree(Texture texture, TiledMapTileLayer layer, GridPoint2 position) {
-        this.graphics = new TextureRegion(texture);
-        this.rectangle = GdxGameUtils.createBoundingRectangle(graphics);
-        this.coordinates = new GridPoint2(position);
-        GdxGameUtils.moveRectangleAtTileCenter(layer, rectangle, coordinates);
-    }
-    @Override
-    public void render(Batch batch) {
-        GdxGameUtils.drawTextureRegionUnscaled(batch, graphics, rectangle, 0f);
-    }
-    
-    @Override
-    public void dispose() {
-        graphics.getTexture().dispose();
-    }
-    
-    public GridPoint2 getCoordinates() {
-        return new GridPoint2(coordinates);
-    }
-}
-
-public enum Direction {
-    UP(90f, p -> GdxGameUtils.incrementedY(p)),
-    DOWN(-90f, p -> GdxGameUtils.decrementedY(p)),
-    LEFT(-180f, p -> GdxGameUtils.decrementedX(p)),
-    RIGHT(0f, p -> GdxGameUtils.incrementedX(p));
-    
-    private final float rotation;
-    private final Function<GridPoint2, GridPoint2> transformer;
-    
-    Direction(float rotation, Function<GridPoint2, GridPoint2> transformer) {
-        this.rotation = rotation;
-        this.transformer = transformer;
-    }
-    
-    public GridPoint2 apply(GridPoint2 point) {
-        return transformer.apply(point);
-    }
-    
-    public float getRotation() {
-        return rotation;
-    }
-}
 
 
 public class GameDesktopLauncher implements ApplicationListener {
@@ -170,14 +65,14 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-       batch = new SpriteBatch();
-    level = new TmxMapLoader().load("level.tmx");
-    levelRenderer = createSingleLayerMapRenderer(level, batch);
-    TiledMapTileLayer groundLayer = getSingleLayer(level);
-    
-    // Создание объектов через абстракции
-    player = new Tank(new Texture("images/tank_blue.png"), groundLayer, new GridPoint2(1, 1));
-    tree = new Tree(new Texture("images/greenTree.png"), groundLayer, new GridPoint2(1, 3));
+        batch = new SpriteBatch();
+        level = new TmxMapLoader().load("level.tmx");
+        levelRenderer = createSingleLayerMapRenderer(level, batch);
+        TiledMapTileLayer groundLayer = getSingleLayer(level);
+        
+        // Создание объектов через абстракции
+        player = new Tank(new Texture("images/tank_blue.png"), groundLayer, new GridPoint2(1, 1));
+        tree = new Tree(new Texture("images/greenTree.png"), groundLayer, new GridPoint2(1, 3));
     }
 
     @Override
@@ -187,13 +82,13 @@ public class GameDesktopLauncher implements ApplicationListener {
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
          handleInput();
-    player.update(deltaTime, MOVEMENT_SPEED);
+        player.update(deltaTime, MOVEMENT_SPEED);
     
-    levelRenderer.render();
-    batch.begin();
-    player.render(batch);
-    tree.render(batch);
-    batch.end();
+        levelRenderer.render();
+        batch.begin();
+        player.render(batch);
+        tree.render(batch);
+        batch.end();
     }
 
     private void handleInput() {
@@ -223,8 +118,8 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        greenTreeTexture.dispose();
-        blueTankTexture.dispose();
+        player.dispose();
+        tree.dispose();
         level.dispose();
         batch.dispose();
     }

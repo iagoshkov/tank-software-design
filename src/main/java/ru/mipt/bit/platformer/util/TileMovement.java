@@ -33,4 +33,7 @@ public class TileMovement {
                 .setX(intermediateBottomLeftX)
                 .setY(intermediateBottomLeftY);
     }
+    public TiledMapTileLayer getTileLayer() {
+        return tileLayer;
+    }
 }
