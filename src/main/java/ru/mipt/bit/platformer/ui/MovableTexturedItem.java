@@ -16,6 +16,7 @@ public class MovableTexturedItem extends TexturedItem {
 
     public MovableTexturedItem(String src, GridPoint2 curCoordinate) {
         super(src, curCoordinate);
+        destination = super.coordinate;
     }
 
     public void continueProgress(float deltaTime, float speed) {
