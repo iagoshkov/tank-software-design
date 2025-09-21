@@ -15,9 +15,12 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.input.InputController;
 import ru.mipt.bit.platformer.input.impl.KeyboardInputController;
+import ru.mipt.bit.platformer.logic.movements.MovementsProcessor;
 import ru.mipt.bit.platformer.logic.movements.impl.PlayerMovementsProcessor;
 import ru.mipt.bit.platformer.model.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
+
+import java.util.ArrayList;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
@@ -31,7 +34,7 @@ public class GameApplication implements ApplicationListener {
 
     private Player player;
 
-    private PlayerMovementsProcessor movementsProcessor;
+    private MovementsProcessor movementsProcessor;
 
     private TiledMap level;
     private MapRenderer levelRenderer;
@@ -43,7 +46,7 @@ public class GameApplication implements ApplicationListener {
 
     private Texture greenTreeTexture;
     private TextureRegion treeObstacleGraphics;
-    private GridPoint2 treeObstacleCoordinates = new GridPoint2();
+    private ArrayList<GridPoint2> obstacles = new ArrayList<>();
     private Rectangle treeObstacleRectangle = new Rectangle();
 
     @Override
@@ -64,12 +67,13 @@ public class GameApplication implements ApplicationListener {
         playerRectangle = createBoundingRectangle(playerGraphics);
         // set player initial position
         player = new Player(new GridPoint2(1, 1));
+        movementsProcessor = new PlayerMovementsProcessor();
 
         greenTreeTexture = new Texture("images/greenTree.png");
         treeObstacleGraphics = new TextureRegion(greenTreeTexture);
-        treeObstacleCoordinates = new GridPoint2(1, 3);
+        obstacles.add(new GridPoint2(1, 3));
         treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
-        moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, treeObstacleCoordinates);
+        moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, obstacles.get(0));
     }
 
     @Override
@@ -78,10 +82,7 @@ public class GameApplication implements ApplicationListener {
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
-        // get time passed since the last render
-        float deltaTime = Gdx.graphics.getDeltaTime();
-
-        input.move().ifPresent(direction -> {movementsProcessor.processMoveCommand(player, direction);});
+        input.move().ifPresent(direction -> movementsProcessor.processMoveCommand(player, direction, obstacles));
 
         // calculate interpolated player screen coordinates
         tileMovement.moveRectangleBetweenTileCenters(playerRectangle, player.getPlayerCoordinates(), player.getPlayerDestinationCoordinates(), player.getPlayerMovementProgress());
