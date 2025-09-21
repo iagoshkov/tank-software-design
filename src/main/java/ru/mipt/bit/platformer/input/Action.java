@@ -1,4 +1,4 @@
-package input;
+package ru.mipt.bit.platformer.input;
 
 import ru.mipt.bit.platformer.ui.MovableTexturedItem;
 import ru.mipt.bit.platformer.ui.TexturedItem;

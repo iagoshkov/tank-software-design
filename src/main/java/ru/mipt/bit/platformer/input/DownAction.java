@@ -1,25 +1,24 @@
-package input;
+package ru.mipt.bit.platformer.input;
 
 import ru.mipt.bit.platformer.ui.MovableTexturedItem;
 import ru.mipt.bit.platformer.ui.TexturedItem;
 
 import java.util.List;
 
-public class LeftAction implements Action {
+public class DownAction implements Action {
     @Override
     public void accept(MovableTexturedItem player, List<TexturedItem> obstacles) {
         if (!player.progressCompleted()) {
             return;
         }
 
-        player.rotate(-180f);
+        player.rotate(-90f);
 
-        if (obstacles.stream().anyMatch(item -> player.hasCommonBorderOnLeftWith(item))) {
+        if (obstacles.stream().anyMatch(item -> player.hasCommonBorderOnBottomWith(item))) {
             return;
         }
 
-        player.moveLeft();
+        player.moveDown();
         player.resetProgress();
-
     }
 }
