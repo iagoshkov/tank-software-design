@@ -10,8 +10,8 @@ public class PlayerController extends EntityController<PlayerModel, PlayerView> 
     }
 
     @Override
-    public void move(Direction dir, LevelController levelController) {
-        entityModel.move(dir, levelController);
+    public void move(LevelController levelController, Direction direction) {
+        entityModel.move(levelController.getLevelModel(), direction);
     }
 
     @Override

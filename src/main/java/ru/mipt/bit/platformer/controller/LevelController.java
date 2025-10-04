@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer.controller;
 
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.model.LevelModel;
 import ru.mipt.bit.platformer.view.LevelView;
 
@@ -32,8 +31,8 @@ public class LevelController {
         return new LevelController(levelModel, levelView);
     }
 
-    public boolean isFree(GridPoint2 position) {
-        return levelModel.isFree(position);
+    public LevelModel getLevelModel() {
+        return levelModel;
     }
 
     public void render() {

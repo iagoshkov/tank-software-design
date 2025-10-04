@@ -18,7 +18,7 @@ public class EntityController<T extends EntityModel, V extends EntityView<T>> {
         return entityModel;
     }
 
-    public void move(Direction dir, LevelController levelController) {
+    public void move(LevelController levelController, Direction direction) {
     }
 
     public void update(float delta) {

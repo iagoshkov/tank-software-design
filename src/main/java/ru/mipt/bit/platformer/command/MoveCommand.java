@@ -13,6 +13,6 @@ public class MoveCommand implements Command {
 
     @Override
     public void execute(LevelController levelController, PlayerController playerController) {
-        playerController.move(direction, levelController);
+        playerController.move(levelController, direction);
     }
 }
