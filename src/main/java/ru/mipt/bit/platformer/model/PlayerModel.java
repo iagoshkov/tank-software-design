@@ -30,8 +30,16 @@ public class PlayerModel extends EntityModel {
         this.progress = 1f;
     }
 
+    public GridPoint2 getDestination() {
+        return destination;
+    }
+
     public float getRotation() {
         return rotation;
+    }
+
+    public float getProgress() {
+        return progress;
     }
 
     public void move(LevelModel levelModel, Direction direction) {
