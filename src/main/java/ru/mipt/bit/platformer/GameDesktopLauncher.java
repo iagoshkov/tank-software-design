@@ -6,36 +6,51 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import ru.mipt.bit.platformer.controller.EntityController;
+import ru.mipt.bit.platformer.controller.LevelController;
+import ru.mipt.bit.platformer.controller.ObstacleController;
+import ru.mipt.bit.platformer.controller.PlayerController;
+
+import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float MOVEMENT_SPEED = 0.4f;
 
-    private EntityFactory entityFactory;
     private PlayerInputController playerInputController;
 
     private Batch batch;
-    private Level level;
-    private Player player;
+
+    private List<ObstacleController> obstacleControllers;
+    private LevelController levelController;
+    private PlayerController playerController;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
 
         TiledMap map = new TmxMapLoader().load("level.tmx");
+        EntityControllerFactory entityControllerFactory = new EntityControllerFactory(map);
 
-        entityFactory = new EntityFactory(map);
         playerInputController = new PlayerInputController();
 
-        level = createLevel(map);
-        level.addObstacle(entityFactory.createObstacle("images/green_tree.png", 1, 3));
-
-        player = entityFactory.createPlayer("images/tank_blue.png", 1, 1, MOVEMENT_SPEED);
+        obstacleControllers = List.of(
+                entityControllerFactory.createObstacleController(
+                        "images/green_tree.png", 1, 3
+                )
+        );
+        levelController = LevelController.getInstance(
+                obstacleControllers,
+                map,
+                createSingleLayerMapRenderer(map, batch)
+        );
+        playerController = entityControllerFactory.createPlayerController(
+                "images/tank_blue.png", 1, 1, MOVEMENT_SPEED
+        );
     }
 
     @Override
@@ -44,13 +59,14 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         float delta = getTimePassedSinceLastRender();
 
-        playerInputController.getDirection().ifPresent(dir -> player.move(dir, level));
+        playerInputController.getDirection().ifPresent(dir -> playerController.move(dir, levelController));
 
-        player.update(delta);
+        playerController.update(delta);
 
-        level.render(batch);
+        levelController.render();
         batch.begin();
-        player.render(batch);
+        obstacleControllers.forEach(obstacleController -> obstacleController.render(batch));
+        playerController.render(batch);
         batch.end();
     }
 
@@ -76,13 +92,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         batch.dispose();
-        level.dispose();
-        player.dispose();
-    }
-
-    private Level createLevel(TiledMap map) {
-        MapRenderer renderer = createSingleLayerMapRenderer(map, batch);
-        return new Level(map, renderer);
+        obstacleControllers.forEach(EntityController::dispose);
+        levelController.dispose();
+        playerController.dispose();
     }
 
     private void clearScreen() {

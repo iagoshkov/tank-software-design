@@ -1,0 +1,67 @@
+package ru.mipt.bit.platformer.model;
+
+import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import ru.mipt.bit.platformer.Direction;
+import ru.mipt.bit.platformer.controller.LevelController;
+import ru.mipt.bit.platformer.util.TileMovement;
+
+import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
+
+public class PlayerModel extends EntityModel {
+    private final GridPoint2 destination;
+    private final TileMovement movement;
+    private final float speed;
+
+    private float rotation;
+    private float progress;
+
+    public PlayerModel(
+            Rectangle bounds,
+            GridPoint2 position,
+            TileMovement movement,
+            float speed
+    ) {
+        super(bounds, position);
+        this.destination = new GridPoint2(position);
+        this.movement = movement;
+        this.speed = speed;
+        this.rotation = 0f;
+        this.progress = 1f;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public void move(Direction direction, LevelController levelController) {
+        if (!MathUtils.isEqual(progress, 1f)) {
+            return;
+        }
+
+        GridPoint2 newDest = new GridPoint2(
+                position.x + direction.dx, position.y + direction.dy
+        );
+        if (levelController.isFree(newDest)) {
+            destination.set(newDest);
+            progress = 0f;
+        }
+        rotation = direction.rotation;
+    }
+
+    public void update(float delta) {
+//        Rectangle r1 = new Rectangle(bounds);
+        movement.moveRectangleBetweenTileCenters(bounds, position, destination, progress);
+//        Rectangle r2 = new Rectangle(bounds);
+//        if (!r1.equals(r2)) {
+//            throw new RuntimeException();
+//        }
+
+        progress = continueProgress(progress, delta, speed);
+
+        if (MathUtils.isEqual(progress, 1f)) {
+            position.set(destination);
+        }
+    }
+}
