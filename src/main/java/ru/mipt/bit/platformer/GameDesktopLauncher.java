@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import ru.mipt.bit.platformer.command.MoveCommand;
 import ru.mipt.bit.platformer.controller.EntityController;
 import ru.mipt.bit.platformer.controller.LevelController;
 import ru.mipt.bit.platformer.controller.ObstacleController;
@@ -15,13 +16,14 @@ import ru.mipt.bit.platformer.controller.PlayerController;
 
 import java.util.List;
 
+import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private static final float MOVEMENT_SPEED = 0.4f;
 
-    private PlayerInputController playerInputController;
+    private final InputHandler inputHandler;
 
     private Batch batch;
 
@@ -29,14 +31,17 @@ public class GameDesktopLauncher implements ApplicationListener {
     private LevelController levelController;
     private PlayerController playerController;
 
+    public GameDesktopLauncher() {
+        inputHandler = new InputHandler();
+        setupInputHandler();
+    }
+
     @Override
     public void create() {
         batch = new SpriteBatch();
 
         TiledMap map = new TmxMapLoader().load("level.tmx");
         EntityControllerFactory entityControllerFactory = new EntityControllerFactory(map);
-
-        playerInputController = new PlayerInputController();
 
         obstacleControllers = List.of(
                 entityControllerFactory.createObstacleController(
@@ -56,11 +61,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void render() {
         clearScreen();
-
         float delta = getTimePassedSinceLastRender();
 
-        playerInputController.getDirection().ifPresent(dir -> playerController.move(dir, levelController));
-
+        inputHandler.handleInput(levelController, playerController);
         playerController.update(delta);
 
         levelController.render();
@@ -95,6 +98,17 @@ public class GameDesktopLauncher implements ApplicationListener {
         obstacleControllers.forEach(EntityController::dispose);
         levelController.dispose();
         playerController.dispose();
+    }
+
+    private void setupInputHandler() {
+        inputHandler.setCommand(W, new MoveCommand(Direction.UP));
+        inputHandler.setCommand(UP, new MoveCommand(Direction.UP));
+        inputHandler.setCommand(S, new MoveCommand(Direction.DOWN));
+        inputHandler.setCommand(DOWN, new MoveCommand(Direction.DOWN));
+        inputHandler.setCommand(A, new MoveCommand(Direction.LEFT));
+        inputHandler.setCommand(LEFT, new MoveCommand(Direction.LEFT));
+        inputHandler.setCommand(D, new MoveCommand(Direction.RIGHT));
+        inputHandler.setCommand(RIGHT, new MoveCommand(Direction.RIGHT));
     }
 
     private void clearScreen() {
