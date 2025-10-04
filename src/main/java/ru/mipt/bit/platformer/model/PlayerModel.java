@@ -51,12 +51,7 @@ public class PlayerModel extends EntityModel {
     }
 
     public void update(float delta) {
-//        Rectangle r1 = new Rectangle(bounds);
         movement.moveRectangleBetweenTileCenters(bounds, position, destination, progress);
-//        Rectangle r2 = new Rectangle(bounds);
-//        if (!r1.equals(r2)) {
-//            throw new RuntimeException();
-//        }
 
         progress = continueProgress(progress, delta, speed);
 
