@@ -19,10 +19,12 @@ import java.util.NoSuchElementException;
 public class TiledLevel implements Disposable {
     /** Logger. */
     private static final GameLogger logger = GameLogger.getLogger(TiledLevel.class);
+
     /**
      * Level.
      */
     private final TiledMap level;
+
     /**
      * Level renderer.
      */
