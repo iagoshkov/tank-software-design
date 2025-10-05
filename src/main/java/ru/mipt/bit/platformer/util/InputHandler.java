@@ -3,10 +3,10 @@ package ru.mipt.bit.platformer.util;
 import com.badlogic.gdx.math.GridPoint2;
 
 public class InputHandler {
-    private final Tank tank;
+    private final TankModel tank;
     private final GameField gameField;
 
-    public InputHandler(Tank tank, GameField gameField) {
+    public InputHandler(TankModel tank, GameField gameField) {
         this.tank = tank;
         this.gameField = gameField;
     }
@@ -23,5 +23,7 @@ public class InputHandler {
                 }
             }
         }
+
+        // TODO: Add shooting handler for space key
     }
 }

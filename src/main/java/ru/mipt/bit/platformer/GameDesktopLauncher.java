@@ -32,8 +32,12 @@ public class GameDesktopLauncher implements ApplicationListener {
     private TileMovement tileMovement;
 
     private GameField gameField;
-    private Tank tank;
-    private Tree treeObstacle;
+    private TankModel tankModel;
+    private TankView tankView;
+    private GameEntity tankEntity;
+    private TreeModel treeModel;
+    private TreeView treeView;
+    private GameEntity treeEntity;
     private InputHandler inputHandler;
 
     @Override
@@ -53,18 +57,22 @@ public class GameDesktopLauncher implements ApplicationListener {
         Texture blueTankTexture = new Texture("images/tank_blue.png");
         TextureRegion playerGraphics = new TextureRegion(blueTankTexture);
         GridPoint2 initialTankPosition = new GridPoint2(1, 1);
-        tank = new Tank(initialTankPosition, playerGraphics, groundLayer, tileMovement, MOVEMENT_SPEED);
-        gameField.addGameObject(tank);
+        tankModel = new TankModel(initialTankPosition, MOVEMENT_SPEED);
+        tankView = new TankView(tankModel, playerGraphics, groundLayer, tileMovement);
+        tankEntity = new GameEntity(tankModel, tankView);
+        gameField.addGameEntity(tankEntity);
 
         // Создаем дерево
         Texture greenTreeTexture = new Texture("images/greenTree.png");
         TextureRegion treeGraphics = new TextureRegion(greenTreeTexture);
         GridPoint2 treePosition = new GridPoint2(1, 3);
-        treeObstacle = new Tree(treePosition, treeGraphics, groundLayer);
-        gameField.addGameObject(treeObstacle);
+        treeModel = new TreeModel(treePosition);
+        treeView = new TreeView(treeModel, treeGraphics, groundLayer);
+        treeEntity = new GameEntity(treeModel, treeView);
+        gameField.addGameEntity(treeEntity);
 
         // Обработчик ввода от пользователя
-        inputHandler = new InputHandler(tank, gameField);
+        inputHandler = new InputHandler(tankModel, gameField);
     }
 
     @Override

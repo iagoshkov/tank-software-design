@@ -11,16 +11,16 @@ import java.util.List;
 public class GameField {
     private final MapRenderer levelRenderer;
     private final TiledMapTileLayer groundLayer;
-    private final List<GameObject> gameObjects;
+    private final List<GameEntity> gameEntities;
 
     public GameField(MapRenderer levelRenderer, TiledMapTileLayer groundLayer) {
         this.levelRenderer = levelRenderer;
         this.groundLayer = groundLayer;
-        this.gameObjects = new ArrayList<>();
+        this.gameEntities = new ArrayList<>();
     }
 
-    public void addGameObject(GameObject gameObject) {
-        gameObjects.add(gameObject);
+    public void addGameEntity(GameEntity gameEntity) {
+        gameEntities.add(gameEntity);
     }
 
     public void renderLevel() {
@@ -28,14 +28,14 @@ public class GameField {
     }
 
     public void renderGameObjects(Batch batch) {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.render(batch);
+        for (GameEntity gameEntity : gameEntities) {
+            gameEntity.render(batch);
         }
     }
 
     public void updateGameObjects(float deltaTime) {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.update(deltaTime);
+        for (GameEntity gameEntity : gameEntities) {
+            gameEntity.update(deltaTime);
         }
     }
 
@@ -43,14 +43,14 @@ public class GameField {
         return groundLayer;
     }
 
-    public List<GameObject> getGameObjects() {
-        return new ArrayList<>(gameObjects);
+    public List<GameEntity> getGameEntities() {
+        return new ArrayList<>(gameEntities);
     }
 
     public boolean isPositionOccupied(GridPoint2 position) {
-        for (GameObject gameObject : gameObjects) {
-            if (gameObject instanceof Tree) {
-                Tree tree = (Tree) gameObject;
+        for (GameEntity gameEntity : gameEntities) {
+            if (gameEntity.getModel() instanceof TreeModel) {
+                TreeModel tree = (TreeModel) gameEntity.getModel();
                 if (tree.occupiesPosition(position)) {
                     return true;
                 }

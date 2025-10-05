@@ -1,29 +1,22 @@
 package ru.mipt.bit.platformer.util;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 
-public class Tank extends GameObject {
+public class TankModel extends GameObjectModel {
     private GridPoint2 destinationCoordinates;
     private float movementProgress;
-    private final TileMovement tileMovement;
     private final float movementSpeed;
 
-    public Tank(GridPoint2 coordinates, TextureRegion graphics, TiledMapTileLayer groundLayer,
-                TileMovement tileMovement, float movementSpeed) {
-        super(coordinates, graphics, groundLayer);
+    public TankModel(GridPoint2 coordinates, float movementSpeed) {
+        super(coordinates);
         this.destinationCoordinates = new GridPoint2(coordinates);
         this.movementProgress = 1f;
-        this.tileMovement = tileMovement;
         this.movementSpeed = movementSpeed;
     }
 
     @Override
     public void update(float deltaTime) {
         movementProgress = GdxGameUtils.continueProgress(movementProgress, deltaTime, movementSpeed);
-        tileMovement.moveRectangleBetweenTileCenters(rectangle, coordinates, destinationCoordinates, movementProgress);
-
         if (GdxGameUtils.isEqual(movementProgress, 1f)) {
             coordinates.set(destinationCoordinates);
         }
