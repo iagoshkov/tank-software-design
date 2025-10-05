@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.model;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -19,12 +19,10 @@ import ru.mipt.bit.platformer.util.TileMovement;
 
 
 public abstract class GameObject{
-    protected TextureRegion graphics;
     protected Rectangle rectangle;
     protected GridPoint2 coordinates;
 
-    public abstract void render(Batch batch);
-    public abstract void dispose();
+    public abstract void update(float deltaTimt);
 
      public GridPoint2 getCoordinates() {
         return new GridPoint2(coordinates);

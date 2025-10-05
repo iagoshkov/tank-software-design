@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.model;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -15,16 +15,21 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
+
+import ru.mipt.bit.platformer.util.GdxGameUtils;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 
-public class Tree extends GameObject {
+public class Tree extends GameObject implements Renderable{
+    private TextureRegion graphics;
+    
     public Tree(Texture texture, TiledMapTileLayer layer, GridPoint2 position) {
         this.graphics = new TextureRegion(texture);
         this.rectangle = GdxGameUtils.createBoundingRectangle(graphics);
         this.coordinates = new GridPoint2(position);
         GdxGameUtils.moveRectangleAtTileCenter(layer, rectangle, coordinates);
     }
+
     @Override
     public void render(Batch batch) {
         GdxGameUtils.drawTextureRegionUnscaled(batch, graphics, rectangle, 0f);
@@ -34,8 +39,8 @@ public class Tree extends GameObject {
     public void dispose() {
         graphics.getTexture().dispose();
     }
-    
-    public GridPoint2 getCoordinates() {
-        return new GridPoint2(coordinates);
+
+    @Override
+    public void update(float deltaTime) {
     }
 }

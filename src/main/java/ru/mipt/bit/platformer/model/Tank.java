@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.model;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -15,10 +15,14 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
+
+import ru.mipt.bit.platformer.util.GdxGameUtils;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Tank extends GameObject{
+public class Tank extends GameObject implements Renderable{
+    private TextureRegion graphics;
     private float rotation;
     private float movementProgress=1f;
     private GridPoint2 destinationCoordinates;
@@ -57,18 +61,24 @@ public class Tank extends GameObject{
         return true;
     }
 
-    public void update(float deltaTime, float speed) {
-        movementProgress = GdxGameUtils.continueProgress(movementProgress, deltaTime, speed);
+    public void update(float deltaTime) {
+
+    }
+    
+    public void updateMovement(float deltaTime, float speed) {
+        movementProgress = continueProgress(movementProgress, deltaTime, speed);
         tileMovement.moveRectangleBetweenTileCenters(rectangle, coordinates, destinationCoordinates, movementProgress);
+        
         if (movementProgress >= 1f) {
             coordinates.set(destinationCoordinates);
         }
     }
-    public GridPoint2 getCoordinates() {
-        return new GridPoint2(coordinates);
+    
+    public boolean isMoving() {
+        return movementProgress < 1f;
     }
     
-    public TiledMapTileLayer getTileLayer() {
-        return tileMovement.getTileLayer();
+    public float getMovementProgress() {
+        return movementProgress;
     }
 }

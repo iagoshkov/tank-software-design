@@ -28,6 +28,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 
 import main.java.ru.mipt.bit.platformer.Direction;
+import main.java.ru.mipt.bit.platformer.InputController;
 import main.java.ru.mipt.bit.platformer.Tank;
 import main.java.ru.mipt.bit.platformer.Tree;
 import ru.mipt.bit.platformer.util.TileMovement;
@@ -73,6 +74,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         // Создание объектов через абстракции
         player = new Tank(new Texture("images/tank_blue.png"), groundLayer, new GridPoint2(1, 1));
         tree = new Tree(new Texture("images/greenTree.png"), groundLayer, new GridPoint2(1, 3));
+        inputController = new InputController(player);
     }
 
     @Override
@@ -80,23 +82,16 @@ public class GameDesktopLauncher implements ApplicationListener {
         // clear the screen
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-
-         handleInput();
+        float deltaTime = Gdx.graphics.getDeltaTime();
         player.update(deltaTime, MOVEMENT_SPEED);
-    
+        inputController.handleInput(tree.getCoordinates());
+
+        player.updateMovement(deltaTime, MOVEMENT_SPEED);
         levelRenderer.render();
         batch.begin();
         player.render(batch);
         tree.render(batch);
         batch.end();
-    }
-
-    private void handleInput() {
-    for (Direction dir : Direction.values()) {
-        if (Gdx.input.isKeyPressed(dir.getKey())) {
-            player.move(dir, tree.getCoordinates());
-            break;
-        }
     }
 }
 
