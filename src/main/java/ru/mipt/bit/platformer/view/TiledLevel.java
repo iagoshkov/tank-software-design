@@ -1,5 +1,6 @@
 package ru.mipt.bit.platformer.view;
 
+import java.util.NoSuchElementException;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapRenderer;
@@ -12,8 +13,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.log.GameLogger;
-
-import java.util.NoSuchElementException;
 
 /** */
 public class TiledLevel implements Disposable {

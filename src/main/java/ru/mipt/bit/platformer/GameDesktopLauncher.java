@@ -118,7 +118,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     }
 
     /**
-     * @param disposable Disposable to register.
+     * @param animatedView Disposable to register.
      */
     public <T extends AnimatedEntityView> T registerAnimatedView(Supplier<T> animatedView) {
         T a = animatedView.get();

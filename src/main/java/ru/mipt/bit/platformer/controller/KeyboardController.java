@@ -43,4 +43,5 @@ public class KeyboardController implements InputController {
         if (!anyKeyPressed) {
             logger.debug("No movement keys pressed");
         }
-    }}
+    }
+}

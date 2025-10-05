@@ -48,24 +48,24 @@ class EntityTest {
         assertEquals(Direction.RIGHT, entity.getDirection());
 
         assertFalse(entity.move(Direction.RIGHT, obstaclesManager));
-        assertEquals(new GridPoint2(3, 2), entity.getDestination()); // Остается первоначальное назначение
+        assertEquals(new GridPoint2(3, 2), entity.getDestination());
     }
 
     /** */
     @Test
     void getPositionShouldReturnCopy() {
         GridPoint2 position = entity.getPosition();
-        position.set(5, 5); // Модифицируем возвращенный объект
+        position.set(5, 5);
 
-        assertEquals(initialPosition, entity.getPosition()); // Оригинал не изменился
+        assertEquals(initialPosition, entity.getPosition());
     }
 
     /** */
     @Test
     void getDestinationShouldReturnCopy() {
         GridPoint2 destination = entity.getDestination();
-        destination.set(5, 5); // Модифицируем возвращенный объект
+        destination.set(5, 5);
 
-        assertEquals(initialPosition, entity.getDestination()); // Оригинал не изменился
+        assertEquals(initialPosition, entity.getDestination());
     }
 }
