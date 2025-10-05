@@ -13,6 +13,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.graphics.PlayerGraphics;
+import ru.mipt.bit.platformer.graphics.TreeGraphics;
+import ru.mipt.bit.platformer.movement.PlayerMovement;
+import ru.mipt.bit.platformer.models.Player;
+import ru.mipt.bit.platformer.models.Tree;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.ArrayList;
@@ -33,10 +38,14 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private Texture blueTankTexture;
     private Player player;
+    private PlayerGraphics playerView;
 
     private Texture greenTreeTexture;
 
     private final List<Tree> obstacles = new ArrayList<>();
+    private final List<TreeGraphics> obstacleViews = new ArrayList<>();
+
+    private PlayerMovement playerInputHandler;
 
     @Override
     public void create() {
@@ -50,19 +59,32 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // Texture decodes an image file and loads it into GPU memory, it represents a native resource
         blueTankTexture = new Texture("images/tank_blue.png");
-        player = new Player(blueTankTexture, tileMovement, new GridPoint2(1, 1));
+        player = new Player(tileMovement, new GridPoint2(1, 1));
+        playerView = new PlayerGraphics(player, blueTankTexture);
 
         greenTreeTexture = new Texture("images/greenTree.png");
 
-        addTree(groundLayer, new GridPoint2(1, 3));
-        addTree(groundLayer, new GridPoint2(4, 4));
-        addTree(groundLayer, new GridPoint2(6, 2));
+        addTree(new GridPoint2(1, 3));
+        addTree(new GridPoint2(4, 4));
+        addTree(new GridPoint2(6, 2));
+
+        playerInputHandler = new PlayerMovement(player, getObstacleCoords());
     }
 
-    private void addTree(TiledMapTileLayer groundLayer, GridPoint2 coords) {
-        Tree tree = new Tree(greenTreeTexture, new GridPoint2(coords));
-        moveRectangleAtTileCenter(groundLayer, tree.getRectangle(), tree.getCoordinates());
+    private void addTree(GridPoint2 coords) {
+        Tree tree = new Tree(tileMovement, coords);
+        TreeGraphics treeView = new TreeGraphics(tree, greenTreeTexture);
         obstacles.add(tree);
+        obstacleViews.add(treeView);
+    }
+
+
+    private List<GridPoint2> getObstacleCoords() {
+        List<GridPoint2> obstacleCoords = new ArrayList<>();
+        for (Tree tree : obstacles) {
+            obstacleCoords.add(tree.getCoordinates());
+        }
+        return obstacleCoords;
     }
 
     @Override
@@ -74,12 +96,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        List<GridPoint2> obstacleCoords = new ArrayList<>();
-        for (Tree tree : obstacles) {
-            obstacleCoords.add(tree.getCoordinates());
-        }
-
-        player.update(deltaTime, obstacleCoords);
+        playerInputHandler.handleInput(deltaTime);
+        player.update(deltaTime);
 
         // render each tile of the level
         levelRenderer.render();
@@ -88,11 +106,11 @@ public class GameDesktopLauncher implements ApplicationListener {
         batch.begin();
 
         // render player
-        player.render(batch);
+        playerView.render(batch);
 
         // render tree obstacles
-        for (Tree tree : obstacles) {
-            tree.render(batch);
+        for (TreeGraphics treeView : obstacleViews) {
+            treeView.render(batch);
         }
 
         // submit all drawing requests
