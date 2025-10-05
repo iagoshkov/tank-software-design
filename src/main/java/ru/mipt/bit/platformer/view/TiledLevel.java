@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.ui;
+package ru.mipt.bit.platformer.view;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapLayers;
@@ -11,11 +11,14 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import ru.mipt.bit.platformer.log.GameLogger;
 
 import java.util.NoSuchElementException;
 
 /** */
 public class TiledLevel implements Disposable {
+    /** Logger. */
+    private static final GameLogger logger = GameLogger.getLogger(TiledLevel.class);
     /**
      * Level.
      */
@@ -30,6 +33,7 @@ public class TiledLevel implements Disposable {
      * @param src Source.
      */
     public TiledLevel(Batch batch, String src) {
+        logger.info("Loading Tiled level from: {}", src);
         level = new TmxMapLoader().load(src);
         levelRenderer = createSingleLayerMapRenderer(batch);
     }
@@ -39,6 +43,12 @@ public class TiledLevel implements Disposable {
         levelRenderer.render();
     }
 
+    /**
+     * Generate center of tile with coordinates of left bottom corner.
+     *
+     * @param tileCoordinates Coordinates of left bottom corner.
+     * @return Center of tile.
+     */
     public Vector2 calculateTileCenter(GridPoint2 tileCoordinates) {
         TiledMapTileLayer layer = getSingleLayer();
         int tileWidth = layer.getTileWidth();
@@ -54,17 +64,10 @@ public class TiledLevel implements Disposable {
                 .getCenter(new Vector2());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void dispose() {
         level.dispose();
-    }
-
-    public int getTileWidth() {
-        return getSingleLayer().getTileWidth();
-    }
-
-    public int getTileHeight() {
-        return getSingleLayer().getTileHeight();
     }
 
     /**
@@ -76,7 +79,6 @@ public class TiledLevel implements Disposable {
             case 0:
                 throw new NoSuchElementException("Map has no layers");
             case 1:
-                @SuppressWarnings("unchecked")
                 TiledMapTileLayer layer = (TiledMapTileLayer) layers.iterator().next();
                 return layer;
             default:
@@ -84,6 +86,11 @@ public class TiledLevel implements Disposable {
         }
     }
 
+    /**
+     * Create map renderer.
+     *
+     * @param batch Batch.
+     */
     private MapRenderer createSingleLayerMapRenderer(Batch batch) {
         TiledMapTileLayer tileLayer = getSingleLayer();
         float viewWidth = tileLayer.getWidth() * tileLayer.getTileWidth();
