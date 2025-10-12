@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Entity;
 import ru.mipt.bit.platformer.model.ObstaclesManager;
+import ru.mipt.bit.platformer.model.ObstaclesManagerImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -30,7 +31,7 @@ class KeyboardControllerTest {
     void setUp() {
         keyboardController = new KeyboardController();
         entity = new Entity(new GridPoint2(0, 0));
-        obstaclesManager = new ObstaclesManager();
+        obstaclesManager = new ObstaclesManagerImpl();
         obstaclesManager.addObstacle(new Entity(new GridPoint2(1, 0)));
 
         com.badlogic.gdx.Input inputMock = mock(com.badlogic.gdx.Input.class);

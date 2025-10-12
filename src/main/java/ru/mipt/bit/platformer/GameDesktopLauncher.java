@@ -17,6 +17,7 @@ import ru.mipt.bit.platformer.controller.KeyboardController;
 import ru.mipt.bit.platformer.log.GameLogger;
 import ru.mipt.bit.platformer.model.Entity;
 import ru.mipt.bit.platformer.model.ObstaclesManager;
+import ru.mipt.bit.platformer.model.ObstaclesManagerImpl;
 import ru.mipt.bit.platformer.model.Tank;
 import ru.mipt.bit.platformer.model.Tree;
 import ru.mipt.bit.platformer.view.AnimatedEntityView;
@@ -61,7 +62,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         batch = registerDisposable(SpriteBatch::new);
 
-        obstaclesManager = new ObstaclesManager();
+        obstaclesManager = new ObstaclesManagerImpl();
 
         tiledLevel = registerDisposable(() -> new TiledLevel(batch, "level.tmx"));
 

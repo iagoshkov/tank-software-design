@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Entity;
-import ru.mipt.bit.platformer.model.ObstaclesManager;
+import ru.mipt.bit.platformer.model.ObstaclesManagerImpl;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,7 +26,7 @@ class AnimatedEntityViewTest {
     @BeforeEach
     void setUp() {
         entity = new Entity(new GridPoint2(0, 0));
-        entity.move(Direction.RIGHT, new ObstaclesManager());
+        entity.move(Direction.RIGHT, new ObstaclesManagerImpl());
         level = mock(TiledLevel.class);
 
         when(level.calculateTileCenter(new GridPoint2(0, 0))).thenReturn(new Vector2(0, 0));

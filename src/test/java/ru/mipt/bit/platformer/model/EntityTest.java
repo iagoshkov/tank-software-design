@@ -24,7 +24,7 @@ class EntityTest {
     void setUp() {
         initialPosition = new GridPoint2(2, 2);
         entity = new Entity(initialPosition);
-        obstaclesManager = new ObstaclesManager();
+        obstaclesManager = new ObstaclesManagerImpl();
     }
 
     /** */

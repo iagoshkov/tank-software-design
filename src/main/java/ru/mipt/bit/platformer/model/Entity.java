@@ -7,7 +7,7 @@ import ru.mipt.bit.platformer.log.GameLogger;
  * Class representing an entity in the game.
  * Holds information about position, direction, and movement state.
  */
-public class Entity {
+public class Entity implements Obstacle {
     /** Logger for debugging. */
     private static final GameLogger logger = GameLogger.getLogger(Entity.class);
 
@@ -41,8 +41,8 @@ public class Entity {
      * @param dir direction to move
      * @return true if the movement was started successfully, false otherwise
      */
-    public boolean move(Direction dir, ObstaclesManager collisionManager) {
-        if (!canMove(dir, collisionManager)) {
+    public boolean move(Direction dir, ObstaclesManager obstaclesManager) {
+        if (!canMove(dir, obstaclesManager)) {
             return false;
         }
 
@@ -77,14 +77,14 @@ public class Entity {
     }
 
     /** */
-    public boolean canMove(Direction dir, ObstaclesManager collisionManager) {
+    public boolean canMove(Direction dir, ObstaclesManager obstaclesManager) {
         if (moving) {
             return false;
         }
 
         GridPoint2 newDestination = new GridPoint2(position).add(dir.dx, dir.dy);
 
-        if (!collisionManager.isPositionFree(newDestination)) {
+        if (!obstaclesManager.isPositionFree(newDestination)) {
             logger.debug("Movement blocked by obstacle at {}", newDestination);
             return false;
         }
@@ -97,7 +97,7 @@ public class Entity {
      *
      * @return current position
      */
-    public GridPoint2 getPosition() {
+    @Override public GridPoint2 getPosition() {
         return new GridPoint2(position);
     }
 

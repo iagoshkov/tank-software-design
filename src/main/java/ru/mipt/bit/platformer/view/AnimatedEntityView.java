@@ -11,7 +11,7 @@ import ru.mipt.bit.platformer.model.Entity;
 import com.badlogic.gdx.math.Interpolation;
 
 /** Responsible for animation of an entity. */
-public class AnimatedEntityView {
+public class AnimatedEntityView implements Drawble {
     /** Logger. */
     private static final GameLogger logger = GameLogger.getLogger(AnimatedEntityView.class);
 
@@ -85,12 +85,8 @@ public class AnimatedEntityView {
         }
     }
 
-    /**
-     * Draws the view.
-     *
-     * @param batch Batch.
-     */
-    public void draw(Batch batch) {
+    /** {@inheritDoc} */
+    @Override public void draw(Batch batch) {
         float rotation = entity.getDirection().rotation;
         batch.draw(region, rect.x, rect.y,
                 rect.width / 2f, rect.height / 2f,
