@@ -4,10 +4,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
-
 import ru.mipt.bit.platformer.Level;
+import ru.mipt.bit.platformer.drawers.Renderable;
 
-public class Tree extends GameObject {
+public class Tree extends GameObject implements Renderable {
     private final TextureRegion graphics;
     private Level level;
 

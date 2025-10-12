@@ -3,26 +3,32 @@ package ru.mipt.bit.platformer.util;
 import com.badlogic.gdx.math.GridPoint2;
 
 public enum Direction {
-    UP(0, 1, 90f),
-    DOWN(0, -1, -90f),
-    LEFT(-1, 0, -180f),
-    RIGHT(1, 0, 0f);
+    RIGHT(0f, new GridPoint2(1, 0)),
+    LEFT(180f, new GridPoint2(-1, 0)),
+    UP(90f, new GridPoint2(0, 1)),
+    DOWN(-90f, new GridPoint2(0, -1)),
+    NULL(0f, new GridPoint2(0, 0));
 
-    private final int dx;
-    private final int dy;
     private final float rotation;
+    private final GridPoint2 directionVector;
 
-    Direction(int dx, int dy, float rotation) {
-        this.dx = dx;
-        this.dy = dy;
+    Direction(float rotation, GridPoint2 directionVector) {
         this.rotation = rotation;
+        this.directionVector = directionVector;
     }
 
     public GridPoint2 getNextPosition(GridPoint2 currentPosition) {
-        return new GridPoint2(currentPosition.x + dx, currentPosition.y + dy);
+        return new GridPoint2(
+            currentPosition.x + directionVector.x,
+            currentPosition.y + directionVector.y
+        );
     }
 
     public float getRotation() {
         return rotation;
+    }
+
+    public GridPoint2 getDirectionVector() {
+        return directionVector;
     }
 }

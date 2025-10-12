@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;  // или в какой пакет вы поместили InputHandler
+package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
@@ -28,6 +28,9 @@ public class InputHandler {
             tryMove(Direction.DOWN);
         } else if (isKeyPressed(RIGHT, D)) {
             tryMove(Direction.RIGHT);
+        } else if (isKeyPressed(SPACE)) {
+            // Место для будущей реализации стрельбы
+            System.out.println("Shoot action triggered");
         }
     }
 

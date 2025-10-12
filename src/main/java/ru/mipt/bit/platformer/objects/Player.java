@@ -4,11 +4,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
-
 import ru.mipt.bit.platformer.Level;
+import ru.mipt.bit.platformer.drawers.Renderable;
+import ru.mipt.bit.platformer.drawers.Updatable;
 import ru.mipt.bit.platformer.util.Direction;
 
-public class Player extends GameObject {
+public class Player extends GameObject implements Updatable, Renderable {
     private static final float MOVEMENT_SPEED = 0.4f;
     
     private final TextureRegion graphics;
@@ -26,7 +27,7 @@ public class Player extends GameObject {
         level.placeObject(this);
     }
 
-    public void move(ru.mipt.bit.platformer.util.Direction direction) {
+    public void move(Direction direction) {
         if (isMoving()) return;
         
         GridPoint2 nextPosition = direction.getNextPosition(coordinates);
@@ -35,6 +36,7 @@ public class Player extends GameObject {
         rotation = direction.getRotation();
     }
 
+    @Override
     public void update(float deltaTime) {
         if (isMoving()) {
             movementProgress = ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);

@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
 
-import ru.mipt.bit.platformer.objects.Player;
-import ru.mipt.bit.platformer.objects.Tree;
+import ru.mipt.bit.platformer.objects.Player;  // Оставьте в objects, если не перемещали
+import ru.mipt.bit.platformer.objects.Tree;    // Оставьте в objects, если не перемещали
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
