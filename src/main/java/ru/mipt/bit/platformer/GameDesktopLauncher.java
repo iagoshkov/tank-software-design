@@ -31,6 +31,9 @@ import main.java.ru.mipt.bit.platformer.Direction;
 import main.java.ru.mipt.bit.platformer.InputController;
 import main.java.ru.mipt.bit.platformer.Tank;
 import main.java.ru.mipt.bit.platformer.Tree;
+import main.java.ru.mipt.bit.platformer.collision.CollisionDetector;
+import main.java.ru.mipt.bit.platformer.collision.SimpleCollisionDetector;
+import main.java.ru.mipt.config.GameConfig;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import static com.badlogic.gdx.Input.Keys.*;
@@ -49,20 +52,10 @@ public class GameDesktopLauncher implements ApplicationListener {
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
 
-    private Texture blueTankTexture;
-    private TextureRegion playerGraphics;
-    private Rectangle playerRectangle;
-    // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
-    private GridPoint2 playerCoordinates;
-    // which tile the player want to go next
-    private GridPoint2 playerDestinationCoordinates;
-    private float playerMovementProgress = 1f;
-    private float playerRotation;
-
-    private Texture greenTreeTexture;
-    private TextureRegion treeObstacleGraphics;
-    private GridPoint2 treeObstacleCoordinates = new GridPoint2();
-    private Rectangle treeObstacleRectangle = new Rectangle();
+    private Tank player;
+    private Tree tree;
+    private InputController inputController;
+    private CollisionDetector collisionDetector;
 
     @Override
     public void create() {
@@ -70,10 +63,26 @@ public class GameDesktopLauncher implements ApplicationListener {
         level = new TmxMapLoader().load("level.tmx");
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level);
+        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         
+        collisionDetector = new SimpleCollisionDetector();
+
         // Создание объектов через абстракции
-        player = new Tank(new Texture("images/tank_blue.png"), groundLayer, new GridPoint2(1, 1));
-        tree = new Tree(new Texture("images/greenTree.png"), groundLayer, new GridPoint2(1, 3));
+        player = new Tank(
+            new Texture("images/tank_blue.png"),
+            groundLayer,
+            new GridPoint2(1, 1),
+            collisionDetector,
+            GameConfig.MOVEMENT_SPEED
+        );
+        
+        tree = new Tree(
+            new Texture("images/greenTree.png"), 
+            groundLayer,
+            new GridPoint2(1, 3)
+        );    
+        collisionDetector.addObstacle(tree);
+        
         inputController = new InputController(player);
     }
 

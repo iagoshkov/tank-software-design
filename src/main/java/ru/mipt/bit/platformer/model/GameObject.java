@@ -31,4 +31,14 @@ public abstract class GameObject{
     public Rectangle getRectangle() {
         return new Rectangle(rectangle);
     }
+
+    // Проверка коллизий
+     public boolean collidesWith(GameObject other) {
+        return this.rectangle.overlaps(other.getRectangle());
+    }
+
+    // Получние границ
+     public Rectangle getBounds() {
+        return new Rectangle(rectangle);
+    }
 }

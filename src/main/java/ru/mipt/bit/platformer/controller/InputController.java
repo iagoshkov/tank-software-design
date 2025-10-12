@@ -15,7 +15,7 @@ public class InputController {
     public boolean handleInput(GridPoint2 obstacleCoordinates) {
         for (Direction direction : Direction.values()) {
             if (direction.isPressed()) {
-                return playerTank.move(direction, obstacleCoordinates);
+                return playerTank.move(direction);
             }
         }
         return false;
