@@ -2,11 +2,10 @@ package ru.mipt.bit.platformer.models;
 
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
-
+import ru.mipt.bit.platformer.graphics.Renderable;
 import ru.mipt.bit.platformer.util.TileMovement;
 
-
-public class Tree extends RigidBody {
+public class Tree extends RigidBody implements Renderable {
 
     private final Rectangle rectangle;
 
@@ -20,7 +19,13 @@ public class Tree extends RigidBody {
     public void update(float deltaTime) {
     }
 
+    @Override
     public Rectangle getRectangle() {
         return rectangle;
+    }
+
+    @Override
+    public float getRotation() {
+        return 0f;
     }
 }

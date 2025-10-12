@@ -13,11 +13,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.graphics.PlayerGraphics;
-import ru.mipt.bit.platformer.graphics.TreeGraphics;
-import ru.mipt.bit.platformer.movement.PlayerMovement;
-import ru.mipt.bit.platformer.models.Player;
-import ru.mipt.bit.platformer.models.Tree;
+import ru.mipt.bit.platformer.graphics.*;
+import ru.mipt.bit.platformer.movement.*;
+import ru.mipt.bit.platformer.models.*;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.ArrayList;
@@ -28,113 +26,110 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
-    private static final float MOVEMENT_SPEED = 0.4f;
-
     private Batch batch;
+    private Renderer renderer;
 
     private TiledMap level;
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
 
     private Texture blueTankTexture;
-    private Player player;
-    private PlayerGraphics playerView;
-
     private Texture greenTreeTexture;
 
+    private Player player;
+    private EntityGraphics playerView;
+
     private final List<Tree> obstacles = new ArrayList<>();
-    private final List<TreeGraphics> obstacleViews = new ArrayList<>();
+    private final List<EntityGraphics> obstacleViews = new ArrayList<>();
 
     private PlayerMovement playerInputHandler;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
+        renderer = new LibGdxRenderer(batch);
 
-        // load level tiles
+        // Загрузка карты
         level = new TmxMapLoader().load("level.tmx");
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
-        // Texture decodes an image file and loads it into GPU memory, it represents a native resource
+        // Игрок
         blueTankTexture = new Texture("images/tank_blue.png");
         player = new Player(tileMovement, new GridPoint2(1, 1));
-        playerView = new PlayerGraphics(player, blueTankTexture);
+        playerView = new EntityGraphics(player, blueTankTexture, renderer);
 
+        // Препятствия (деревья)
         greenTreeTexture = new Texture("images/greenTree.png");
-
         addTree(new GridPoint2(1, 3));
         addTree(new GridPoint2(4, 4));
         addTree(new GridPoint2(6, 2));
 
-        playerInputHandler = new PlayerMovement(player, getObstacleCoords());
+        // Контроллер ввода
+        InputController inputController = new GdxInputController();
+        playerInputHandler = new PlayerMovement(player, getObstacleCoords(), inputController);
     }
 
     private void addTree(GridPoint2 coords) {
         Tree tree = new Tree(tileMovement, coords);
-        TreeGraphics treeView = new TreeGraphics(tree, greenTreeTexture);
+        EntityGraphics treeView = new EntityGraphics(tree, greenTreeTexture, renderer);
         obstacles.add(tree);
         obstacleViews.add(treeView);
     }
 
-
     private List<GridPoint2> getObstacleCoords() {
-        List<GridPoint2> obstacleCoords = new ArrayList<>();
+        List<GridPoint2> coords = new ArrayList<>();
         for (Tree tree : obstacles) {
-            obstacleCoords.add(tree.getCoordinates());
+            coords.add(tree.getCoordinates());
         }
-        return obstacleCoords;
+        return coords;
     }
 
-    @Override
-    public void render() {
-        // clear the screen
+    private void clearScreen() {
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
+    }
 
-        // get time passed since the last render
-        float deltaTime = Gdx.graphics.getDeltaTime();
-
+    private void handleInput(float deltaTime) {
         playerInputHandler.handleInput(deltaTime);
         player.update(deltaTime);
+    }
 
-        // render each tile of the level
-        levelRenderer.render();
-
-        // start recording all drawing commands
+    private void drawObjects(){
         batch.begin();
-
-        // render player
-        playerView.render(batch);
-
-        // render tree obstacles
-        for (TreeGraphics treeView : obstacleViews) {
-            treeView.render(batch);
+        playerView.render();
+        for (EntityGraphics treeView : obstacleViews) {
+            treeView.render();
         }
-
-        // submit all drawing requests
         batch.end();
     }
 
     @Override
+    public void render() {
+        clearScreen();
+
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        handleInput(deltaTime);
+
+        levelRenderer.render();
+
+        drawObjects();
+    }
+
+    @Override
     public void resize(int width, int height) {
-        // do not react to window resizing
     }
 
     @Override
-    public void pause() {
-        // game doesn't get paused
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-        // game doesn't get paused
-    }
+    public void resume() {}
 
     @Override
     public void dispose() {
-        // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
         greenTreeTexture.dispose();
         blueTankTexture.dispose();
         level.dispose();
@@ -143,7 +138,6 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        // level width: 10 tiles x 128px, height: 8 tiles x 128px
         config.setWindowedMode(1280, 1024);
         new Lwjgl3Application(new GameDesktopLauncher(), config);
     }

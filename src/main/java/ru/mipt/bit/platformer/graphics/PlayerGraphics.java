@@ -1,27 +1,21 @@
 package ru.mipt.bit.platformer.graphics;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import ru.mipt.bit.platformer.models.Player;
-import ru.mipt.bit.platformer.util.GdxGameUtils;
 
 public class PlayerGraphics {
 
-    private final Player player;
+    private final Renderable player;
     private final TextureRegion graphics;
+    private final Renderer renderer;
 
-    public PlayerGraphics(Player player, Texture texture) {
+    public PlayerGraphics(Renderable player, Texture texture, Renderer renderer) {
         this.player = player;
         this.graphics = new TextureRegion(texture);
+        this.renderer = renderer;
     }
 
-    public void render(Batch batch) {
-        GdxGameUtils.drawTextureRegionUnscaled(
-                batch,
-                graphics,
-                player.getRectangle(),
-                player.getRotation()
-        );
+    public void render() {
+        renderer.render(player, graphics);
     }
 }

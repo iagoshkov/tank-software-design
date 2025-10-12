@@ -7,7 +7,9 @@ import ru.mipt.bit.platformer.util.TileMovement;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
-public class Player extends RigidBody {
+import ru.mipt.bit.platformer.graphics.Renderable;
+
+public class Player extends RigidBody implements Renderable{
 
     private static final float MOVEMENT_SPEED = 0.4f;
 
