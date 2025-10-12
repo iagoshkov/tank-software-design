@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameField {
+public class GameField implements Field {
     private final MapRenderer levelRenderer;
     private final TiledMapTileLayer groundLayer;
     private final List<GameEntity> gameEntities;
@@ -47,11 +47,12 @@ public class GameField {
         return new ArrayList<>(gameEntities);
     }
 
+    @Override
     public boolean isPositionOccupied(GridPoint2 position) {
         for (GameEntity gameEntity : gameEntities) {
-            if (gameEntity.getModel() instanceof TreeModel) {
-                TreeModel tree = (TreeModel) gameEntity.getModel();
-                if (tree.occupiesPosition(position)) {
+            if (gameEntity.getModel() instanceof PositionOccupier) {
+                PositionOccupier occupier = (PositionOccupier) gameEntity.getModel();
+                if (occupier.occupiesPosition(position)) {
                     return true;
                 }
             }

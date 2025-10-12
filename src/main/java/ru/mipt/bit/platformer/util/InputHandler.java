@@ -3,23 +3,23 @@ package ru.mipt.bit.platformer.util;
 import com.badlogic.gdx.math.GridPoint2;
 
 public class InputHandler {
-    private final TankModel tank;
-    private final GameField gameField;
+    private final Movable movable;
+    private final Field field;
 
-    public InputHandler(TankModel tank, GameField gameField) {
-        this.tank = tank;
-        this.gameField = gameField;
+    public InputHandler(Movable movable, Field field) {
+        this.movable = movable;
+        this.field = field;
     }
 
     public void handleInput(float deltaTime) {
         // Проверяю все направления на входе
         for (Direction direction : Direction.values()) {
-            if (direction.isKeyPressed() && tank.isMovementComplete()) {
-                GridPoint2 newPosition = direction.calculateNewPosition(tank.getCoordinates());
+            if (direction.isKeyPressed() && movable.isMovementComplete()) {
+                GridPoint2 newPosition = direction.calculateNewPosition(movable.getCoordinates());
 
                 // Проверка коллизий
-                if (!gameField.isPositionOccupied(newPosition)) {
-                    tank.moveTo(newPosition, direction);
+                if (!field.isPositionOccupied(newPosition)) {
+                    movable.moveTo(newPosition, direction);
                 }
             }
         }

@@ -2,7 +2,7 @@ package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-public class TankModel extends GameObjectModel {
+public class TankModel extends GameObjectModel implements Movable {
     private GridPoint2 destinationCoordinates;
     private float movementProgress;
     private final float movementSpeed;
@@ -22,10 +22,12 @@ public class TankModel extends GameObjectModel {
         }
     }
 
+    @Override
     public boolean canMoveTo(GridPoint2 newPosition) {
         return !newPosition.equals(destinationCoordinates) || GdxGameUtils.isEqual(movementProgress, 1f);
     }
 
+    @Override
     public void moveTo(GridPoint2 newPosition, Direction direction) {
         if (GdxGameUtils.isEqual(movementProgress, 1f)) {
             this.destinationCoordinates.set(newPosition);
@@ -34,8 +36,14 @@ public class TankModel extends GameObjectModel {
         }
     }
 
+    @Override
     public boolean isMovementComplete() {
         return GdxGameUtils.isEqual(movementProgress, 1f);
+    }
+
+    @Override
+    public GridPoint2 getCoordinates() {
+        return new GridPoint2(coordinates);
     }
 
     public GridPoint2 getDestinationCoordinates() {

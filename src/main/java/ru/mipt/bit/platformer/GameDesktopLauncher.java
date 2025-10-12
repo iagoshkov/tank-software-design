@@ -1,5 +1,7 @@
 package ru.mipt.bit.platformer;
 
+import java.util.List;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -22,8 +24,6 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
-
-    private static final float MOVEMENT_SPEED = 0.4f;
 
     private Batch batch;
 
@@ -57,7 +57,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         Texture blueTankTexture = new Texture("images/tank_blue.png");
         TextureRegion playerGraphics = new TextureRegion(blueTankTexture);
         GridPoint2 initialTankPosition = new GridPoint2(1, 1);
-        tankModel = new TankModel(initialTankPosition, MOVEMENT_SPEED);
+        tankModel = new TankModel(initialTankPosition, 0.4f);
         tankView = new TankView(tankModel, playerGraphics, groundLayer, tileMovement);
         tankEntity = new GameEntity(tankModel, tankView);
         gameField.addGameEntity(tankEntity);
