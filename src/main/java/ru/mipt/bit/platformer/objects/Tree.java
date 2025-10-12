@@ -5,16 +5,16 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.Level;
-import ru.mipt.bit.platformer.drawers.Renderable;
+import ru.mipt.bit.platformer.configs.TreeConfig;
 
-public class Tree extends GameObject implements Renderable {
+public class Tree extends GameObject {
     private final TextureRegion graphics;
     private Level level;
 
-    public Tree(GridPoint2 coordinates, Level level) {
-        super(coordinates);
+    public Tree(TreeConfig config, Level level) {
+        super(config.getInitialPosition());
         this.level = level;
-        this.graphics = new TextureRegion(new Texture("images/greenTree.png"));
+        this.graphics = new TextureRegion(new Texture(config.getTexturePath()));
         this.bounds = ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle(graphics);
         
         level.placeObject(this);

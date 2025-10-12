@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Interpolation;
 
 import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.util.Direction;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;

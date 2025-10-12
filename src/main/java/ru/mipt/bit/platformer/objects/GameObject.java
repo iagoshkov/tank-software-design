@@ -3,8 +3,9 @@ package ru.mipt.bit.platformer.objects;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
+import ru.mipt.bit.platformer.drawers.Renderable;
 
-public abstract class GameObject {
+public abstract class GameObject implements Renderable {
     protected GridPoint2 coordinates;
     protected Rectangle bounds;
     protected float rotation;
@@ -13,9 +14,6 @@ public abstract class GameObject {
         this.coordinates = new GridPoint2(coordinates);
         this.rotation = 0f;
     }
-
-    public abstract void draw(Batch batch);
-    public abstract void dispose();
 
     public GridPoint2 getCoordinates() {
         return coordinates;

@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
 
-import ru.mipt.bit.platformer.objects.Player;  // Оставьте в objects, если не перемещали
-import ru.mipt.bit.platformer.objects.Tree;    // Оставьте в objects, если не перемещали
+import ru.mipt.bit.platformer.configs.PlayerConfig;
+import ru.mipt.bit.platformer.configs.TreeConfig;
+import ru.mipt.bit.platformer.controllers.PlayerInputController;
+import ru.mipt.bit.platformer.objects.Player;
+import ru.mipt.bit.platformer.objects.Tree;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
@@ -24,9 +27,13 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void create() {
         batch = new SpriteBatch();
         level = new Level();
-        player = new Player(new GridPoint2(1, 1), level);
-        tree = new Tree(new GridPoint2(1, 3), level);
-        inputHandler = new InputHandler(player, tree);
+        
+        PlayerConfig playerConfig = new PlayerConfig(new GridPoint2(1, 1));
+        TreeConfig treeConfig = new TreeConfig(new GridPoint2(1, 3));
+        
+        player = new Player(playerConfig, level);
+        tree = new Tree(treeConfig, level);
+        inputHandler = new InputHandler(player, new PlayerInputController());
     }
 
     @Override
@@ -45,6 +52,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         tree.draw(batch);
         batch.end();
     }
+
 
     @Override
     public void resize(int width, int height) {}

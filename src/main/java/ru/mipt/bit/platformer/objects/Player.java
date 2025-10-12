@@ -5,23 +5,23 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.Level;
-import ru.mipt.bit.platformer.drawers.Renderable;
+import ru.mipt.bit.platformer.configs.PlayerConfig;
 import ru.mipt.bit.platformer.drawers.Updatable;
 import ru.mipt.bit.platformer.util.Direction;
 
-public class Player extends GameObject implements Updatable, Renderable {
-    private static final float MOVEMENT_SPEED = 0.4f;
-    
+public class Player extends GameObject implements Updatable {
+    private final float movementSpeed;
     private final TextureRegion graphics;
     private final GridPoint2 destinationCoordinates;
     private float movementProgress = 1.0f;
     private Level level;
 
-    public Player(GridPoint2 coordinates, Level level) {
-        super(coordinates);
+    public Player(PlayerConfig config, Level level) {
+        super(config.getInitialPosition());
         this.level = level;
+        this.movementSpeed = config.getMovementSpeed();
         this.destinationCoordinates = new GridPoint2(coordinates);
-        this.graphics = new TextureRegion(new Texture("images/tank_blue.png"));
+        this.graphics = new TextureRegion(new Texture(config.getTexturePath()));
         this.bounds = ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle(graphics);
         
         level.placeObject(this);
@@ -39,7 +39,7 @@ public class Player extends GameObject implements Updatable, Renderable {
     @Override
     public void update(float deltaTime) {
         if (isMoving()) {
-            movementProgress = ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
+            movementProgress = ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress(movementProgress, deltaTime, movementSpeed);
             
             level.getTileMovement().moveRectangleBetweenTileCenters(
                 bounds, coordinates, destinationCoordinates, movementProgress
@@ -55,10 +55,6 @@ public class Player extends GameObject implements Updatable, Renderable {
 
     public boolean isMoving() {
         return movementProgress < 1f;
-    }
-
-    public boolean canMoveTo(GridPoint2 position, GameObject obstacle) {
-        return !position.equals(obstacle.getCoordinates());
     }
 
     @Override
