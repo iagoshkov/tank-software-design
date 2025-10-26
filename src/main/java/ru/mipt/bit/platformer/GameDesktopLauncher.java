@@ -55,6 +55,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
+        System.out.println("Ground layer size: " + groundLayer.getWidth() + "x" + groundLayer.getHeight());
+
         // Создаем игровое поле
         gameField = new GameField(levelRenderer, groundLayer);
 
@@ -63,16 +65,27 @@ public class GameDesktopLauncher implements ApplicationListener {
         int fieldHeight = groundLayer.getHeight();
         levelGenerator = new LevelGenerator(fieldWidth, fieldHeight);
 
+        System.out.println("Level generator created with size: " + fieldWidth + "x" + fieldHeight);
+        System.out.println("useRandomLevel: " + useRandomLevel);
+        System.out.println("levelFilePath: " + levelFilePath);
+
         // Генерируем или загружаем уровень
         LevelGenerator.LevelData levelData;
         if (useRandomLevel) {
             levelData = levelGenerator.generateRandomLevel(5); // 5 деревьев
+            System.out.println("Generated random level with " + levelData.getTreePositions().size() + " trees");
         } else {
             try {
                 levelData = levelGenerator.loadLevelFromFile(levelFilePath);
+                System.out.println("Loaded level from file with " + levelData.getTreePositions().size() + " trees");
+                System.out.println("Tank position: " + levelData.getTankPosition());
             } catch (IOException e) {
                 // Если файл не найден, используем случайный уровень
                 System.err.println("Не удалось загрузить уровень из файла: " + e.getMessage());
+                levelData = levelGenerator.generateRandomLevel(5);
+            } catch (Exception e) {
+                System.err.println("Ошибка при загрузке уровня: " + e.getMessage());
+                e.printStackTrace();
                 levelData = levelGenerator.generateRandomLevel(5);
             }
         }
