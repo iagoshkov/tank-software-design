@@ -1,5 +1,6 @@
 package ru.mipt.bit.platformer;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -40,6 +41,10 @@ public class GameDesktopLauncher implements ApplicationListener {
     private GameEntity treeEntity;
     private InputHandler inputHandler;
 
+    private LevelGenerator levelGenerator;
+    private boolean useRandomLevel = false; // true - случайный уровень, false - из файла
+    private String levelFilePath = "src/main/resources/level.txt"; // путь к файлу уровня
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -53,23 +58,41 @@ public class GameDesktopLauncher implements ApplicationListener {
         // Создаем игровое поле
         gameField = new GameField(levelRenderer, groundLayer);
 
-        // Создаем танк
-        Texture blueTankTexture = new Texture("images/tank_blue.png");
-        TextureRegion playerGraphics = new TextureRegion(blueTankTexture);
-        GridPoint2 initialTankPosition = new GridPoint2(1, 1);
-        tankModel = new TankModel(initialTankPosition, 0.4f);
-        tankView = new TankView(tankModel, playerGraphics, groundLayer, tileMovement);
-        tankEntity = new GameEntity(tankModel, tankView);
-        gameField.addGameEntity(tankEntity);
+        // Создаем генератор уровней (размер поля берем из groundLayer)
+        int fieldWidth = groundLayer.getWidth();
+        int fieldHeight = groundLayer.getHeight();
+        levelGenerator = new LevelGenerator(fieldWidth, fieldHeight);
 
-        // Создаем дерево
+        // Генерируем или загружаем уровень
+        LevelGenerator.LevelData levelData;
+        if (useRandomLevel) {
+            levelData = levelGenerator.generateRandomLevel(5); // 5 деревьев
+        } else {
+            try {
+                levelData = levelGenerator.loadLevelFromFile(levelFilePath);
+            } catch (IOException e) {
+                // Если файл не найден, используем случайный уровень
+                System.err.println("Не удалось загрузить уровень из файла: " + e.getMessage());
+                levelData = levelGenerator.generateRandomLevel(5);
+            }
+        }
+
+        // Загружаем текстуры
+        Texture blueTankTexture = new Texture("images/tank_blue.png");
         Texture greenTreeTexture = new Texture("images/greenTree.png");
-        TextureRegion treeGraphics = new TextureRegion(greenTreeTexture);
-        GridPoint2 treePosition = new GridPoint2(1, 3);
-        treeModel = new TreeModel(treePosition);
-        treeView = new TreeView(treeModel, treeGraphics, groundLayer);
-        treeEntity = new GameEntity(treeModel, treeView);
-        gameField.addGameEntity(treeEntity);
+
+        // Инициализируем уровень
+        gameField.initializeLevel(levelData, blueTankTexture, greenTreeTexture, tileMovement);
+
+        // Получаем танк для обработчика ввода
+        List<GameEntity> entities = gameField.getGameEntities();
+        TankModel tankModel = null;
+        for (GameEntity entity : entities) {
+            if (entity.getModel() instanceof TankModel) {
+                tankModel = (TankModel) entity.getModel();
+                break;
+            }
+        }
 
         // Обработчик ввода от пользователя
         inputHandler = new InputHandler(tankModel, gameField);
@@ -124,5 +147,44 @@ public class GameDesktopLauncher implements ApplicationListener {
         // level width: 10 tiles x 128px, height: 8 tiles x 128px
         config.setWindowedMode(1280, 1024);
         new Lwjgl3Application(new GameDesktopLauncher(), config);
+    }
+
+    public void setUseRandomLevel(boolean useRandomLevel) {
+        this.useRandomLevel = useRandomLevel;
+    }
+
+    public void setLevelFilePath(String levelFilePath) {
+        this.levelFilePath = levelFilePath;
+    }
+
+    public void reloadLevel() {
+        // Перезагружаем уровень
+        Texture blueTankTexture = new Texture("images/tank_blue.png");
+        Texture greenTreeTexture = new Texture("images/greenTree.png");
+
+        LevelGenerator.LevelData levelData;
+        if (useRandomLevel) {
+            levelData = levelGenerator.generateRandomLevel(5);
+        } else {
+            try {
+                levelData = levelGenerator.loadLevelFromFile(levelFilePath);
+            } catch (IOException e) {
+                System.err.println("Не удалось загрузить уровень из файла: " + e.getMessage());
+                levelData = levelGenerator.generateRandomLevel(5);
+            }
+        }
+
+        gameField.initializeLevel(levelData, blueTankTexture, greenTreeTexture, tileMovement);
+
+        // Обновляем ссылку на танк в inputHandler
+        List<GameEntity> entities = gameField.getGameEntities();
+        TankModel tankModel = null;
+        for (GameEntity entity : entities) {
+            if (entity.getModel() instanceof TankModel) {
+                tankModel = (TankModel) entity.getModel();
+                break;
+            }
+        }
+        inputHandler = new InputHandler(tankModel, gameField);
     }
 }

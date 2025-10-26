@@ -1,6 +1,8 @@
 package ru.mipt.bit.platformer.util;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
@@ -58,5 +60,24 @@ public class GameField implements Field {
             }
         }
         return false;
+    }
+
+    public void initializeLevel(LevelGenerator.LevelData levelData, Texture tankTexture, Texture treeTexture, TileMovement tileMovement) {
+        // Очищаем существующие сущности
+        gameEntities.clear();
+
+        // Создаем танк
+        TankModel tankModel = new TankModel(levelData.getTankPosition(), 0.4f);
+        TankView tankView = new TankView(tankModel, new TextureRegion(tankTexture), groundLayer, tileMovement);
+        GameEntity tankEntity = new GameEntity(tankModel, tankView);
+        addGameEntity(tankEntity);
+
+        // Создаем деревья
+        for (GridPoint2 treePos : levelData.getTreePositions()) {
+            TreeModel treeModel = new TreeModel(treePos);
+            TreeView treeView = new TreeView(treeModel, new TextureRegion(treeTexture), groundLayer);
+            GameEntity treeEntity = new GameEntity(treeModel, treeView);
+            addGameEntity(treeEntity);
+        }
     }
 }
