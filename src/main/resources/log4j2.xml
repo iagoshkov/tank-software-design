@@ -33,9 +33,4 @@
             <AppenderRef ref="Async"/>
         </Root>
     </Loggers>
-
-    <!-- Временно увеличим уровень логирования для диагностики -->
-    <Logger name="ru.mipt.bit.platformer" level="TRACE" additivity="false">
-        <AppenderRef ref="Async"/>
-    </Logger>
 </Configuration>

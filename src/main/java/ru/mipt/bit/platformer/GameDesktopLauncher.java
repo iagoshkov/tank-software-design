@@ -10,12 +10,15 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.controller.InputController;
 import ru.mipt.bit.platformer.controller.KeyboardController;
+import ru.mipt.bit.platformer.model.level.FileLevelInfoGenerator;
+import ru.mipt.bit.platformer.model.level.LevelInfoGenerator;
+import ru.mipt.bit.platformer.model.level.RandomLevelInfoGenerator;
 import ru.mipt.bit.platformer.log.GameLogger;
 import ru.mipt.bit.platformer.model.Entity;
+import ru.mipt.bit.platformer.model.level.LevelInfo;
 import ru.mipt.bit.platformer.model.ObstaclesManager;
 import ru.mipt.bit.platformer.model.ObstaclesManagerImpl;
 import ru.mipt.bit.platformer.model.Tank;
@@ -33,6 +36,15 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     /** Window height. */
     private static final int WINDOW_HEIGHT = 1024;
+
+    /** Level width in tiles. */
+    private static final int LEVEL_WIDTH = 15;
+
+    /** Level height in tiles. */
+    private static final int LEVEL_HEIGHT = 15;
+
+    /** System environment variable for level file path. */
+    private static final String LEVEL_CONFIG_KEY_NAME = "USER.LEVEL";
 
     /** Batch. */
     private Batch batch;
@@ -66,19 +78,42 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         tiledLevel = registerDisposable(() -> new TiledLevel(batch, "level.tmx"));
 
-        tankEntity = registerEntity(() -> new Tank(new GridPoint2(1, 1)));
+        LevelInfo levelInfo = levelGenerator().generate();
 
-        Entity treeEntity = registerEntity(() -> new Tree(new GridPoint2(1, 3)));
-
-        registerAnimatedView(() -> new AnimatedEntityView(tankEntity, "images/tank_blue.png", 0.4f));
-
-        registerAnimatedView(() -> new AnimatedEntityView(treeEntity, "images/greenTree.png", 0f));
+        initiateEntities(levelInfo);
 
         logger.info("Views initialized");
 
         keyboardController = new KeyboardController();
 
         logger.info("Game initialization completed successfully");
+    }
+
+    /**
+     * @param levelInfo Level info.
+     */
+    private void initiateEntities(LevelInfo levelInfo) {
+        tankEntity = registerEntity(() -> new Tank(levelInfo.playerStartPosition()));
+
+        registerAnimatedView(() -> new AnimatedEntityView(tankEntity, "images/tank_blue.png", 0.4f));
+
+        levelInfo.treePositions().stream().map(treePos -> registerEntity(() -> new Tree(treePos)))
+            .forEach(treeEntity -> registerAnimatedView(() -> new AnimatedEntityView(treeEntity, "images/greenTree.png", 0f)));
+    }
+
+    /** */
+    private static LevelInfoGenerator levelGenerator() {
+        String levelConfigPath = System.getenv(LEVEL_CONFIG_KEY_NAME);
+
+        if (levelConfigPath != null) {
+            logger.info("Using file level loader from USER.LEVEL environment variable: {}", levelConfigPath);
+
+            return new FileLevelInfoGenerator(levelConfigPath);
+        }
+
+        logger.info("USER.LEVEL environment variable not set or empty. Using random level generator");
+
+        return new RandomLevelInfoGenerator(LEVEL_WIDTH, LEVEL_HEIGHT);
     }
 
     /** {@inheritDoc} */
