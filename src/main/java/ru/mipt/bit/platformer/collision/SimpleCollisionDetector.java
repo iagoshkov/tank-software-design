@@ -2,6 +2,7 @@ package ru.mipt.bit.platformer.collision;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.model.GameObject;
+import ru.mipt.bit.platformer.render.Renderable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,5 +30,26 @@ public class SimpleCollisionDetector implements CollisionDetector {
     @Override
     public void removeObstacle(GameObject obstacle) {
         obstacles.remove(obstacle);
+    }
+    
+    public List<GameObject> getObstacles() {
+        return new ArrayList<>(obstacles);
+    }
+    
+    public void renderObstacles(Batch batch) {
+        for (GameObject obstacle : obstacles) {
+            if (obstacle instanceof Renderable) {
+                ((Renderable) obstacle).render(batch);
+            }
+        }
+    }
+    
+    public void disposeObstacles() {
+        for (GameObject obstacle : obstacles) {
+            if (obstacle instanceof Renderable) {
+                ((Renderable) obstacle).dispose();
+            }
+        }
+        obstacles.clear();
     }
 }

@@ -33,6 +33,7 @@ import main.java.ru.mipt.bit.platformer.Tank;
 import main.java.ru.mipt.bit.platformer.Tree;
 import main.java.ru.mipt.bit.platformer.collision.CollisionDetector;
 import main.java.ru.mipt.bit.platformer.collision.SimpleCollisionDetector;
+import main.java.ru.mipt.bit.platformer.level.LevelManager;
 import main.java.ru.mipt.config.GameConfig;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -45,17 +46,17 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
+    private static final boolean USE_RANDOM_LEVEL = false;
 
     private Batch batch;
-
     private TiledMap level;
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
 
     private Tank player;
-    private Tree tree;
     private InputController inputController;
     private CollisionDetector collisionDetector;
+    private LevelManager levelManager;
 
     @Override
     public void create() {
@@ -67,21 +68,18 @@ public class GameDesktopLauncher implements ApplicationListener {
         
         collisionDetector = new SimpleCollisionDetector();
 
-        // Создание объектов через абстракции
-        player = new Tank(
-            new Texture("images/tank_blue.png"),
+        levelManager = new LevelManager(
             groundLayer,
-            new GridPoint2(1, 1),
-            collisionDetector,
-            GameConfig.MOVEMENT_SPEED
+            new Texture("images/greenTree.png"),
+            new Texture("images/tank_blue.png"), 
+            collisionDetector
         );
         
-        tree = new Tree(
-            new Texture("images/greenTree.png"), 
-            groundLayer,
-            new GridPoint2(1, 3)
-        );    
-        collisionDetector.addObstacle(tree);
+        if (USE_RANDOM_LEVEL) {
+            player = levelManager.createRandomLevel(0.2f, MOVEMENT_SPEED);
+        } else {
+            player = levelManager.createLevelFromFile("levels/level1.txt", MOVEMENT_SPEED);
+        }
         
         inputController = new InputController(player);
     }
@@ -92,14 +90,13 @@ public class GameDesktopLauncher implements ApplicationListener {
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
         float deltaTime = Gdx.graphics.getDeltaTime();
+        inputController.handleInput();
         player.update(deltaTime, MOVEMENT_SPEED);
-        inputController.handleInput(tree.getCoordinates());
-
-        player.updateMovement(deltaTime, MOVEMENT_SPEED);
+        
         levelRenderer.render();
         batch.begin();
         player.render(batch);
-        tree.render(batch);
+        levelManager.renderTrees(batch);
         batch.end();
     }
 }
@@ -122,8 +119,8 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
+        levelManager.dispose();
         player.dispose();
-        tree.dispose();
         level.dispose();
         batch.dispose();
     }
