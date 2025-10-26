@@ -99,4 +99,12 @@ public final class GdxGameUtils {
                 .setHeight(tileHeight)
                 .getCenter(new Vector2());
     }
+
+    public static boolean isKeyPressed(int key) {
+        return com.badlogic.gdx.Gdx.input.isKeyPressed(key);
+    }
+
+    public static boolean isEqual(float a, float b) {
+        return com.badlogic.gdx.math.MathUtils.isEqual(a, b);
+    }
 }
