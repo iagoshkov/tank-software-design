@@ -6,13 +6,9 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.GridPoint2;
-
-import ru.mipt.bit.platformer.configs.PlayerConfig;
-import ru.mipt.bit.platformer.configs.TreeConfig;
 import ru.mipt.bit.platformer.controllers.PlayerInputController;
+import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.Player;
-import ru.mipt.bit.platformer.objects.Tree;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
@@ -20,19 +16,16 @@ public class GameDesktopLauncher implements ApplicationListener {
     private Batch batch;
     private Level level;
     private Player player;
-    private Tree tree;
     private InputHandler inputHandler;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        level = new Level();
         
-        PlayerConfig playerConfig = new PlayerConfig(new GridPoint2(1, 1));
-        TreeConfig treeConfig = new TreeConfig(new GridPoint2(1, 3));
+        LevelGenerator generator = new FromFileLevelGenerator("src/assets/levels/level1.txt");
+        level = generator.generate();
+        player = generator.getPlayer();
         
-        player = new Player(playerConfig, level);
-        tree = new Tree(treeConfig, level);
         inputHandler = new InputHandler(player, new PlayerInputController());
     }
 
@@ -48,11 +41,14 @@ public class GameDesktopLauncher implements ApplicationListener {
         
         batch.begin();
         level.render(batch);
-        player.draw(batch);
-        tree.draw(batch);
+        
+        // Рендерим все игровые объекты (игрока и деревья)
+        for (GameObject gameObject : level.getGameObjects()) {
+            gameObject.draw(batch);
+        }
+        
         batch.end();
     }
-
 
     @Override
     public void resize(int width, int height) {}
@@ -66,7 +62,6 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         player.dispose();
-        tree.dispose();
         level.dispose();
         batch.dispose();
     }

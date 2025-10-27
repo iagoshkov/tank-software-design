@@ -1,5 +1,3 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 plugins {
     id 'application'
     id 'java'
@@ -12,7 +10,7 @@ version '1.0-SNAPSHOT'
 
 application {
     mainClassName = 'ru.mipt.bit.platformer.GameDesktopLauncher'
-    if (Os.isFamily(Os.FAMILY_MAC)) {
+    if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
         applicationDefaultJvmArgs = ['-XstartOnFirstThread']
     }
 }
@@ -34,4 +32,12 @@ dependencies {
 
 test {
     useJUnit()
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['assets']
+        }
+    }
 }

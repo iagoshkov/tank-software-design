@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.GridPoint2;
 
 public class PlayerConfig extends GameObjectConfig {
     public static final float DEFAULT_MOVEMENT_SPEED = 0.4f;
-    public static final String DEFAULT_TEXTURE = "images/tank_blue.png";
+    public static final String DEFAULT_TEXTURE = "src/main/resources/images/tank_blue.png";
     
     public PlayerConfig(GridPoint2 initialPosition) {
         super(DEFAULT_TEXTURE, initialPosition, DEFAULT_MOVEMENT_SPEED);

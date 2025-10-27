@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer.configs;
 import com.badlogic.gdx.math.GridPoint2;
 
 public class TreeConfig extends GameObjectConfig {
-    public static final String DEFAULT_TEXTURE = "images/greenTree.png";
+    public static final String DEFAULT_TEXTURE = "src/main/resources/images/greenTree.png";
     
     public TreeConfig(GridPoint2 initialPosition) {
         super(DEFAULT_TEXTURE, initialPosition, 0f);
