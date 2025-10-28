@@ -1,5 +1,7 @@
 package ru.mipt.bit.platformer.util;
 
+import javax.sound.midi.Receiver;
+
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
@@ -33,4 +35,8 @@ public class TileMovement {
                 .setX(intermediateBottomLeftX)
                 .setY(intermediateBottomLeftY);
     }
+
+    public Rectangle moveRectangleToTileCenter(Rectangle rectangle, GridPoint2 coordinates) {
+        return moveRectangleAtTileCenter(tileLayer, rectangle, coordinates);
+    };
 }
