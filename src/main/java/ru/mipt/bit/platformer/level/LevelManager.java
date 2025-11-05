@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.collision.CollisionDetector;
+import ru.mipt.bit.platformer.controller.AITankController;
 import ru.mipt.bit.platformer.model.Tank;
 import ru.mipt.bit.platformer.model.Tree;
 
@@ -25,8 +26,54 @@ public class LevelManager {
         this.tankTexture = tankTexture;
         this.collisionDetector = collisionDetector;
         this.createdTrees = new ArrayList<>();
+        this.createdTanks = new ArrayList<>();
+        this.aiControllers = new ArrayList<>();
     }
-    
+
+    public List<Tank> createRandomTanks(int tankCount, float movementSpeed) {
+        List<Tank> tanks = new ArrayList<>();
+        LevelGenerator generator = new LevelGenerator(10, 8);
+        
+        for (int i = 0; i < tankCount; i++) {
+            GridPoint2 position;
+            boolean positionValid;
+            int attempts = 0;
+            
+            do {
+                position = generator.generateRandomStartPosition();
+                positionValid = !collisionDetector.isPositionBlocked(position);
+                attempts++;
+            } while (!positionValid && attempts < 100);
+            
+            if (positionValid) {
+                Tank tank = new Tank(tankTexture, groundLayer, position, collisionDetector, movementSpeed);
+                tank.setPlayerControlled(false);
+                
+                AITankController aiController = new AITankController(tank);
+                tank.setAIController(aiController);
+                
+                tanks.add(tank);
+                createdTanks.add(tank);
+                aiControllers.add(aiController);
+                collisionDetector.addMovingTank(tank);
+            }
+        }
+        
+        return tanks;
+    }
+
+    public void renderTanks(Batch batch) {
+        for (Tank tank : createdTanks) {
+            tank.render(batch);
+        }
+    }
+
+    public void updateTanks(float deltaTime) {
+        for (Tank tank : createdTanks) {
+            tank.update(deltaTime);
+        }
+    }
+
     // Случайная генерация уровня
     public Tank createRandomLevel(float obstacleDensity, float movementSpeed) {
         clearLevel(); // Очищаем предыдущий уровень
@@ -76,7 +123,12 @@ public class LevelManager {
         for (Tree tree : createdTrees) {
             tree.dispose();
         }
+        for (Tank tank : createdTanks) {
+            tank.dispose();
+        }
         createdTrees.clear();
+        createdTanks.clear();
+        aiControllers.clear();
         treeTexture.dispose();
         tankTexture.dispose();
     }

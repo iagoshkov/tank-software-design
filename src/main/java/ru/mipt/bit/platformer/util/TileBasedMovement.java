@@ -2,6 +2,8 @@ package ru.mipt.bit.platformer.movement;
 
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+
+import main.java.ru.mipt.bit.platformer.model.MovementStrategy;
 import ru.mipt.bit.platformer.model.GameObject;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -14,6 +16,7 @@ public class TileBasedMovement implements MovementStrategy {
     private float movementProgress = 1f;
     private float speed;
     private GridPoint2 currentDirection;
+    private GridPoint2 destinationCoordinates;
     
     public TileBasedMovement(GameObject gameObject, TileMovement tileMovement, float speed) {
         this.gameObject = gameObject;
@@ -41,7 +44,9 @@ public class TileBasedMovement implements MovementStrategy {
     
     @Override
     public void update(float deltaTime) {
+       float previousProgress = movementProgress;
         movementProgress = continueProgress(movementProgress, deltaTime, speed);
+        
         tileMovement.moveRectangleBetweenTileCenters(
             gameObject.getRectangle(), 
             gameObject.getCoordinates(), 
@@ -49,11 +54,16 @@ public class TileBasedMovement implements MovementStrategy {
             movementProgress
         );
         
-        if (movementProgress >= 1f) {
+        // Обновляем координаты объекта только когда движение завершено
+        if (previousProgress < 1f && movementProgress >= 1f) {
             gameObject.getCoordinates().set(destinationCoordinates);
         }
     }
     
+    public GridPoint2 getDestinationCoordinates() {
+        return new GridPoint2(destinationCoordinates);
+    }
+
     @Override
     public boolean isMoving() {
         return movementProgress < 1f;

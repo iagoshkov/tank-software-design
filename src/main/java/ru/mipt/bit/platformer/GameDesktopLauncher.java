@@ -11,6 +11,8 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedX;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedY;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
+import java.util.List;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -74,7 +76,9 @@ public class GameDesktopLauncher implements ApplicationListener {
             new Texture("images/tank_blue.png"), 
             collisionDetector
         );
-        
+
+        List<Tank> aiTanks = levelManager.createRandomTanks(3, MOVEMENT_SPEED);
+
         if (USE_RANDOM_LEVEL) {
             player = levelManager.createRandomLevel(0.2f, MOVEMENT_SPEED);
         } else {
@@ -87,17 +91,20 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void render() {
         // clear the screen
-        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
-        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        inputController.handleInput();
-        player.update(deltaTime, MOVEMENT_SPEED);
-        
-        levelRenderer.render();
-        batch.begin();
-        player.render(batch);
-        levelManager.renderTrees(batch);
-        batch.end();
+    Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
+    Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
+    float deltaTime = Gdx.graphics.getDeltaTime();
+    
+    inputController.handleInput();
+    player.update(deltaTime);
+    levelManager.updateTanks(deltaTime); 
+
+    levelRenderer.render();
+    batch.begin();
+    player.render(batch);
+    levelManager.renderTrees(batch);
+    levelManager.renderTanks(batch);
+    batch.end();
     }
 }
 

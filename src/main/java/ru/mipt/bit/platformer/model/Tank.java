@@ -20,6 +20,7 @@ import main.java.ru.mipt.bit.platformer.collision.CollisionDetector;
 import main.java.ru.mipt.bit.platformer.model.MovementStrategy;
 import main.java.ru.mipt.bit.platformer.util.TileBasedMovement;
 import ru.mipt.bit.platformer.Direction;
+import ru.mipt.bit.platformer.controller.AITankController;
 import ru.mipt.bit.platformer.render.Renderable;
 import ru.mipt.bit.platformer.util.GdxGameUtils;
 import ru.mipt.bit.platformer.util.TileMovement;
@@ -32,6 +33,9 @@ public class Tank extends GameObject implements Renderable{
     private float movementProgress=1f;
     private final MovementStrategy movement;
     private final CollisionDetector collisionDetector;
+    private AITankController aiController;
+    private boolean isPlayerControlled;
+    private GridPoint2 destinationCoordinates;
 
     public Tank(Texture texture, TiledMapTileLayer layer, GridPoint2 initialPos,
         MovementStrategy movement, CollisionDetector collisionDetector){
@@ -42,7 +46,8 @@ public class Tank extends GameObject implements Renderable{
         this.movement = movement;
         this.collisionDetector = collisionDetector;
         this.rotation = 0f;
-        
+        this.destinationCoordinates = new GridPoint2(initialPos);
+
         GdxGameUtils.moveRectangleAtTileCenter(layer, rectangle, coordinates);
     }
     // Упрощенный конструктор для обратной совместимости
@@ -52,6 +57,26 @@ public class Tank extends GameObject implements Renderable{
              new TileBasedMovement(this, new TileMovement(layer, Interpolation.smooth), speed),
              collisionDetector);
     }
+    public GridPoint2 getDestinationCoordinates() {
+        return new GridPoint2(destinationCoordinates);
+    }
+
+    public void setAIController(AITankController aiController) {
+        this.aiController = aiController;
+        this.isPlayerControlled = false;
+    }
+
+    public void setPlayerControlled(boolean playerControlled) {
+        this.isPlayerControlled = playerControlled;
+        if (playerControlled) {
+            this.aiController = null;
+        }
+    }
+
+    public boolean isPlayerControlled() {
+        return isPlayerControlled;
+    }
+
 
     @Override
     public void render(Batch batch) {
@@ -62,6 +87,7 @@ public class Tank extends GameObject implements Renderable{
     public void dispose() {
         graphics.getTexture().dispose();
     }
+
     public boolean move(Direction direction){
         if (movement.isMoving()) return false;
         
@@ -69,12 +95,34 @@ public class Tank extends GameObject implements Renderable{
         if (collisionDetector.isPositionBlocked(target)) return false;
         
         movement.moveTo(target);
+        this.destinationCoordinates = new GridPoint2(target); 
         rotation = direction.getRotation();
         return true;
     }
 
     public void update(float deltaTime) {
         movement.update(deltaTime);
+        
+        if (!movement.isMoving()) {
+            this.coordinates.set(destinationCoordinates);
+        }
+    }
+
+    //метод для получения направлени движения
+    public Direction getMovementDirection() {
+        if (!isMoving()) {
+            return null;
+        }
+        
+        int dx = destinationCoordinates.x - coordinates.x;
+        int dy = destinationCoordinates.y - coordinates.y;
+        
+        if (dx > 0) return Direction.RIGHT;
+        if (dx < 0) return Direction.LEFT;
+        if (dy > 0) return Direction.UP;
+        if (dy < 0) return Direction.DOWN;
+        
+        return null;
     }
     
     public boolean isMoving() {
