@@ -8,8 +8,22 @@ import ru.mipt.bit.platformer.model.Tank;
 public class InputController {
     private final Tank playerTank;
     
-    public InputController(Tank playerTank) {
+    public InputController(Tank playerTank, ToggleHealthDisplayCommand toggleHealthCommand) {
         this.playerTank = playerTank;
+        this.toggleHealthCommand = toggleHealthCommand;
+    }
+
+    public void handleInput() {
+        // Обрабатываем переключение здоровья
+        toggleHealthCommand.execute();
+        
+        // Обрабатываем движение игрока
+        for (Direction direction : Direction.values()) {
+            if (direction.isPressed()) {
+                playerTank.move(direction);
+                break;
+            }
+        }
     }
     
     public boolean handleInput(GridPoint2 obstacleCoordinates) {

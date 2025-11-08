@@ -21,6 +21,7 @@ import main.java.ru.mipt.bit.platformer.model.MovementStrategy;
 import main.java.ru.mipt.bit.platformer.util.TileBasedMovement;
 import ru.mipt.bit.platformer.Direction;
 import ru.mipt.bit.platformer.controller.AITankController;
+import ru.mipt.bit.platformer.render.HealthBarDecorator;
 import ru.mipt.bit.platformer.render.Renderable;
 import ru.mipt.bit.platformer.util.GdxGameUtils;
 import ru.mipt.bit.platformer.util.TileMovement;
@@ -36,9 +37,13 @@ public class Tank extends GameObject implements Renderable{
     private AITankController aiController;
     private boolean isPlayerControlled;
     private GridPoint2 destinationCoordinates;
+    private HealthSystem healthSystem;
+    private HealthBarDecorator healthBarDecorator;
+    private boolean healthBarVisible = false;
 
     public Tank(Texture texture, TiledMapTileLayer layer, GridPoint2 initialPos,
-        MovementStrategy movement, CollisionDetector collisionDetector){
+        MovementStrategy movement, CollisionDetector collisionDetector,
+        HealthSystem healthSystem){
         
         this.graphics = new TextureRegion(texture);
         this.rectangle = GdxGameUtils.createBoundingRectangle(graphics);
@@ -47,6 +52,8 @@ public class Tank extends GameObject implements Renderable{
         this.collisionDetector = collisionDetector;
         this.rotation = 0f;
         this.destinationCoordinates = new GridPoint2(initialPos);
+        this.healthSystem = healthSystem;
+        this.healthBarDecorator = new HealthBarDecorator();
 
         GdxGameUtils.moveRectangleAtTileCenter(layer, rectangle, coordinates);
     }
@@ -55,7 +62,7 @@ public class Tank extends GameObject implements Renderable{
                 CollisionDetector collisionDetector, float speed) {
         this(texture, layer, initialPos, 
              new TileBasedMovement(this, new TileMovement(layer, Interpolation.smooth), speed),
-             collisionDetector);
+             collisionDetector, HealthSystem.createRandomHealth());
     }
     public GridPoint2 getDestinationCoordinates() {
         return new GridPoint2(destinationCoordinates);
@@ -81,11 +88,46 @@ public class Tank extends GameObject implements Renderable{
     @Override
     public void render(Batch batch) {
         GdxGameUtils.drawTextureRegionUnscaled(batch, graphics, rectangle, rotation);
+        
+        // Отрисовываем полоску здоровья если включено и здоровье не полное
+        if (healthBarVisible && healthSystem.getHealthPercentage() < 1.0f) {
+            healthBarDecorator.renderHealthBar(batch, rectangle, healthSystem.getHealthPercentage());
+        }
+    }
+    // Методы для работы со дзоровьем
+    public void takeDamage(int damage) {
+        healthSystem.takeDamage(damage);
+    }
+    
+    public void heal(int amount) {
+        healthSystem.heal(amount);
+    }
+    
+    public boolean isAlive() {
+        return healthSystem.isAlive();
+    }
+    
+    public int getCurrentHealth() {
+        return healthSystem.getCurrentHealth();
+    }
+    
+    public int getMaxHealth() {
+        return healthSystem.getMaxHealth();
+    }
+    
+    public void setHealthBarVisible(boolean visible) {
+        this.healthBarVisible = visible;
+        this.healthSystem.setShowHealthBar(visible);
+    }
+    
+    public boolean isHealthBarVisible() {
+        return healthBarVisible;
     }
     
     @Override
     public void dispose() {
         graphics.getTexture().dispose();
+        healthBarDecorator.dispose();
     }
 
     public boolean move(Direction direction){

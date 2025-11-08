@@ -85,6 +85,7 @@ public class GameDesktopLauncher implements ApplicationListener {
             player = levelManager.createLevelFromFile("levels/level1.txt", MOVEMENT_SPEED);
         }
         
+        toggleHealthCommand = levelManager.getToggleHealthCommand();
         inputController = new InputController(player);
     }
 
@@ -96,6 +97,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     float deltaTime = Gdx.graphics.getDeltaTime();
     
     inputController.handleInput();
+    toggleHealthCommand.execute();
     player.update(deltaTime);
     levelManager.updateTanks(deltaTime); 
 

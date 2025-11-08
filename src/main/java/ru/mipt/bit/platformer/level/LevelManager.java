@@ -5,11 +5,13 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.collision.CollisionDetector;
 import ru.mipt.bit.platformer.controller.AITankController;
+import ru.mipt.bit.platformer.controller.ToggleHealthDisplayCommand;
 import ru.mipt.bit.platformer.model.Tank;
 import ru.mipt.bit.platformer.model.Tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class LevelManager {
@@ -18,6 +20,7 @@ public class LevelManager {
     private final Texture tankTexture;
     private final CollisionDetector collisionDetector;
     private final List<Tree> createdTrees;
+    private ToggleHealthDisplayCommand toggleHealthCommand;
     
     public LevelManager(TiledMapTileLayer groundLayer, Texture treeTexture, 
                        Texture tankTexture, CollisionDetector collisionDetector) {
@@ -28,6 +31,24 @@ public class LevelManager {
         this.createdTrees = new ArrayList<>();
         this.createdTanks = new ArrayList<>();
         this.aiControllers = new ArrayList<>();
+    }
+
+    public List<Tank> getAllTanks() {
+        return new ArrayList<>(createdTanks);
+    }
+
+    // метод для получения команды переключения здоровья
+    public ToggleHealthDisplayCommand getToggleHealthCommand() {
+        if (toggleHealthCommand == null) {
+            toggleHealthCommand = new ToggleHealthDisplayCommand(getAllTanks());
+        }
+        return toggleHealthCommand;
+    }
+
+    public List<Tank> getAliveTanks() {
+        return createdTanks.stream()
+                .filter(Tank::isAlive)
+                .collect(Collectors.toList());
     }
 
     public List<Tank> createRandomTanks(int tankCount, float movementSpeed) {
@@ -69,8 +90,21 @@ public class LevelManager {
     }
 
     public void updateTanks(float deltaTime) {
+        // Удаляем мертвые танки
+        Iterator<Tank> iterator = createdTanks.iterator();
+        while (iterator.hasNext()) {
+            Tank tank = iterator.next();
+            if (!tank.isAlive()) {
+                collisionDetector.removeMovingTank(tank);
+                iterator.remove();
+            }
+        }
+        
+        // Обновляем живые танки
         for (Tank tank : createdTanks) {
-            tank.update(deltaTime);
+            if (tank.isAlive()) {
+                tank.update(deltaTime);
+            }
         }
     }
 
