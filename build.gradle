@@ -10,8 +10,9 @@ version '1.0-SNAPSHOT'
 
 application {
     mainClassName = 'ru.mipt.bit.platformer.GameDesktopLauncher'
+    applicationDefaultJvmArgs = ['-ea'] // Добавь эту строку
     if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
-        applicationDefaultJvmArgs = ['-XstartOnFirstThread']
+        applicationDefaultJvmArgs += ['-XstartOnFirstThread']
     }
 }
 

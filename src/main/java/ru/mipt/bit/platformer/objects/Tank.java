@@ -9,22 +9,27 @@ import ru.mipt.bit.platformer.configs.PlayerConfig;
 import ru.mipt.bit.platformer.drawers.Updatable;
 import ru.mipt.bit.platformer.util.Direction;
 
-public class Player extends GameObject implements Updatable {
+public class Tank extends GameObject implements Updatable {
     private final float movementSpeed;
     private final TextureRegion graphics;
     private final GridPoint2 destinationCoordinates;
     private float movementProgress = 1.0f;
     private Level level;
+    private boolean isPlayerControlled;
+    private GridPoint2 previousCoordinates;
 
-    public Player(PlayerConfig config, Level level) {
+    public Tank(PlayerConfig config, Level level, boolean isPlayerControlled) {
         super(config.getInitialPosition());
         this.level = level;
         this.movementSpeed = config.getMovementSpeed();
         this.destinationCoordinates = new GridPoint2(coordinates);
         this.graphics = new TextureRegion(new Texture(config.getTexturePath()));
         this.bounds = ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle(graphics);
+        this.isPlayerControlled = isPlayerControlled;
+        this.previousCoordinates = new GridPoint2(coordinates);
         
         level.placeObject(this);
+        level.reservePosition(coordinates, this);
     }
 
     public void move(Direction direction) {
@@ -32,20 +37,20 @@ public class Player extends GameObject implements Updatable {
         
         GridPoint2 nextPosition = direction.getNextPosition(coordinates);
         
-        // Проверяем границы уровня
         if (!level.isPositionValid(nextPosition)) {
             return;
         }
         
-        // Проверяем, что позиция не занята танком
         if (level.isPositionOccupied(nextPosition)) {
             return;
         }
         
-        // Проверяем, что на позиции нет дерева
         if (level.isPositionBlockedByTree(nextPosition)) {
             return;
         }
+        
+        previousCoordinates.set(coordinates);
+        level.reservePosition(nextPosition, this);
         
         destinationCoordinates.set(nextPosition);
         movementProgress = 0f;
@@ -62,6 +67,7 @@ public class Player extends GameObject implements Updatable {
             );
             
             if (movementProgress >= 1f) {
+                level.freePosition(previousCoordinates);
                 coordinates.set(destinationCoordinates);
                 movementProgress = 1f;
                 level.placeObject(this);
@@ -71,6 +77,10 @@ public class Player extends GameObject implements Updatable {
 
     public boolean isMoving() {
         return movementProgress < 1f;
+    }
+
+    public boolean isPlayerControlled() {
+        return isPlayerControlled;
     }
 
     public GridPoint2 getDestinationCoordinates() {
@@ -84,6 +94,10 @@ public class Player extends GameObject implements Updatable {
 
     @Override
     public void dispose() {
+        level.freePosition(coordinates);
+        if (!coordinates.equals(previousCoordinates)) {
+            level.freePosition(previousCoordinates);
+        }
         graphics.getTexture().dispose();
     }
 }
