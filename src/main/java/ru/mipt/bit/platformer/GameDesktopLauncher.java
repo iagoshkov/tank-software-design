@@ -11,18 +11,20 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
+import ru.mipt.bit.platformer.command.CommandManager;
 import ru.mipt.bit.platformer.controller.InputController;
 import ru.mipt.bit.platformer.controller.KeyboardController;
-import ru.mipt.bit.platformer.model.level.FileLevelInfoGenerator;
-import ru.mipt.bit.platformer.model.level.LevelInfoGenerator;
-import ru.mipt.bit.platformer.model.level.RandomLevelInfoGenerator;
+import ru.mipt.bit.platformer.controller.RandomController;
 import ru.mipt.bit.platformer.log.GameLogger;
 import ru.mipt.bit.platformer.model.Entity;
-import ru.mipt.bit.platformer.model.level.LevelInfo;
 import ru.mipt.bit.platformer.model.ObstaclesManager;
 import ru.mipt.bit.platformer.model.ObstaclesManagerImpl;
 import ru.mipt.bit.platformer.model.Tank;
 import ru.mipt.bit.platformer.model.Tree;
+import ru.mipt.bit.platformer.model.level.FileLevelInfoGenerator;
+import ru.mipt.bit.platformer.model.level.LevelInfo;
+import ru.mipt.bit.platformer.model.level.LevelInfoGenerator;
+import ru.mipt.bit.platformer.model.level.RandomLevelInfoGenerator;
 import ru.mipt.bit.platformer.view.AnimatedEntityView;
 import ru.mipt.bit.platformer.view.TiledLevel;
 
@@ -37,14 +39,11 @@ public class GameDesktopLauncher implements ApplicationListener {
     /** Window height. */
     private static final int WINDOW_HEIGHT = 1024;
 
-    /** Level width in tiles. */
-    private static final int LEVEL_WIDTH = 15;
-
-    /** Level height in tiles. */
-    private static final int LEVEL_HEIGHT = 15;
-
     /** System environment variable for level file path. */
     private static final String LEVEL_CONFIG_KEY_NAME = "USER.LEVEL";
+
+    /** Internal context. */
+    private final InternalContext internalContext = new InternalContext();
 
     /** Batch. */
     private Batch batch;
@@ -58,14 +57,17 @@ public class GameDesktopLauncher implements ApplicationListener {
     /** Keyboard handler. */
     private InputController keyboardController;
 
+    /** Keyboard handler. */
+    private InputController aiController;
+
+    /** Enemy tanks. */
+    private List<Tank> enemyTanks = new ArrayList<>();
+
     /** Disposables. */
     private final List<Disposable> disposables = new ArrayList<>();
 
     /** Animated views. */
     private final List<AnimatedEntityView> animatedViews = new ArrayList<>();
-
-    /** Obstacles manager. */
-    private ObstaclesManager obstaclesManager;
 
     /** {@inheritDoc} */
     @Override
@@ -74,17 +76,23 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         batch = registerDisposable(SpriteBatch::new);
 
-        obstaclesManager = new ObstaclesManagerImpl();
-
         tiledLevel = registerDisposable(() -> new TiledLevel(batch, "level.tmx"));
 
-        LevelInfo levelInfo = levelGenerator().generate();
+        int levelWidth = tiledLevel.getWidthInTiles();
+        int levelHeight = tiledLevel.getHeightInTiles();
+
+        LevelInfo levelInfo = levelGenerator(levelWidth, levelHeight).generate();
+
+        new CommandManager(internalContext);
+
+        new ObstaclesManagerImpl(levelInfo.levelWidth(), levelInfo.levelHeight(), internalContext);
 
         initiateEntities(levelInfo);
 
         logger.info("Views initialized");
 
-        keyboardController = new KeyboardController();
+        keyboardController = new KeyboardController(internalContext);
+        aiController = new RandomController(internalContext);
 
         logger.info("Game initialization completed successfully");
     }
@@ -97,12 +105,19 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         registerAnimatedView(() -> new AnimatedEntityView(tankEntity, "images/tank_blue.png", 0.4f));
 
+        enemyTanks = levelInfo.enemyPositions().stream()
+            .map(position -> registerEntity(() -> new Tank(position))).toList();
+
+        enemyTanks.forEach(enemyTank ->
+                registerAnimatedView(() -> new AnimatedEntityView(enemyTank, "images/tank_blue.png", 0.4f))
+            );
+
         levelInfo.treePositions().stream().map(treePos -> registerEntity(() -> new Tree(treePos)))
             .forEach(treeEntity -> registerAnimatedView(() -> new AnimatedEntityView(treeEntity, "images/greenTree.png", 0f)));
     }
 
     /** */
-    private static LevelInfoGenerator levelGenerator() {
+    private static LevelInfoGenerator levelGenerator(int levelWidth, int levelHeight) {
         String levelConfigPath = System.getenv(LEVEL_CONFIG_KEY_NAME);
 
         if (levelConfigPath != null) {
@@ -113,7 +128,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         logger.info("USER.LEVEL environment variable not set or empty. Using random level generator");
 
-        return new RandomLevelInfoGenerator(LEVEL_WIDTH, LEVEL_HEIGHT);
+        return new RandomLevelInfoGenerator(levelWidth, levelHeight);
     }
 
     /** {@inheritDoc} */
@@ -124,7 +139,11 @@ public class GameDesktopLauncher implements ApplicationListener {
         float deltaTime = Gdx.graphics.getDeltaTime();
         logger.debug("Delta time: {}", deltaTime);
 
-        keyboardController.update(tankEntity, obstaclesManager);
+        keyboardController.update(tankEntity);
+
+        enemyTanks.forEach(tank -> aiController.update(tank));
+
+        internalContext.get(CommandManager.class).executeAll();
 
         animatedViews.forEach(view -> view.update(deltaTime, tiledLevel));
 
@@ -149,7 +168,7 @@ public class GameDesktopLauncher implements ApplicationListener {
      */
     public <T extends Entity> T registerEntity(Supplier<T> entity) {
         T e = entity.get();
-        obstaclesManager.addObstacle(e);
+        internalContext.get(ObstaclesManager.class).addObstacle(e);
         return e;
     }
 

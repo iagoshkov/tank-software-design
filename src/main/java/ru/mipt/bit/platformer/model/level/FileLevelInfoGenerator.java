@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.badlogic.gdx.math.GridPoint2;
@@ -85,6 +86,6 @@ public class FileLevelInfoGenerator implements LevelInfoGenerator {
         if (playerPosition == null)
             throw new RuntimeException("Invalid level config: player position not found");
 
-        return new LevelInfo(playerPosition, treePositions);
+        return new LevelInfo(playerPosition, Collections.emptyList(), treePositions, levelWidth, levelHeight);
     }
 }

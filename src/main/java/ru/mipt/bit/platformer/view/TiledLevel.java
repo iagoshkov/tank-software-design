@@ -45,6 +45,20 @@ public class TiledLevel implements Disposable {
     }
 
     /**
+     * @return Level width in tiles.
+     */
+    public int getWidthInTiles() {
+        return getSingleLayer().getWidth();
+    }
+
+    /**
+     * @return Level height in tiles.
+     */
+    public int getHeightInTiles() {
+        return getSingleLayer().getHeight();
+    }
+
+    /**
      * Generate center of tile with coordinates of left bottom corner.
      *
      * @param tileCoordinates Coordinates of left bottom corner.

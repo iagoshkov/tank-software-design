@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.mipt.bit.platformer.InternalContext;
+import ru.mipt.bit.platformer.command.CommandManager;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Entity;
 import ru.mipt.bit.platformer.model.ObstaclesManager;
@@ -26,13 +28,18 @@ class KeyboardControllerTest {
     /** Obstacles manager. */
     private ObstaclesManager obstaclesManager;
 
-    /** */
+    private CommandManager commandManager;
+    private InternalContext context;
+
     @BeforeEach
     void setUp() {
-        keyboardController = new KeyboardController();
+        context = new InternalContext();
+        commandManager = new CommandManager(context);
+        obstaclesManager = new ObstaclesManagerImpl(5, 5, context);
         entity = new Entity(new GridPoint2(0, 0));
-        obstaclesManager = new ObstaclesManagerImpl();
+        obstaclesManager.addObstacle(entity);
         obstaclesManager.addObstacle(new Entity(new GridPoint2(1, 0)));
+        keyboardController = new KeyboardController(context);
 
         com.badlogic.gdx.Input inputMock = mock(com.badlogic.gdx.Input.class);
         Gdx.input = inputMock;
@@ -42,7 +49,8 @@ class KeyboardControllerTest {
     void testMove() {
         when(Gdx.input.isKeyPressed(Input.Keys.W)).thenReturn(true);
 
-        keyboardController.update(entity, obstaclesManager);
+        keyboardController.update(entity);
+        commandManager.executeAll();
 
         assertTrue(entity.isMoving());
         assertEquals(Direction.UP, entity.getDirection());
@@ -53,7 +61,8 @@ class KeyboardControllerTest {
     void testMoveToObstacle() {
         when(Gdx.input.isKeyPressed(Input.Keys.RIGHT)).thenReturn(true);
 
-        keyboardController.update(entity, obstaclesManager);
+        keyboardController.update(entity);
+        commandManager.executeAll();
 
         assertFalse(entity.isMoving());
         assertEquals(new GridPoint2(0, 0), entity.getDestination());

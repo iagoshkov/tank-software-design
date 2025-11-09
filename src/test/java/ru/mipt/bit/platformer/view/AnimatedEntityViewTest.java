@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.mipt.bit.platformer.InternalContext;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Entity;
 import ru.mipt.bit.platformer.model.ObstaclesManagerImpl;
@@ -26,7 +27,10 @@ class AnimatedEntityViewTest {
     @BeforeEach
     void setUp() {
         entity = new Entity(new GridPoint2(0, 0));
-        entity.move(Direction.RIGHT, new ObstaclesManagerImpl());
+        InternalContext context = new InternalContext();
+        ObstaclesManagerImpl manager = new ObstaclesManagerImpl(5, 5, context);
+        manager.addObstacle(entity);
+        entity.move(Direction.RIGHT, manager);
         level = mock(TiledLevel.class);
 
         when(level.calculateTileCenter(new GridPoint2(0, 0))).thenReturn(new Vector2(0, 0));

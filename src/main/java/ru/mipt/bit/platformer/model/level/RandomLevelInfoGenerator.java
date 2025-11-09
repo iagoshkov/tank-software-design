@@ -1,18 +1,27 @@
 package ru.mipt.bit.platformer.model.level;
 
 import com.badlogic.gdx.math.GridPoint2;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Random;
 
 /**
  * Random level generator
  */
 public class RandomLevelInfoGenerator implements LevelInfoGenerator {
+    /** Enemy tanks count. */
+    public static final int ENEMY_TANKS_COUNT = 2;
+
     /** Level width. */
     private final int levelWidth;
 
     /** Level height. */
     private final int levelHeight;
+
+    /** Random. */
+    private final Random random = new Random();
 
     /**
      * @param levelWidth Level width.
@@ -27,32 +36,42 @@ public class RandomLevelInfoGenerator implements LevelInfoGenerator {
     @Override
     public LevelInfo generate() {
         Set<GridPoint2> treePositions = new HashSet<>();
-        GridPoint2 playerPosition = null;
 
         for (int x = 0; x < levelWidth; x++) {
             for (int y = 0; y < levelHeight; y++) {
-                if (Math.random() < 0.2) {
+                if (random.nextFloat() < 0.2f) {
                     treePositions.add(new GridPoint2(x, y));
                 }
             }
         }
 
-        while (playerPosition == null) {
-            GridPoint2 position = new GridPoint2(getRandomNumber(levelWidth), getRandomNumber(levelHeight));
+        List<GridPoint2> freePositions = collectFreePositions(treePositions);
 
-            if (treePositions.contains(position))
-                continue;
+        GridPoint2 playerPosition = freePositions.remove(random.nextInt(freePositions.size()));
 
-            playerPosition = position;
-        }
+        List<GridPoint2> enemyTankPositions = new ArrayList<>();
 
-        return new LevelInfo(playerPosition, treePositions.stream().toList());
+        for (int i = 0; i < ENEMY_TANKS_COUNT && !freePositions.isEmpty(); i++)
+            enemyTankPositions.add(freePositions.remove(random.nextInt(freePositions.size())));
+
+        return new LevelInfo(playerPosition, enemyTankPositions, treePositions.stream().toList(), levelWidth, levelHeight);
     }
 
-    /**
-     * @param max Max value.
-     */
-    private static int getRandomNumber(int max) {
-        return (int) (Math.random() * max);
+    /** */
+    private List<GridPoint2> collectFreePositions(Set<GridPoint2> ponts) {
+        List<GridPoint2> freePositions = new ArrayList<>();
+
+        for (int x = 0; x < levelWidth; x++) {
+            for (int y = 0; y < levelHeight; y++) {
+                GridPoint2 position = new GridPoint2(x, y);
+
+                if (ponts.contains(position))
+                    continue;
+
+                freePositions.add(position);
+            }
+        }
+
+        return freePositions;
     }
 }
