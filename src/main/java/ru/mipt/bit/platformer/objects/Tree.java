@@ -12,13 +12,14 @@ public class Tree extends GameObject {
     private Level level;
 
     public Tree(TreeConfig config, Level level) {
-        super(config.getInitialPosition());
+        super(config.getInitialPosition(), 1); // Деревья имеют 1 HP (неуязвимы)
         this.level = level;
         this.graphics = new TextureRegion(new Texture(config.getTexturePath()));
         this.bounds = ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle(graphics);
         
         level.placeObject(this);
     }
+
 
     @Override
     public void draw(Batch batch) {

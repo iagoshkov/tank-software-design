@@ -1,6 +1,8 @@
 package ru.mipt.bit.platformer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.commands.ToggleHealthBarCommand;
 import ru.mipt.bit.platformer.controllers.InputController;
 import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.Player;
@@ -11,20 +13,28 @@ public class InputHandler {
     private final Object controlledObject;
     private final InputController inputController;
     private final Level level;
+    private final ToggleHealthBarCommand toggleHealthBarCommand;
 
     public InputHandler(Player player, InputController inputController, Level level) {
         this.controlledObject = player;
         this.inputController = inputController;
         this.level = level;
+        this.toggleHealthBarCommand = new ToggleHealthBarCommand(level);
     }
 
     public InputHandler(Tank tank, InputController inputController, Level level) {
         this.controlledObject = tank;
         this.inputController = inputController;
         this.level = level;
+        this.toggleHealthBarCommand = new ToggleHealthBarCommand(level);
     }
 
     public void handleInput() {
+        // Обработка переключения здоровья (только для игрока)
+        if (controlledObject instanceof Player && Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.L)) {
+            toggleHealthBarCommand.execute();
+        }
+
         if (isMoving()) return;
 
         Direction direction = inputController.getInputDirection();

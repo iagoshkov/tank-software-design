@@ -9,6 +9,8 @@ import ru.mipt.bit.platformer.configs.PlayerConfig;
 import ru.mipt.bit.platformer.drawers.Updatable;
 import ru.mipt.bit.platformer.util.Direction;
 
+import java.util.Random;
+
 public class Tank extends GameObject implements Updatable {
     private final float movementSpeed;
     private final TextureRegion graphics;
@@ -19,7 +21,7 @@ public class Tank extends GameObject implements Updatable {
     private GridPoint2 previousCoordinates;
 
     public Tank(PlayerConfig config, Level level, boolean isPlayerControlled) {
-        super(config.getInitialPosition());
+        super(config.getInitialPosition(), generateRandomHealth());
         this.level = level;
         this.movementSpeed = config.getMovementSpeed();
         this.destinationCoordinates = new GridPoint2(coordinates);
@@ -30,6 +32,11 @@ public class Tank extends GameObject implements Updatable {
         
         level.placeObject(this);
         level.reservePosition(coordinates, this);
+    }
+
+    private static int generateRandomHealth() {
+        Random random = new Random();
+        return random.nextInt(21) + 80;
     }
 
     public void move(Direction direction) {

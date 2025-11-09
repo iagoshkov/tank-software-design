@@ -17,7 +17,7 @@ public class Player extends GameObject implements Updatable {
     private Level level;
 
     public Player(PlayerConfig config, Level level) {
-        super(config.getInitialPosition());
+        super(config.getInitialPosition(), 100); // Игрок всегда с 100 HP
         this.level = level;
         this.movementSpeed = config.getMovementSpeed();
         this.destinationCoordinates = new GridPoint2(coordinates);
@@ -26,6 +26,7 @@ public class Player extends GameObject implements Updatable {
         
         level.placeObject(this);
     }
+
 
     public void move(Direction direction) {
         if (isMoving()) return;
