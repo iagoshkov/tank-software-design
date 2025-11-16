@@ -16,6 +16,7 @@ public class AITankControllerTest {
     private AITankController aiController;
     private Tank mockTank;
     
+    
     @Before
     public void setUp() {
         mockTank = mock(Tank.class);

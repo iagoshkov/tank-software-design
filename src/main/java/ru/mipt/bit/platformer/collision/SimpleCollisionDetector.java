@@ -1,6 +1,9 @@
 package ru.mipt.bit.platformer.collision;
 
 import com.badlogic.gdx.math.GridPoint2;
+
+import main.java.ru.mipt.bit.platformer.model.Bullet;
+
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import ru.mipt.bit.platformer.model.GameObject;
 import ru.mipt.bit.platformer.model.Tank;
@@ -12,6 +15,7 @@ public class SimpleCollisionDetector implements CollisionDetector {
     private final List<GameObject> obstacles = new ArrayList<>();
     private final List<Tank> movingTanks = new ArrayList<>();
     private final LevelBoundsChecker boundsChecker;
+    private final List<Bullet> bullets = new ArrayList<>();
     
     public SimpleCollisionDetector(TiledMapTileLayer groundLayer) {
         this.boundsChecker = new LevelBoundsChecker(groundLayer);
@@ -54,8 +58,66 @@ public class SimpleCollisionDetector implements CollisionDetector {
                 }
             }
         }
+
+        // Проверяем пули
+        for (Bullet bullet : bullets) {
+            if (bullet.getCoordinates().equals(position) && bullet.isActive()) {
+                return true; // Пули блокируют только другие пули
+            }
+        }
         
         return false;
+    }
+
+    // методы для работы с пулями
+    public void addBullet(Bullet bullet) {
+        bullets.add(bullet);
+    }
+    
+    public void removeBullet(Bullet bullet) {
+        bullets.remove(bullet);
+    }
+    
+    // mетод для проверки столкновений пуль
+    public void checkBulletCollisions() {
+        Iterator<Bullet> iterator = bullets.iterator();
+        while (iterator.hasNext()) {
+            Bullet bullet = iterator.next();
+            
+            if (!bullet.isActive()) {
+                iterator.remove();
+                continue;
+            }
+            
+            GridPoint2 bulletPos = bullet.getCoordinates();
+            
+            // Проверка на столкновение с границами
+            if (!boundsChecker.isWithinBounds(bulletPos)) {
+                bullet.onCollision();
+                iterator.remove();
+                continue;
+            }
+            
+            // Проверка на столкновение с препятствиями
+            boolean hitObstacle = obstacles.stream()
+                .anyMatch(obstacle -> obstacle.getCoordinates().equals(bulletPos));
+            
+            if (hitObstacle) {
+                bullet.onCollision();
+                iterator.remove();
+                continue;
+            }
+            
+            // Проверка на столкновение с танками
+            for (Tank tank : movingTanks) {
+                if (tank.getCoordinates().equals(bulletPos) && tank.isAlive()) {
+                    tank.takeDamage(bullet.getDamage());
+                    bullet.onCollision();
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
     
     @Override

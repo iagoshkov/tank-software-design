@@ -3,6 +3,8 @@ package ru.mipt.bit.platformer.level;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
+
+import main.java.ru.mipt.bit.platformer.observer.GameLevelObservable;
 import ru.mipt.bit.platformer.collision.CollisionDetector;
 import ru.mipt.bit.platformer.controller.AITankController;
 import ru.mipt.bit.platformer.controller.ToggleHealthDisplayCommand;
@@ -21,16 +23,20 @@ public class LevelManager {
     private final CollisionDetector collisionDetector;
     private final List<Tree> createdTrees;
     private ToggleHealthDisplayCommand toggleHealthCommand;
+    private final GameLevelObservable levelObservable;
+    private final Texture bulletTexture;
     
     public LevelManager(TiledMapTileLayer groundLayer, Texture treeTexture, 
-                       Texture tankTexture, CollisionDetector collisionDetector) {
-        this.groundLayer = groundLayer;
+                       Texture tankTexture, Texture bulletTexture, 
+                       CollisionDetector collisionDetector, GameLevelObservable levelObservable) {        this.groundLayer = groundLayer;
         this.treeTexture = treeTexture;
         this.tankTexture = tankTexture;
         this.collisionDetector = collisionDetector;
         this.createdTrees = new ArrayList<>();
         this.createdTanks = new ArrayList<>();
         this.aiControllers = new ArrayList<>();
+        this.bulletTexture = bulletTexture;
+        this.levelObservable = levelObservable;
     }
 
     public List<Tank> getAllTanks() {
@@ -67,7 +73,8 @@ public class LevelManager {
             } while (!positionValid && attempts < 100);
             
             if (positionValid) {
-                Tank tank = new Tank(tankTexture, groundLayer, position, collisionDetector, movementSpeed);
+                 Tank tank = new Tank(tankTexture, groundLayer, position, collisionDetector, 
+                               movementSpeed, bulletTexture, levelObservable);
                 tank.setPlayerControlled(false);
                 
                 AITankController aiController = new AITankController(tank);
@@ -78,7 +85,10 @@ public class LevelManager {
                 aiControllers.add(aiController);
                 collisionDetector.addMovingTank(tank);
             }
+            // Регистрируем танк в наблюдателе
+            levelObservable.addGameObject(tank);
         }
+
         
         return tanks;
     }
@@ -87,6 +97,22 @@ public class LevelManager {
         for (Tank tank : createdTanks) {
             tank.render(batch);
         }
+    }
+
+    // метод инициализации уровня
+    public void initializeLevel() {
+        // Регистрруем все деревья
+        for (Tree tree : createdTrees) {
+            levelObservable.addGameObject(tree);
+        }
+        
+        // Регистрируем все такни
+        for (Tank tank : createdTanks) {
+            levelObservable.addGameObject(tank);
+        }
+        
+        // Уведомляем о завершении инициализации
+        levelObservable.notifyLevelInitialized();
     }
 
     public void updateTanks(float deltaTime) {

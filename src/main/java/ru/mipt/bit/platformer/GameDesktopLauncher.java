@@ -36,7 +36,10 @@ import main.java.ru.mipt.bit.platformer.Tree;
 import main.java.ru.mipt.bit.platformer.collision.CollisionDetector;
 import main.java.ru.mipt.bit.platformer.collision.SimpleCollisionDetector;
 import main.java.ru.mipt.bit.platformer.level.LevelManager;
+import main.java.ru.mipt.bit.platformer.observer.GameLevelObservable;
+import main.java.ru.mipt.bit.platformer.render.GameRenderer;
 import main.java.ru.mipt.config.GameConfig;
+import ru.mipt.bit.platformer.controller.ShootCommand;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import static com.badlogic.gdx.Input.Keys.*;
@@ -59,6 +62,10 @@ public class GameDesktopLauncher implements ApplicationListener {
     private InputController inputController;
     private CollisionDetector collisionDetector;
     private LevelManager levelManager;
+    private ShootCommand shootCommand;
+    private GameLevelObservable levelObservable;
+    private GameRenderer gameRenderer;
+    private Texture bulletTexture;
 
     @Override
     public void create() {
@@ -68,45 +75,61 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         
-        collisionDetector = new SimpleCollisionDetector();
-
+        // Инициализируем систему наблюдателя
+        levelObservable = new GameLevelObservable();
+        collisionDetector = new SimpleCollisionDetector(groundLayer);
+        
+        // Загружаем текстуру пули
+        bulletTexture = new Texture("images/bullet.png");
+        
         levelManager = new LevelManager(
             groundLayer,
             new Texture("images/greenTree.png"),
             new Texture("images/tank_blue.png"), 
-            collisionDetector
+            bulletTexture,
+            collisionDetector,
+            levelObservable
         );
-
-        List<Tank> aiTanks = levelManager.createRandomTanks(3, MOVEMENT_SPEED);
-
+        
+        // Создаем игрока с поддержкой стрельбы
         if (USE_RANDOM_LEVEL) {
             player = levelManager.createRandomLevel(0.2f, MOVEMENT_SPEED);
         } else {
             player = levelManager.createLevelFromFile("levels/level1.txt", MOVEMENT_SPEED);
         }
         
-        toggleHealthCommand = levelManager.getToggleHealthCommand();
+        // Инициализируем уровень
+        levelManager.initializeLevel();
+        
+        // Создаем рендерер и регистрируем как наблюдателя
+        gameRenderer = new GameRenderer(batch);
+        levelObservable.addObserver(gameRenderer);
+        
+        // Создаем команды
         inputController = new InputController(player);
+        shootCommand = new ShootCommand(player);
+        toggleHealthCommand = levelManager.getToggleHealthCommand();
     }
 
     @Override
     public void render() {
         // clear the screen
-    Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
-    Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-    float deltaTime = Gdx.graphics.getDeltaTime();
-    
-    inputController.handleInput();
-    toggleHealthCommand.execute();
-    player.update(deltaTime);
-    levelManager.updateTanks(deltaTime); 
+        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
+        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        
+        inputController.handleInput();
+        shootCommand.execute();
+        toggleHealthCommand.execute();
 
-    levelRenderer.render();
-    batch.begin();
-    player.render(batch);
-    levelManager.renderTrees(batch);
-    levelManager.renderTanks(batch);
-    batch.end();
+        player.update(deltaTime);
+        levelManager.updateTanks(deltaTime);
+        collisionDetector.checkBulletCollisions();
+
+        levelRenderer.render();
+        batch.begin();
+        gameRenderer.render(); // Отрисовываем все объекты через наблюдателя
+        batch.end();
     }
 }
 
@@ -129,7 +152,8 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
         levelManager.dispose();
-        player.dispose();
+        gameRenderer.dispose();
+        bulletTexture.dispose();
         level.dispose();
         batch.dispose();
     }

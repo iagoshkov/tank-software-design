@@ -7,15 +7,21 @@ import ru.mipt.bit.platformer.model.Tank;
 
 public class InputController {
     private final Tank playerTank;
+    private final ToggleHealthDisplayCommand toggleHealthCommand;
+    private final ShootCommand shootCommand
     
-    public InputController(Tank playerTank, ToggleHealthDisplayCommand toggleHealthCommand) {
+    public InputController(Tank playerTank, ToggleHealthDisplayCommand toggleHealthCommand, ShootCommand shootCommand) {
         this.playerTank = playerTank;
         this.toggleHealthCommand = toggleHealthCommand;
+        this.shootCommand = shootCommand;
     }
 
     public void handleInput() {
         // Обрабатываем переключение здоровья
         toggleHealthCommand.execute();
+
+        // Обрабатывем стрельбу
+        shootCommand.execute();
         
         // Обрабатываем движение игрока
         for (Direction direction : Direction.values()) {

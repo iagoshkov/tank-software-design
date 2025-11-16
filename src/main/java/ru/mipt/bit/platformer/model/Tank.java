@@ -17,7 +17,9 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 
 import main.java.ru.mipt.bit.platformer.collision.CollisionDetector;
+import main.java.ru.mipt.bit.platformer.model.Bullet;
 import main.java.ru.mipt.bit.platformer.model.MovementStrategy;
+import main.java.ru.mipt.bit.platformer.observer.GameLevelObservable;
 import main.java.ru.mipt.bit.platformer.util.TileBasedMovement;
 import ru.mipt.bit.platformer.Direction;
 import ru.mipt.bit.platformer.controller.AITankController;
@@ -40,10 +42,15 @@ public class Tank extends GameObject implements Renderable{
     private HealthSystem healthSystem;
     private HealthBarDecorator healthBarDecorator;
     private boolean healthBarVisible = false;
+    private Texture bulletTexture;
+    private TiledMapTileLayer groundLayer;
+    private GameLevelObservable levelObservable;
+    private float shootCooldown = 0f;
+    private static final float SHOOT_COOLDOWN_TIME = 1f;
 
     public Tank(Texture texture, TiledMapTileLayer layer, GridPoint2 initialPos,
-        MovementStrategy movement, CollisionDetector collisionDetector,
-        HealthSystem healthSystem){
+                MovementStrategy movement, CollisionDetector collisionDetector, 
+                HealthSystem healthSystem, Texture bulletTexture, GameLevelObservable levelObservable) {
         
         this.graphics = new TextureRegion(texture);
         this.rectangle = GdxGameUtils.createBoundingRectangle(graphics);
@@ -54,16 +61,50 @@ public class Tank extends GameObject implements Renderable{
         this.destinationCoordinates = new GridPoint2(initialPos);
         this.healthSystem = healthSystem;
         this.healthBarDecorator = new HealthBarDecorator();
+        this.bulletTexture = bulletTexture;
+        this.groundLayer = layer;
+        this.levelObservable = levelObservable;
 
         GdxGameUtils.moveRectangleAtTileCenter(layer, rectangle, coordinates);
     }
     // Упрощенный конструктор для обратной совместимости
     public Tank(Texture texture, TiledMapTileLayer layer, GridPoint2 initialPos, 
-                CollisionDetector collisionDetector, float speed) {
+                CollisionDetector collisionDetector, float speed, 
+                Texture bulletTexture, GameLevelObservable levelObservable) {
         this(texture, layer, initialPos, 
              new TileBasedMovement(this, new TileMovement(layer, Interpolation.smooth), speed),
-             collisionDetector, HealthSystem.createRandomHealth());
+             collisionDetector, HealthSystem.createRandomHealth(), bulletTexture, levelObservable);
     }
+
+    // Mетод стрельбы
+    public boolean shoot() {
+        if (shootCooldown > 0f || !isAlive()) {
+            return false;
+        }
+        // Определяем позицию пули - следующая клетка от танка
+        GridPoint2 bulletPosition = getDirection().apply(coordinates);
+        // Проверяем, не выходит ли пуля за границы
+        if (!isPositionWithinBounds(bulletPosition)) {
+            return false;
+        }
+        
+        // Создаем пулю
+        Bullet bullet = new Bullet(bulletTexture, groundLayer, bulletPosition, getDirection());
+        // Регистрируем пулю в логическом уровне
+        levelObservable.addGameObject(bullet);
+        // Устанавливакм перезарядку
+        shootCooldown = SHOOT_COOLDOWN_TIME;
+        return true;
+    }
+
+    // Метод для получения текущего направления по rotation
+    public Direction getDirection() {
+        if (rotation == 90f) return Direction.UP;
+        if (rotation == -90f) return Direction.DOWN;
+        if (rotation == -180f) return Direction.LEFT;
+        return Direction.RIGHT; // rotation == 0f
+    }
+
     public GridPoint2 getDestinationCoordinates() {
         return new GridPoint2(destinationCoordinates);
     }
@@ -142,12 +183,26 @@ public class Tank extends GameObject implements Renderable{
         return true;
     }
 
+    @Override
     public void update(float deltaTime) {
-        movement.update(deltaTime);
-        
-        if (!movement.isMoving()) {
-            this.coordinates.set(destinationCoordinates);
+        if (shootCooldown > 0f) {
+            shootCooldown -= deltaTime;
         }
+        
+        if (aiController != null && !isPlayerControlled) {
+            aiController.update(deltaTime);
+        }
+        movement.update(deltaTime);
+    }
+
+    private boolean isPositionWithinBounds(GridPoint2 position) {
+        return position.x >= 0 && position.y >= 0 && 
+               position.x < groundLayer.getWidth() && 
+               position.y < groundLayer.getHeight();
+    }
+    
+    public boolean canShoot() {
+        return shootCooldown <= 0f && isAlive();
     }
 
     //метод для получения направлени движения
