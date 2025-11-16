@@ -15,9 +15,10 @@ public class Player extends GameObject implements Updatable {
     private final GridPoint2 destinationCoordinates;
     private float movementProgress = 1.0f;
     private Level level;
+    private final int bulletDamage = 15;
 
     public Player(PlayerConfig config, Level level) {
-        super(config.getInitialPosition(), 100); // Игрок всегда с 100 HP
+        super(config.getInitialPosition(), 100);
         this.level = level;
         this.movementSpeed = config.getMovementSpeed();
         this.destinationCoordinates = new GridPoint2(coordinates);
@@ -27,30 +28,34 @@ public class Player extends GameObject implements Updatable {
         level.placeObject(this);
     }
 
-
     public void move(Direction direction) {
         if (isMoving()) return;
         
         GridPoint2 nextPosition = direction.getNextPosition(coordinates);
         
-        // Проверяем границы уровня
-        if (!level.isPositionValid(nextPosition)) {
-            return;
-        }
-        
-        // Проверяем, что позиция не занята танком
-        if (level.isPositionOccupied(nextPosition)) {
-            return;
-        }
-        
-        // Проверяем, что на позиции нет дерева
-        if (level.isPositionBlockedByTree(nextPosition)) {
-            return;
-        }
+        if (!level.isPositionValid(nextPosition)) return;
+        if (level.isPositionOccupied(nextPosition)) return;
+        if (level.isPositionBlockedByTree(nextPosition)) return;
         
         destinationCoordinates.set(nextPosition);
         movementProgress = 0f;
         rotation = direction.getRotation();
+    }
+
+    public void shoot() {
+        GridPoint2 bulletPosition = Direction.fromRotation(rotation).getNextPosition(coordinates);
+        if (level.isPositionValid(bulletPosition) && !level.isPositionBlockedByTree(bulletPosition)) {
+            new Bullet(bulletPosition, Direction.fromRotation(rotation), level, bulletDamage, 0f);
+        }
+    }
+
+    public void takeDamage(int damage) {
+        int newHealth = getHealth() - damage;
+        setHealth(newHealth);
+        
+        if (!isAlive()) {
+            System.out.println("PLAYER DIED! GAME OVER");
+        }
     }
 
     @Override
@@ -80,7 +85,9 @@ public class Player extends GameObject implements Updatable {
 
     @Override
     public void draw(Batch batch) {
-        ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled(batch, graphics, bounds, rotation);
+        if (isAlive()) {
+            ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled(batch, graphics, bounds, rotation);
+        }
     }
 
     @Override

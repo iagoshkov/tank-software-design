@@ -26,6 +26,11 @@ public class PlayerInputController implements InputController {
         return isKeyPressed(SPACE);
     }
 
+    @Override
+    public boolean shouldShoot() {
+        return Gdx.input.isKeyJustPressed(SPACE);
+    }
+
     private boolean isKeyPressed(int... keyCodes) {
         for (int keyCode : keyCodes) {
             if (Gdx.input.isKeyPressed(keyCode)) {

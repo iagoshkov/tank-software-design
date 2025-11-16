@@ -2,6 +2,8 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.commands.MoveCommand;
+import ru.mipt.bit.platformer.commands.ShootCommand;
 import ru.mipt.bit.platformer.commands.ToggleHealthBarCommand;
 import ru.mipt.bit.platformer.controllers.InputController;
 import ru.mipt.bit.platformer.objects.GameObject;
@@ -30,22 +32,29 @@ public class InputHandler {
     }
 
     public void handleInput() {
-        // Обработка переключения здоровья (только для игрока)
         if (controlledObject instanceof Player && Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.L)) {
             toggleHealthBarCommand.execute();
         }
 
-        if (isMoving()) return;
-
-        Direction direction = inputController.getInputDirection();
-        if (direction != Direction.NULL && isMoveValid(direction)) {
+        if (inputController.shouldShoot()) {
             if (controlledObject instanceof Player) {
-                ((Player) controlledObject).move(direction);
+                ((Player) controlledObject).shoot();
             } else if (controlledObject instanceof Tank) {
-                ((Tank) controlledObject).move(direction);
+                ShootCommand shootCommand = new ShootCommand((Tank) controlledObject);
+                shootCommand.execute();
             }
-        } else if (inputController.isShootPressed()) {
-            System.out.println("Shoot action triggered");
+        }
+
+        if (!isMoving()) {
+            Direction direction = inputController.getInputDirection();
+            if (direction != Direction.NULL && isMoveValid(direction)) {
+                if (controlledObject instanceof Player) {
+                    ((Player) controlledObject).move(direction);
+                } else if (controlledObject instanceof Tank) {
+                    MoveCommand moveCommand = new MoveCommand((Tank) controlledObject, direction);
+                    moveCommand.execute();
+                }
+            }
         }
     }
 
@@ -53,28 +62,14 @@ public class InputHandler {
         GridPoint2 currentPosition = getCurrentPosition();
         GridPoint2 nextPosition = direction.getNextPosition(currentPosition);
 
-        // Проверяем границы уровня
-        if (!level.isPositionValid(nextPosition)) {
-            return false;
-        }
+        if (!level.isPositionValid(nextPosition)) return false;
+        if (level.isPositionOccupied(nextPosition)) return false;
+        if (level.isPositionBlockedByTree(nextPosition)) return false;
 
-        // Проверяем, что позиция не занята другим танком
-        if (level.isPositionOccupied(nextPosition)) {
-            return false;
-        }
-
-        // Проверяем, что на позиции нет дерева
-        if (level.isPositionBlockedByTree(nextPosition)) {
-            return false;
-        }
-
-        // Для ИИ танков: проверяем, что не идем на позицию игрока
         if (controlledObject instanceof Tank) {
             Tank tank = (Tank) controlledObject;
             if (!tank.isPlayerControlled()) {
-                if (isPositionOccupiedByPlayer(nextPosition)) {
-                    return false;
-                }
+                if (isPositionOccupiedByPlayer(nextPosition)) return false;
             }
         }
 

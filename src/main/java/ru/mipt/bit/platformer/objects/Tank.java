@@ -19,6 +19,7 @@ public class Tank extends GameObject implements Updatable {
     private Level level;
     private boolean isPlayerControlled;
     private GridPoint2 previousCoordinates;
+    private final int bulletDamage = 25;
 
     public Tank(PlayerConfig config, Level level, boolean isPlayerControlled) {
         super(config.getInitialPosition(), generateRandomHealth());
@@ -44,17 +45,9 @@ public class Tank extends GameObject implements Updatable {
         
         GridPoint2 nextPosition = direction.getNextPosition(coordinates);
         
-        if (!level.isPositionValid(nextPosition)) {
-            return;
-        }
-        
-        if (level.isPositionOccupied(nextPosition)) {
-            return;
-        }
-        
-        if (level.isPositionBlockedByTree(nextPosition)) {
-            return;
-        }
+        if (!level.isPositionValid(nextPosition)) return;
+        if (level.isPositionOccupied(nextPosition)) return;
+        if (level.isPositionBlockedByTree(nextPosition)) return;
         
         previousCoordinates.set(coordinates);
         level.reservePosition(nextPosition, this);
@@ -62,6 +55,30 @@ public class Tank extends GameObject implements Updatable {
         destinationCoordinates.set(nextPosition);
         movementProgress = 0f;
         rotation = direction.getRotation();
+    }
+
+    public void shoot() {
+        GridPoint2 bulletPosition = getBulletStartPosition();
+        if (level.isPositionValid(bulletPosition) && !level.isPositionBlockedByTree(bulletPosition)) {
+            new Bullet(bulletPosition, Direction.fromRotation(rotation), level, bulletDamage, 0f);
+        }
+    }
+
+    private GridPoint2 getBulletStartPosition() {
+        return Direction.fromRotation(rotation).getNextPosition(coordinates);
+    }
+
+    public void takeDamage(int damage) {
+        int newHealth = getHealth() - damage;
+        setHealth(newHealth);
+        
+        if (!isAlive()) {
+            level.removeObject(this);
+            level.freePosition(coordinates);
+            if (!coordinates.equals(previousCoordinates)) {
+                level.freePosition(previousCoordinates);
+            }
+        }
     }
 
     @Override
@@ -96,7 +113,9 @@ public class Tank extends GameObject implements Updatable {
 
     @Override
     public void draw(Batch batch) {
-        ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled(batch, graphics, bounds, rotation);
+        if (isAlive()) {
+            ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled(batch, graphics, bounds, rotation);
+        }
     }
 
     @Override

@@ -11,7 +11,7 @@ import ru.mipt.bit.platformer.objects.Tree;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FromFileLevelGenerator implements LevelGenerator {
+public class FromFileLevelGenerator {
     private final String filePath;
     private Player player;
 
@@ -19,7 +19,6 @@ public class FromFileLevelGenerator implements LevelGenerator {
         this.filePath = filePath;
     }
 
-    @Override
     public Level generate() {
         Level level = new Level();
         
@@ -61,7 +60,6 @@ public class FromFileLevelGenerator implements LevelGenerator {
         return level;
     }
 
-    @Override
     public Player getPlayer() {
         return player;
     }

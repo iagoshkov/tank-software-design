@@ -31,4 +31,14 @@ public enum Direction {
     public GridPoint2 getDirectionVector() {
         return directionVector;
     }
+
+    public static Direction fromRotation(float rotation) {
+    // Простая проверка с допуском
+    if (Math.abs(rotation - 0) < 1) return RIGHT;
+    if (Math.abs(rotation - 180) < 1) return LEFT;
+    if (Math.abs(rotation - 90) < 1) return UP;
+    if (Math.abs(rotation - 270) < 1 || Math.abs(rotation + 90) < 1) return DOWN;
+    
+    return RIGHT; // По умолчанию
+    }
 }

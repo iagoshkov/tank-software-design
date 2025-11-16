@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.events.LevelEventListener;
 import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.Player;
 import ru.mipt.bit.platformer.objects.Tank;
@@ -28,6 +29,7 @@ public class Level {
     private final List<GameObject> gameObjects;
     private final Map<GridPoint2, Tank> occupiedPositions;
     private final List<Tree> trees;
+    private final List<LevelEventListener> listeners;
     private final int levelWidth;
     private final int levelHeight;
 
@@ -39,9 +41,18 @@ public class Level {
         gameObjects = new ArrayList<>();
         occupiedPositions = new HashMap<>();
         trees = new ArrayList<>();
+        listeners = new ArrayList<>();
         
         levelWidth = groundLayer.getWidth();
         levelHeight = groundLayer.getHeight();
+    }
+
+    public void addEventListener(LevelEventListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeEventListener(LevelEventListener listener) {
+        listeners.remove(listener);
     }
 
     public void placeObject(GameObject object) {
@@ -51,13 +62,30 @@ public class Level {
         if (object instanceof Tree) {
             trees.add((Tree) object);
         }
+        
+        // Уведомляем слушателей о новом объекте
+        for (LevelEventListener listener : listeners) {
+            listener.onObjectAdded(object);
+        }
+    }
+
+    public void removeObject(GameObject object) {
+        gameObjects.remove(object);
+        
+        if (object instanceof Tree) {
+            trees.remove(object);
+        }
+        
+        // Уведомляем слушателей об удалении объекта
+        for (LevelEventListener listener : listeners) {
+            listener.onObjectRemoved(object);
+        }
     }
 
     public List<GameObject> getGameObjects() {
         return new ArrayList<>(gameObjects);
     }
 
-    
     public boolean isPositionValid(GridPoint2 position) {
         return position.x >= 0 && position.x < levelWidth && 
                position.y >= 0 && position.y < levelHeight;
@@ -111,24 +139,23 @@ public class Level {
     }
 
     public boolean isPositionOccupiedByPlayer(GridPoint2 position, Tank excludingTank) {
-    for (GameObject obj : gameObjects) {
-        if (obj instanceof Player) {
-            Player player = (Player) obj;
-            if (player.getCoordinates().equals(position) || 
-                (player.isMoving() && player.getDestinationCoordinates().equals(position))) {
-                return true;
-            }
-        } else if (obj instanceof Tank) {
-            Tank tank = (Tank) obj;
-            // Игрок управляемый танк
-            if (tank.isPlayerControlled() && tank != excludingTank) {
-                if (tank.getCoordinates().equals(position) || 
-                    (tank.isMoving() && tank.getDestinationCoordinates().equals(position))) {
+        for (GameObject obj : gameObjects) {
+            if (obj instanceof Player) {
+                Player player = (Player) obj;
+                if (player.getCoordinates().equals(position) || 
+                    (player.isMoving() && player.getDestinationCoordinates().equals(position))) {
                     return true;
+                }
+            } else if (obj instanceof Tank) {
+                Tank tank = (Tank) obj;
+                if (tank.isPlayerControlled() && tank != excludingTank) {
+                    if (tank.getCoordinates().equals(position) || 
+                        (tank.isMoving() && tank.getDestinationCoordinates().equals(position))) {
+                        return true;
+                    }
                 }
             }
         }
+        return false;
     }
-    return false;
-}
 }
