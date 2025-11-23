@@ -7,6 +7,7 @@ import main.java.ru.mipt.bit.platformer.model.Bullet;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import ru.mipt.bit.platformer.model.GameObject;
 import ru.mipt.bit.platformer.model.Tank;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class SimpleCollisionDetector implements CollisionDetector {
     private final LevelBoundsChecker boundsChecker;
     private final List<Bullet> bullets = new ArrayList<>();
     
+    @Autowired
     public SimpleCollisionDetector(TiledMapTileLayer groundLayer) {
         this.boundsChecker = new LevelBoundsChecker(groundLayer);
     }

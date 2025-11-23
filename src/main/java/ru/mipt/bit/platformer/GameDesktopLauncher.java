@@ -40,7 +40,10 @@ import main.java.ru.mipt.bit.platformer.observer.GameLevelObservable;
 import main.java.ru.mipt.bit.platformer.render.GameRenderer;
 import main.java.ru.mipt.config.GameConfig;
 import ru.mipt.bit.platformer.controller.ShootCommand;
+import ru.mipt.bit.platformer.controller.ToggleHealthDisplayCommand;
 import ru.mipt.bit.platformer.util.TileMovement;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import ru.mipt.bit.platformer.config.GameConfig;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -67,48 +70,46 @@ public class GameDesktopLauncher implements ApplicationListener {
     private GameRenderer gameRenderer;
     private Texture bulletTexture;
 
+    private AnnotationConfigApplicationContext springContext;
+
     @Override
     public void create() {
+        // Инициализируем Spring контекст
+        springContext = new AnnotationConfigApplicationContext(GameConfig.class);
+        
+        // Получаем бины из Spring контейнера
         batch = new SpriteBatch();
-        level = new TmxMapLoader().load("level.tmx");
+        level = springContext.getBean(TiledMap.class);
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level);
-        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         
-        // Инициализируем систему наблюдателя
-        levelObservable = new GameLevelObservable();
-        collisionDetector = new SimpleCollisionDetector(groundLayer);
+        tileMovement = springContext.getBean(TileMovement.class);
+        collisionDetector = springContext.getBean(CollisionDetector.class);
         
-        // Загружаем текстуру пули
-        bulletTexture = new Texture("images/bullet.png");
-        
-        levelManager = new LevelManager(
-            groundLayer,
-            new Texture("images/greenTree.png"),
-            new Texture("images/tank_blue.png"), 
-            bulletTexture,
-            collisionDetector,
-            levelObservable
-        );
-        
-        // Создаем игрока с поддержкой стрельбы
+        levelManager = springContext.getBean(LevelManager.class);
+        Texture bulletTexture = springContext.getBean(Texture.class);
+
+        // Создаем игрока с использованием Spring бинов
         if (USE_RANDOM_LEVEL) {
             player = levelManager.createRandomLevel(0.2f, MOVEMENT_SPEED);
         } else {
             player = levelManager.createLevelFromFile("levels/level1.txt", MOVEMENT_SPEED);
         }
-        
+
         // Инициализируем уровень
         levelManager.initializeLevel();
-        
+
+        // Получаем команды из Spring
+        ToggleHealthDisplayCommand toggleHealthCommand = springContext.getBean(ToggleHealthDisplayCommand.class);
+        ShootCommand shootCommand = new ShootCommand(player);
+
         // Создаем рендерер и регистрируем как наблюдателя
         gameRenderer = new GameRenderer(batch);
+        GameLevelObservable levelObservable = springContext.getBean(GameLevelObservable.class);
         levelObservable.addObserver(gameRenderer);
-        
-        // Создаем команды
-        inputController = new InputController(player);
-        shootCommand = new ShootCommand(player);
-        toggleHealthCommand = levelManager.getToggleHealthCommand();
+
+        // Создаем контроллер с Spring бинами
+        inputController = new InputController(player, toggleHealthCommand, shootCommand);
     }
 
     @Override
@@ -151,8 +152,15 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
+        // Закрываем Spring контекст
+        if (springContext != null) {
+            springContext.close();
+        }
+        
         levelManager.dispose();
-        gameRenderer.dispose();
+        if (gameRenderer != null) {
+            gameRenderer.dispose();
+        }
         bulletTexture.dispose();
         level.dispose();
         batch.dispose();

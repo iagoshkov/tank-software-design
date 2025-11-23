@@ -28,6 +28,8 @@ import ru.mipt.bit.platformer.render.Renderable;
 import ru.mipt.bit.platformer.util.GdxGameUtils;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Tank extends GameObject implements Renderable{
@@ -109,6 +111,7 @@ public class Tank extends GameObject implements Renderable{
         return new GridPoint2(destinationCoordinates);
     }
 
+    @Autowired(required = false)
     public void setAIController(AITankController aiController) {
         this.aiController = aiController;
         this.isPlayerControlled = false;

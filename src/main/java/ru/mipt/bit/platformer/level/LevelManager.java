@@ -10,6 +10,8 @@ import ru.mipt.bit.platformer.controller.AITankController;
 import ru.mipt.bit.platformer.controller.ToggleHealthDisplayCommand;
 import ru.mipt.bit.platformer.model.Tank;
 import ru.mipt.bit.platformer.model.Tree;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,17 +28,22 @@ public class LevelManager {
     private final GameLevelObservable levelObservable;
     private final Texture bulletTexture;
     
-    public LevelManager(TiledMapTileLayer groundLayer, Texture treeTexture, 
-                       Texture tankTexture, Texture bulletTexture, 
-                       CollisionDetector collisionDetector, GameLevelObservable levelObservable) {        this.groundLayer = groundLayer;
+    @Autowired
+    public LevelManager(TiledMapTileLayer groundLayer, 
+                       @Autowired Texture treeTexture, 
+                       @Autowired Texture tankTexture, 
+                       @Autowired Texture bulletTexture,
+                       @Autowired CollisionDetector collisionDetector,
+                       @Autowired GameLevelObservable levelObservable) {
+        this.groundLayer = groundLayer;
         this.treeTexture = treeTexture;
         this.tankTexture = tankTexture;
+        this.bulletTexture = bulletTexture;
         this.collisionDetector = collisionDetector;
+        this.levelObservable = levelObservable;
         this.createdTrees = new ArrayList<>();
         this.createdTanks = new ArrayList<>();
         this.aiControllers = new ArrayList<>();
-        this.bulletTexture = bulletTexture;
-        this.levelObservable = levelObservable;
     }
 
     public List<Tank> getAllTanks() {
