@@ -19,7 +19,7 @@ import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.Player;
 import ru.mipt.bit.platformer.objects.Tank;
 import ru.mipt.bit.platformer.objects.Tree;
-
+import ru.mipt.bit.platformer.GameSpringBootApplication;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -38,6 +38,18 @@ public class GameDesktopLauncher implements ApplicationListener {
     private boolean gameOver = false;
     private BitmapFont font;
 
+    private final PlayerInputController playerInputController;
+    private final AiInputController aiInputController;
+
+    public GameDesktopLauncher(PlayerInputController playerInputController, AiInputController aiInputController) {
+        this.playerInputController = playerInputController;
+        this.aiInputController = aiInputController;
+    }
+
+    public GameDesktopLauncher() {
+        this(new PlayerInputController(), new AiInputController());
+    }
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -52,10 +64,10 @@ public class GameDesktopLauncher implements ApplicationListener {
         
         createAiTanks(2);
         
-        playerInputHandler = new InputHandler(playerTank, new PlayerInputController(), level);
+        playerInputHandler = new InputHandler(playerTank, playerInputController, level);
         
         for (Tank aiTank : aiTanks) {
-            aiInputHandlers.add(new InputHandler(aiTank, new AiInputController(), level));
+            aiInputHandlers.add(new InputHandler(aiTank, aiInputController, level));
         }
         
         toggleHealthBarCommand = new ToggleHealthBarCommand(level);
@@ -228,7 +240,10 @@ public class GameDesktopLauncher implements ApplicationListener {
         config.setWindowedMode(1280, 1024);
         config.setResizable(false);
         
-        new Lwjgl3Application(new GameDesktopLauncher(), config);
+        GameSpringBootApplication.initialize();
+        GameDesktopLauncher gameLauncher = GameSpringBootApplication.getGameLauncher();
+        
+        new Lwjgl3Application(gameLauncher, config);
     }
     
     public Player getPlayerTank() {

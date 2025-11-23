@@ -26,7 +26,6 @@ public class LevelLoader {
         }
     }
     
-    // Загрузка уровня из файла
     public static LevelData loadFromFile(String filename) {
         List<String> lines = new ArrayList<>();
         GridPoint2 playerPosition = null;
@@ -37,7 +36,6 @@ public class LevelLoader {
             int y = 0;
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
-                // Обрабатываем строку с конца (так как в LibGDX координаты идут снизу вверх)
                 int actualY = lines.size() - 1 - y;
                 
                 for (int x = 0; x < line.length(); x++) {
@@ -61,14 +59,12 @@ public class LevelLoader {
         PlayerConfig playerConfig = new PlayerConfig(playerPosition);
         return new LevelData(playerConfig, trees);
     }
-    
-    // Генерация случайного уровня
+
     public static LevelData generateRandomLevel(int width, int height, float obstacleDensity) {
         Random random = new Random();
         List<TreeConfig> trees = new ArrayList<>();
         GridPoint2 playerPosition;
         
-        // Генерируем препятствия
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (random.nextFloat() < obstacleDensity) {
@@ -76,8 +72,6 @@ public class LevelLoader {
                 }
             }
         }
-        
-        // Находим свободную позицию для игрока
         do {
             playerPosition = new GridPoint2(
                 random.nextInt(width),
