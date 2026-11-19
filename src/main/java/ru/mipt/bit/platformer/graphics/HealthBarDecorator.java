@@ -35,11 +35,15 @@ public class HealthBarDecorator implements Renderable {
         float y = rectangle.y + rectangle.height + BAR_OFFSET;
         float health = (float) tank.getHealth() / tank.getMaxHealth();
 
-        batch.setColor(Color.RED);
-        batch.draw(texture, x, y, rectangle.width, BAR_HEIGHT);
-        batch.setColor(Color.GREEN);
-        batch.draw(texture, x, y, rectangle.width * health, BAR_HEIGHT);
-        batch.setColor(Color.WHITE);
+        float color = batch.getPackedColor();
+        try {
+            batch.setColor(Color.RED);
+            batch.draw(texture, x, y, rectangle.width, BAR_HEIGHT);
+            batch.setColor(Color.GREEN);
+            batch.draw(texture, x, y, rectangle.width * health, BAR_HEIGHT);
+        } finally {
+            batch.setPackedColor(color);
+        }
     }
 
     @Override
