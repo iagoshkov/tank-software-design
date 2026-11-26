@@ -1,12 +1,11 @@
 package ru.mipt.bit.platformer.control;
 
-import ru.mipt.bit.platformer.graphics.HealthBarToggle;
-
+/** Application: shows or hides health bars. */
 public class ToggleHealthBarsCommand implements Command {
 
-    private final HealthBarToggle toggle;
+    private final Toggle toggle;
 
-    public ToggleHealthBarsCommand(HealthBarToggle toggle) {
+    public ToggleHealthBarsCommand(Toggle toggle) {
         this.toggle = toggle;
     }
 
