@@ -1,7 +1,9 @@
 package ru.mipt.bit.platformer.graphics;
 
-/** Infrastructure: keeps whether health bars are shown. */
-public class HealthBarToggle {
+import ru.mipt.bit.platformer.control.Toggle;
+
+/** Infrastructure, adapter for Toggle: keeps whether health bars are shown. */
+public class HealthBarToggle implements Toggle {
 
     private boolean visible;
 
@@ -9,6 +11,7 @@ public class HealthBarToggle {
         return visible;
     }
 
+    @Override
     public void toggle() {
         visible = !visible;
     }

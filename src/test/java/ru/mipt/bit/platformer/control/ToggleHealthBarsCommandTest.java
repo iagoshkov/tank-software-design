@@ -1,22 +1,21 @@
 package ru.mipt.bit.platformer.control;
 
 import org.junit.jupiter.api.Test;
-import ru.mipt.bit.platformer.graphics.HealthBarToggle;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ToggleHealthBarsCommandTest {
 
     @Test
     void executeTogglesHealthBars() {
-        HealthBarToggle toggle = new HealthBarToggle();
-        ToggleHealthBarsCommand command = new ToggleHealthBarsCommand(toggle);
+        AtomicInteger calls = new AtomicInteger();
+        ToggleHealthBarsCommand command = new ToggleHealthBarsCommand(calls::incrementAndGet);
 
         command.execute();
-        assertTrue(toggle.isVisible());
+        assertEquals(1, calls.get());
 
         command.execute();
-        assertFalse(toggle.isVisible());
+        assertEquals(2, calls.get());
     }
 }

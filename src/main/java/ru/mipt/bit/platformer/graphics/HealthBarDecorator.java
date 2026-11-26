@@ -9,9 +9,6 @@ import ru.mipt.bit.platformer.model.Tank;
 /** Infrastructure: decorator that draws a health bar over a tank. */
 public class HealthBarDecorator implements Renderable {
 
-    private static final float BAR_HEIGHT = 8f;
-    private static final float BAR_OFFSET = 6f;
-
     private final Renderable renderable;
     private final Tank tank;
     private final HealthBarToggle toggle;
@@ -32,16 +29,15 @@ public class HealthBarDecorator implements Renderable {
         }
 
         Rectangle rectangle = getRectangle();
-        float x = rectangle.x;
-        float y = rectangle.y + rectangle.height + BAR_OFFSET;
-        float health = (float) tank.getHealth() / tank.getMaxHealth();
+        HealthBarLayout bar = new HealthBarLayout(rectangle.x, rectangle.y, rectangle.width,
+                rectangle.height, tank.getHealth(), tank.getMaxHealth());
 
         float color = batch.getPackedColor();
         try {
             batch.setColor(Color.RED);
-            batch.draw(texture, x, y, rectangle.width, BAR_HEIGHT);
+            batch.draw(texture, bar.x, bar.y, bar.width, bar.height);
             batch.setColor(Color.GREEN);
-            batch.draw(texture, x, y, rectangle.width * health, BAR_HEIGHT);
+            batch.draw(texture, bar.x, bar.y, bar.filledWidth, bar.height);
         } finally {
             batch.setPackedColor(color);
         }
